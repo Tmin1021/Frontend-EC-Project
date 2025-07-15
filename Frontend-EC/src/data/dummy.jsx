@@ -23,7 +23,7 @@ const accessories = [
   },
   {
     product_id: 'V2',
-    name: "Montecito Vase",
+    name: "Montecitosss Vase",
     type: 'vase',
     image_url: demo_4,
     price: 25,
@@ -32,8 +32,12 @@ const accessories = [
 
 // B
 const bonus_gifts = [
-  { bouquet_id: 1,
-    accessories_id: 1,
+  { bouquet_id: "B1",
+    accessories_id: "V1",
+    off_price: 5,
+  },
+  { bouquet_id: "B1",
+    accessories_id: "V2",
     off_price: 5,
   }
 ]
@@ -80,9 +84,9 @@ const products = [
     tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
     image_url: [demo, demo_1, demo_2],
     options: {
-      original: { price: 19.99, stems: 5},
-      deluxe: { price: 29.99, stems: 10 },
-      grand: { price: 39.99, stems: 15 },
+      "original": { price: 19.99, stems: 5},
+      "deluxe": { price: 29.99, stems: 10 },
+      "grand": { price: 39.99, stems: 15 },
     },
     wrapping_available: true,
   },
@@ -98,8 +102,9 @@ const products = [
     tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
     image_url: [demo, demo_1, demo_2],
     options: {
-      deluxe: { price: 29.99, stems: 10 },
-      grand: { price: 39.99, stems: 15 },
+      "original": { price: 19.99, stems: 5},
+      "deluxe": { price: 29.99, stems: 10 },
+      "grand": { price: 39.99, stems: 15 },
     },
     wrapping_available: true,
   },
@@ -115,8 +120,9 @@ const products = [
     tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
     image_url: [demo, demo_1, demo_2],
     options: {
-      deluxe: { price: 29.99, stems: 10 },
-      grand: { price: 39.99, stems: 15 },
+      "original": { price: 19.99, stems: 5},
+      "deluxe": { price: 29.99, stems: 10 },
+      "grand": { price: 39.99, stems: 15 },
     },
     wrapping_available: true,
   },
@@ -132,8 +138,9 @@ const products = [
     tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
     image_url: [demo, demo_1, demo_2],
     options: {
-      deluxe: { price: 29.99, stems: 10 },
-      grand: { price: 39.99, stems: 15 },
+      "original": { price: 19.99, stems: 5},
+      "deluxe": { price: 29.99, stems: 10 },
+      "grand": { price: 39.99, stems: 15 },
     },
     wrapping_available: true,
   },

@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "../../context/CartContext";
 import { products } from '../../data/dummy';
 import Cart_Item from './components/cart_item';
@@ -21,16 +22,26 @@ function Cart() {
   }, []);
 
 
+  // initial: "x:100%" --> set the div to the rightmost (out of the portview)
+  // animate: "x:0" --> set the div to the leftmmost (targeted position)
+  // exit: set the position when the div is unmounted
+  // type: spring (linear+bounce+accelerate) - stiffness (how fast) -- damping (bouncing)
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={closeCart}>
-      <div className="w-[500px] max-h-[80vh] bg-white rounded-xl shadow-lg overflow-y-auto p-4" onClick={(e) =>e .stopPropagation()}>
-        {cart.map((cart_item) => (
-          <div key={cart_item}>
-            <Cart_Item product={products.find((product_item) => product_item.product_id === cart_item)} />
-          </div>
-        ))}
-      </div>
-    </div>
+    <AnimatePresence>
+      <motion.div  
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={closeCart}>
+        <div className="w-[500px] max-h-[80vh] bg-white rounded-xl shadow-lg overflow-y-auto p-4" onClick={(e) =>e .stopPropagation()}>
+          {cart.map((cart_item) => (
+              <Cart_Item key={cart_item} product={products.find((product_item) => product_item.product_id === cart_item)} />
+          ))}
+        </div>
+      </motion.div>
+    </AnimatePresence>
+
   );
 }
 

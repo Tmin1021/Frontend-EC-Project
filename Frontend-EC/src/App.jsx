@@ -12,6 +12,7 @@ function App() {
 
   return (
     <Router>
+      <Header/>
       <Routes>
         <Route path="/" element={<Dashboard/>}/>
         <Route path="/product/:id" element={<Product_Detail/>}/>
