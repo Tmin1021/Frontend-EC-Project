@@ -31,12 +31,8 @@ function Product_Detail() {
 
                 <div>
                     <Product_Delivery_Date/>
-                    <div className="flex">
-                        {Object.keys(product.options).map((name) => (
-                            <Product_Option key={name} option={{name:name, price:product.options[name].price, stems:product.options[name].stems}}/>
-                        ))}
-                    </div>
-                    <Product_Extra product={accessories[0]}/>
+                    <Product_Option product={product}/>
+                    <Product_Extra product={product}/>
                 </div>
             </div>
 
