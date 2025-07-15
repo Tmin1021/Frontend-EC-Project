@@ -6,7 +6,7 @@ import { ProductProvider } from '../../context/ProductContext'
 function List_Product() {
   return (
     <ProductProvider>
-      <div>
+      <div className='px-10'>
           <List_Filter/>
           <List_View/>
       </div>

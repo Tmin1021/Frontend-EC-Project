@@ -1,7 +1,9 @@
 import React from 'react'
 import { useProduct } from '../../../context/ProductContext'
 import { useNavigate } from 'react-router-dom'
+import { Bestselling_Item } from '../../dashboard/components/dashboard_bestselling'
 
+/*
 function List_Item({product}) {
     return (
         <div>
@@ -14,6 +16,7 @@ function List_Item({product}) {
 
     )
 }
+    */
 
 function List_View() {
   const {current_product} = useProduct()
@@ -25,10 +28,10 @@ function List_View() {
   }
 
   return (
-    <div className='grid grid-cols-3 gap-4'>
+    <div className='grid grid-cols-3 gap-8 pt-8'>
     {current_product.map((product, i) => (
         <div key={i} onClick={() => handleClick(product.product_id)}>
-            <List_Item product={product}/>
+            <Bestselling_Item product={product}/>
         </div>
     ))}
     </div>
