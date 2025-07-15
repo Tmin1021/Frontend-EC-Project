@@ -1,68 +1,54 @@
-import React, {useRef} from 'react'
+import React from 'react'
 import {products} from '../../../data/dummy'
 import { useNavigate } from 'react-router-dom'
 
-function Bestselling_Item({product}) {
+export function Bestselling_Item({product}) {
+    const findStartingPrice = () => (Math.min(...Object.values(product.options).map(option => option.price)))
+
     return (
-        <div>
-            <div className='w-[350px] h-[350px] rounded-3xl bg-white hover:w-[365px] hover:h-[365px] transition-all duration-400'>
-                <img src={product.image} className='w-full'/>
+        <div className="min-w-[200px]">
+            <div className='"w-full aspect-square overflow-hidden'>
+                <img src={product.image_url[1]} className='w-full h-full object-cover'/>
             </div>
-            <p className='font-bold'>{product.name}</p>
-            <p>from <span >${product.price}</span></p>
+            <p className='font-bold text-base pt-3'>{product.name}</p>
+            <p className='font-light text-sm py-1'>from <span className='font-bold text-lg'>${findStartingPrice()}</span></p>
         </div>
 
     )
 }
 
+function BestSeller_Button() {
+    const navigate = useNavigate()
+
+    return (
+        <div className="w-[250px] min-w-[100px] flex items-center justify-between mx-auto cursor-pointer bg-green-800 hover:bg-green-900 transition-all py-2 px-6 rounded-sm" onClick={()=>navigate("/flowers")}>
+            <p className="mx-auto font-bold">SHOP ALL BEST SELLERS</p>
+        </div>
+    )
+}
+
 const Dashboard_Bestselling = () => {
-      const scrollRef = useRef()
       const navigate = useNavigate()
-  
-      const scrollLeft = () => {
-          scrollRef.current.scrollBy({left: -400, behavior: 'smooth'})
-      }
-  
-      const scrollRight = () => {
-          scrollRef.current.scrollBy({left: 400, behavior: 'smooth'})
-      }
 
       const handleClick = (productID) => {
         navigate(`/product/${productID}`)
       }
   
       return (
-          <div className="relative">
-              <h1 className='font-extrabold text-9xl pt-40 pb-20'>Best-selling Hoa.</h1>
+          <div className="flex flex-col">
+            <p className='font-semibold text-2xl pt-12 pb-6 mx-auto'>Best-selling Hoa.</p>
 
-              {/* Scrollable content */}
-              <div
-                  ref={scrollRef}
-                  className="overflow-x-auto no-scrollbar pl-30"
-                  style={{
-                    marginLeft: `-120px`,
-                    marginRight: `-120px`,}}>
-                  <div className="flex gap-10 w-max">
-                  {products.map((product) => (
-                      <div key={product.product_id} onClick={() => handleClick(product.product_id)}>
-                        <Bestselling_Item product={product} />
-                      </div>
-                  ))}
-                  </div>
-              </div>
-  
-              
-              {/* Scroll Buttons */}
-              <button
-                  onClick={scrollLeft}
-                  className="absolute bottom-[-80px] right-[70px] w-10 h-10 bg-white text-gray-400 text-2xl font-extrabold rounded-full">
-                  &lt;
-              </button>
-              <button
-                  onClick={scrollRight}
-                  className="absolute bottom-[-80px] right-[0px] w-10 h-10 text-gray-400 text-2xl font-extrabold bg-white rounded-full">
-                  &gt;
-              </button>
+            <div className="flex gap-4 overflow-x-auto w-full">
+            {products.slice(0, 4).map((product) => (
+                <div key={product.product_id} className="cursor-pointer" onClick={() => handleClick(product.product_id)}>
+                    <Bestselling_Item product={product} />
+                </div>
+            ))}
+            </div>
+
+            <div className="pt-6">
+               <BestSeller_Button/>
+            </div>
           </div>
       )
 }

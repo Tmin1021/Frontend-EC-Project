@@ -36,7 +36,7 @@ const Dashboard_Banner = () => {
             <img
             src={demo}
             alt="demo"
-            className="w-full" style={{borderRadius: `${rounded}px`}}/>
+            className="w-full h-[500px]" style={{borderRadius: `${rounded}px`}}/>
         </div>
     </div>
 
