@@ -58,13 +58,32 @@ const comments = [
     date: "12/07/2025",
     title: "Excellent",
     content: "Pick Up A Lucky Peony!⠀ Peonies symbolize prosperity, good luck, and love. So, whether you know someone who’s getting married, graduating or just needs a pick-me-up sending them a pretty peony bouquet will be perfect!",
+    star: 4,
     image: [],
   },
   {  
-    user_id: 1,
+    user_id: 2,
     product_id: "B3",
     date: "12/07/2025",
     content: "Pick Up A Lucky Peony!⠀ Peonies symbolize prosperity, good luck, and love. So, whether you know someone who’s getting married, graduating or just needs a pick-me-up sending them a pretty peony bouquet will be perfect!",
+    star: 3,
+    image: [demo_5],
+  },
+    {  
+    user_id: 3,
+    product_id: "B3",
+    date: "12/07/2025",
+    title: "Excellent",
+    content: "Pick Up A Lucky Peony!⠀ Peonies symbolize prosperity, good luck, and love. So, whether you know someone who’s getting married, graduating or just needs a pick-me-up sending them a pretty peony bouquet will be perfect!",
+    star: 4,
+    image: [],
+  },
+  {  
+    user_id: 4,
+    product_id: "B3",
+    date: "12/07/2025",
+    content: "Pick Up A Lucky Peony!⠀ Peonies symbolize prosperity, good luck, and love. So, whether you know someone who’s getting married, graduating or just needs a pick-me-up sending them a pretty peony bouquet will be perfect!",
+    star: 3,
     image: [demo_5],
   },
 ];
@@ -100,7 +119,7 @@ const products = [
     description_detail: "Turning heads wherever they go, our picture-perfect premium peonies are a must. Our farmers select the freshest blooms for you, and these stems of lush, petal-soft ruffles are some of the prettiest we’ve seen.",
     caution: "Colors may vary.",
     tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
-    image_url: [demo, demo_1, demo_2],
+    image_url: [demo, demo_1, demo_2, demo_3, demo_4],
     options: {
       "original": { price: 19.99, stems: 5},
       "deluxe": { price: 29.99, stems: 10 },
@@ -146,4 +165,24 @@ const products = [
   },
 ];
 
-export {products, carts, comments, bonus_gifts, accessories};
+// U
+const users = [
+  {
+    user_id: 1,
+    name: "demo1hihihi"
+  },
+  {
+    user_id: 2,
+    name: "demo1hehehe"
+  },
+    {
+    user_id: 3,
+    name: "demo1hihihi"
+  },
+  {
+    user_id: 4,
+    name: "demo1hehehe"
+  }
+]
+
+export {products, carts, comments, bonus_gifts, accessories, users};
