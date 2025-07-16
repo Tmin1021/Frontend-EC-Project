@@ -6,6 +6,7 @@ import Dashboard from './pages/dashboard'
 import List_Product from './pages/list_product'
 import Product_Detail from './pages/product_detail'
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import SupportPage from './pages/support'
 
 function App() {
   const {isCartOpen} = useCart()
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<Dashboard/>}/>
         <Route path="/product/:id" element={<Product_Detail/>}/>
         <Route path="/flowers" element={<List_Product/>}/>
+        <Route path="/support" element={<SupportPage/>}/>
       </Routes>
       {isCartOpen && <Cart/>}
     </Router>
