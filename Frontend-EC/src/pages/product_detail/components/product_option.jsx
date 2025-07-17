@@ -12,7 +12,7 @@ function Option_Item({option}) {
 
 // option: {name_option, price, stems}
 function Product_Option({product}) {
-  console.log(product.product_id)
+
   return (
     <div className="flex justify-between gap-2">
         {Object.keys(product.options).map((name) => (

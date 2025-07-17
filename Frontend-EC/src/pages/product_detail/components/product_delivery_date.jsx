@@ -9,11 +9,11 @@ function My_Day({day, isActive}) {
 
   return (
     isActive ?
-    (<div className="flex items-center w-[35px] h-[40px] rounded-sm hover:bg-gray-200 transition-all duration:400">
+    (<div className="flex items-center w-[35px] h-[45px] rounded-sm hover:bg-gray-200 transition-all duration:400">
       <p className='text-black text-sm font-semibold mx-auto'>{day}</p>
     </div>)
     :  
-    (<div className="flex items-center w-[35px] h-[40px]">
+    (<div className="flex items-center w-[35px] h-[45px]">
       <p className='text-gray-200 text-sm font-semibold mx-auto'>{day}</p>
     </div>)
   )

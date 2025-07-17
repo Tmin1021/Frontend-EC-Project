@@ -7,6 +7,7 @@ const Cart_Item = ({product}) => {
             <img src={product.image_url[0]} className='w-[120px] h-[120px] p-[5px]'/>
             <div>
                 <p className='font-semibold text-lg'>{product.name}</p>
+
             </div>
         
         </div>

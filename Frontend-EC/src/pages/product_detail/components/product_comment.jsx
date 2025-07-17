@@ -51,7 +51,7 @@ function Product_Rating({comments}) {
 
       <div className='flex flex-col gap-1'>
         {Array.from({length: 5}).map((_, i) => (
-          <div className='flex gap-2'>
+          <div key={i} className='flex gap-2'>
 
             {/* Stars */}
             <div key ={i} className='flex w-[140px] justify-end'>
@@ -80,6 +80,7 @@ function Product_Comment({product_id}) {
     <div>
         <p className='font-bold text-2xl'>Ratings & Reviews</p>
         <Product_Rating comments={this_product_comments}/>
+        
         <div className='flex items-center justify-between'>
           <div onClick={()=>setIndex(Math.max(index-1,0))}><ChevronLeft className="w-10 h-10"/></div>
           <div className='w-full overflow-hidden'>
