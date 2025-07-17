@@ -20,29 +20,25 @@ function Product_Detail() {
 
  return (
     <ProductCalendarProvider>
-        <div className='py-30 px-90'>
-            <h1 className='font-extrabold text-9xl pb-20'>{product.name}</h1>
-
-            <div className='flex gap-10'>
-                <div>
+        <div className='w-[60%] mx-auto'>
+            <div className='flex justify-between gap-14'>
+                <div className='w-[55%]'>
                     <Product_Preview images={product.image_url}/>
                     <Product_Description product={product}/>
                 </div>
 
-                <div>
+                <div className='flex flex-col w-[45%]'>
+                    <p className='font-semibold text-4xl mx-auto'>{product.name}</p>
                     <Product_Delivery_Date/>
                     <Product_Option product={product}/>
                     <Product_Extra product={product}/>
+                    <div className='w-full min-w-[200px] h-[50px] bg-green-700 flex items-center' onClick={() => addCart(product)}>
+                        <p className='font-semibold text-lg text-white mx-auto'>ADD TO CART</p>
+                    </div>
                 </div>
             </div>
 
-            <div className='w-[100px] h-[100px] bg-blue-400' onClick={() => addCart(product)}>
-                Add to cart
-            </div>
-
-            <div>
-                <Product_Comment product_id={product.product_id}/>
-            </div>
+            <Product_Comment product_id={product.product_id}/>
         </div>
     </ProductCalendarProvider>
 

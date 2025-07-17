@@ -17,12 +17,12 @@ export function Bestselling_Item({product}) {
     )
 }
 
-function BestSeller_Button() {
+function BestSelling_Button() {
     const navigate = useNavigate()
 
     return (
         <div className="w-[250px] min-w-[100px] flex items-center justify-between mx-auto cursor-pointer bg-green-800 hover:bg-green-900 transition-all py-2 px-6 rounded-sm" onClick={()=>navigate("/flowers")}>
-            <p className="mx-auto font-bold">SHOP ALL BEST SELLERS</p>
+            <p className="mx-auto font-bold text-white">SHOP ALL BEST SELLERS</p>
         </div>
     )
 }
@@ -47,7 +47,7 @@ const Dashboard_Bestselling = () => {
             </div>
 
             <div className="pt-6">
-               <BestSeller_Button/>
+               <BestSelling_Button/>
             </div>
           </div>
       )
