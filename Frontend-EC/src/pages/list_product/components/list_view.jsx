@@ -23,7 +23,6 @@ function List_View() {
   const navigate = useNavigate()
 
   const handleClick = (productID) => {
-    console.log("HI")
     navigate(`/product/${productID}`)
   }
 
