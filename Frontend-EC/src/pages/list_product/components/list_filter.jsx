@@ -1,6 +1,6 @@
-import React, {useState } from 'react'
+import React, {useState, useEffect, useRef } from 'react'
 import { useProduct } from '../../../context/ProductContext';
-import { ChevronDown } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 
 const filter_types = {
   "Flower Type": ["Anemones", "Dried Flowers", "Hydrangeas", "Lilies", "Orchids", "Peonies", "Ranunculus", "Roses", "Succulents", "Sunflowers", "Tropical"],
@@ -9,14 +9,14 @@ const filter_types = {
   "Sort": ["Best Sellers", "Featured", "Price: Low to High", "Price: High to Low", "First Available"]
 }
 
-function Filter_Option({type}) {
-  const {filterProduct} = useProduct()
+function Filter_Option({type, whichOption, onHandleClick}) {
 
   return (
-    <div className='absolute top-10 right-0 w-[140px] h-[130px] py-2 px-4 rounded-lg overflow-y-auto no-scrollbar dark:bg-white dark:text-black'>
-      {filter_types[type].map((option) => (
-        <div key={option} onClick={() => filterProduct({type: type, value: option})}>
-          <p className='text-sm font-light'>{option}</p>
+    <div className='absolute top-10 right-0 translate-x-1/4 w-[150px] h-[125px] py-2 px-4 rounded-lg overflow-y-auto no-scrollbar bg-white shadow-sm'>
+      {filter_types[type].map((option, index) => (
+        <div key={option} className='flex items-center justify-between' onClick={() => onHandleClick(type, option, index)}>
+          <p className='text-sm font-light py-2'>{option}</p>
+          {whichOption[index] && <Check/> }
         </div>
       ))}
     </div>
@@ -24,24 +24,45 @@ function Filter_Option({type}) {
 }
 
 function Filter({name, isOpenFilter, onHandleClick}) {
+  const [whichOption, setWhichOption] = useState(Array(filter_types[name].length).fill(false))
+  const {filterProduct} = useProduct()
 
+  const handleOption = (type, value, index) => {
+    const newWhichOption = whichOption.slice()
+    newWhichOption[index] = !newWhichOption[index]
+    
+    filterProduct({type: type, value: value, isChosen: newWhichOption[index]})
+    setWhichOption(newWhichOption)
+}
+
+  // click Filter_Option will propagate that click to the parent --> trigger onHandleClick --> had better to separate or stopPropagation
   return (
-    <div className='relative flex gap-4 border-1 py-1 px-2' onClick={onHandleClick}>
-      <p className='font-extralight'>{name}</p>
-      <ChevronDown className={`transition-transform duration-500 ${isOpenFilter ? 'rotate-[-180deg]' : ''}`}/>
-      {isOpenFilter && <Filter_Option type={name}/>}
+    <div className='relative ' >
+      <div className='flex gap-4 border-1 py-1 px-2' onClick={onHandleClick}>
+        <p className='font-extralight'>{name}</p>
+        <ChevronDown className={`transition-transform duration-500 ${isOpenFilter ? 'rotate-[-180deg]' : ''}`}/>
+      </div>
+
+      {isOpenFilter && (
+        <div onClick={(e) => e.stopPropagation()}>
+          <Filter_Option type={name} whichOption={whichOption} onHandleClick={handleOption} />
+        </div>
+      )}
     </div>
   )
 }
 
 function List_Filter() {
-  const [isOpenFilter, setIsOpenFilter] = useState(Array(3).fill(false))
+  const [isOpenFilter, setIsOpenFilter] = useState(Array(4).fill(false))
 
   const handleClick = (index) => {
+    const current_index = !isOpenFilter[index]
     const newIsOpenFilter = Array(4).fill(false)
-    newIsOpenFilter[index] = true
+    newIsOpenFilter[index] = current_index
+
     setIsOpenFilter(newIsOpenFilter)
   }
+
 
   return (
     <div className='flex items-center justify-between'>
