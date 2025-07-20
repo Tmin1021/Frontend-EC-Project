@@ -8,11 +8,21 @@ export function CartProvider({children}) {
     const [isCartOpen, setIsCardOpen] = useState(false)
 
     const addCart = product => {
-        setCart((prevCart) => [...prevCart, product.product_id])
+        setCart((prevCart) => [...prevCart, product])
+    }
+
+    const updateCart = (id, quantity) => {
+        const updatedCart = cart.map(cart_item =>
+            cart_item.product_id === id
+            ? { ...cart_item, quantity: quantity } 
+            : cart_item 
+        )
+
+        setCart(updatedCart)
     }
 
     const removeCart = product => {
-        setCart((prevCart) => prevCart.filter(item => item.product_id !== product.product_id))
+        setCart((prevCart) => prevCart.filter(item => item!== product))
     }
 
     const openCart = () =>  setIsCardOpen(true)
@@ -20,7 +30,7 @@ export function CartProvider({children}) {
     const closeCart = () => setIsCardOpen(false)
 
     return (
-        <CartContext.Provider value={{cart, addCart, removeCart, isCartOpen, openCart, closeCart}}>
+        <CartContext.Provider value={{cart, setCart, addCart, updateCart, removeCart, isCartOpen, openCart, closeCart}}>
             {children}
         </CartContext.Provider>
     )

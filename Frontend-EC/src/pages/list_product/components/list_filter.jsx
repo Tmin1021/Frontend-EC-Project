@@ -23,7 +23,7 @@ function Filter_Option({type, whichOption, onHandleClick}) {
   )
 }
 
-function Filter({name, isOpenFilter, onHandleClick}) {
+export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) {
   const [whichOption, setWhichOption] = useState(Array(filter_types[name].length).fill(false))
   const {filterProduct} = useProduct()
 
