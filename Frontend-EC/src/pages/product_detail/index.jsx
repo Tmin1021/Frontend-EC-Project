@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Calendar from "react-calendar";
 import Product_Preview from './components/product_preview';
 import Product_Option from './components/product_option';
@@ -9,38 +9,53 @@ import {products, accessories} from  '../../data/dummy';
 import { useParams } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import Product_Comment from './components/product_comment';
-import {ProductCalendarProvider} from '../../context/ProductCalendarContext';
+//import {ProductCalendarProvider, useProductCalendar} from '../../context/ProductCalendarContext';
+import Product_Quantity from './components/product_quantity';
+
 
 function Product_Detail() {
  const {id} = useParams(); // return a tuple with many info, the first is id in url
  const product = products.find((p) => p.product_id === id) // callback func
  const {addCart} = useCart()
+ const [quantity, setQuantity] = useState(1)
+
+ const [date, setDate] = useState({Year: 2025, Month: 0, Day: 1})
+ 
+ const updateDate = (year, month, day) => {
+    const new_date = {
+    Year: year,
+    Month: month,
+    Day: day };
+    
+    setDate(new_date)
+ }
 
  if (!product) return <div>Product not found</div>;
 
  return (
-    <ProductCalendarProvider>
-        <div className='w-[60%] mx-auto'>
-            <div className='flex justify-between gap-14'>
-                <div className='w-[55%]'>
-                    <Product_Preview images={product.image_url}/>
-                    <Product_Description product={product}/>
-                </div>
-
-                <div className='flex flex-col w-[45%]'>
-                    <p className='font-semibold text-4xl mx-auto'>{product.name}</p>
-                    <Product_Delivery_Date/>
-                    <Product_Option product={product}/>
-                    <Product_Extra product={product}/>
-                    <div className='w-full min-w-[200px] h-[50px] bg-green-700 flex items-center' onClick={() => addCart(product)}>
-                        <p className='font-semibold text-lg text-white mx-auto'>ADD TO CART</p>
-                    </div>
-                </div>
+    <div className='w-[60%] mx-auto'>
+        <div className='flex justify-between gap-14'>
+            {/* Preview and Description */}
+            <div className='w-[55%]'>
+                <Product_Preview images={product.image_url}/>
+                <Product_Description product={product}/>
             </div>
 
-            <Product_Comment product_id={product.product_id}/>
+        {/* Option */}
+            <div className='flex flex-col w-[45%]'>
+                <p className='font-semibold text-4xl mx-auto'>{product.name}</p>
+                <Product_Delivery_Date date={date} updateDate={updateDate}/>
+                <Product_Option product={product}/>
+                <Product_Extra product={product}/>
+                <Product_Quantity quantity={quantity} setQuantity={setQuantity}/>
+                <div className='w-full min-w-[200px] h-[50px] bg-green-700 flex items-center' onClick={() => {console.log(date); addCart({product_id: product.product_id, quantity: quantity, delivery_date: date})}}>
+                    <p className='font-semibold text-lg text-white mx-auto'>ADD TO CART</p>
+                </div>
+            </div>
         </div>
-    </ProductCalendarProvider>
+
+        <Product_Comment product_id={product.product_id}/>
+    </div>
 
   );
 }
