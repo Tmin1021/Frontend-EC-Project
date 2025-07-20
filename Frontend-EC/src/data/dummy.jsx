@@ -46,8 +46,8 @@ const bonus_gifts = [
 const carts = [
   {
     user_id: 1,
-    product_id: ['B1', 'V1', 'V2']
-    // products: [{product_id, date}]
+    //product_id: ['B1', 'V1', 'V2']
+    products: [{product_id: 'B1', quantity: 2, delivery_date: "25/08/2025"}, {product_id: 'B3', quantity: 3, delivery_date: "25/08/2025"}]
   }
 ]
 
@@ -169,19 +169,31 @@ const products = [
 const users = [
   {
     user_id: 1,
-    name: "demo1hihihi"
+    name: "demo1hihihi",
+    phone: "0901234567",
+    mail: "demo1@gmail.com",
+    password: "bimat"
   },
   {
     user_id: 2,
-    name: "demo1hehehe"
+    name: "demo1hehehe",
+    phone: "0901234567",
+    mail: "demo1@gmail.com",
+    password: "bimat"
   },
     {
     user_id: 3,
-    name: "demo1hihihi"
+    name: "demo1hihihi",
+    phone: "0901234567",
+    mail: "demo1@gmail.com",
+    password: "bimat"
   },
   {
     user_id: 4,
-    name: "demo1hehehe"
+    name: "demo1hehehe",
+    phone: "0901234567",
+    mail: "demo1@gmail.com",
+    password: "bimat"
   }
 ]
 
