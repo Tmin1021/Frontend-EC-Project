@@ -144,6 +144,7 @@ function Header() {
     return (
         <div>
             <div className='relative flex justify-between items-center w-[60%] mx-auto p-4'>
+                <button onClick={() => usenavigate('/')}>Back to dashboard</button>
                 {header_items.map(header_item => (
                     <Header_Item key={header_item} name={header_item}/>
                 ))}

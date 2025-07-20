@@ -7,6 +7,8 @@ import List_Product from './pages/list_product'
 import Product_Detail from './pages/product_detail'
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import SupportPage from './pages/support'
+import Login from './pages/login'
+import Signup from './pages/signup/components/signup'
 
 function App() {
   const {isCartOpen} = useCart()
@@ -19,6 +21,8 @@ function App() {
         <Route path="/product/:id" element={<Product_Detail/>}/>
         <Route path="/flowers" element={<List_Product/>}/>
         <Route path="/support" element={<SupportPage/>}/>
+        <Route path="/login" element={<Login/>}/>
+        <Route path="/signup" element={<Signup/>}/>
       </Routes>
       {isCartOpen && <Cart/>}
     </Router>
