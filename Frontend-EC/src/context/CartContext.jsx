@@ -1,4 +1,5 @@
 import { createContext, useContext, useState} from "react";
+import { accessories, products } from "../data/dummy";
 
 const CartContext = createContext()
 
@@ -6,6 +7,7 @@ const CartContext = createContext()
 export function CartProvider({children}) {
     const [cart, setCart] = useState([])
     const [isCartOpen, setIsCardOpen] = useState(false)
+    const [selectedItems, setSelectedItems] = useState(Array(cart.length).fill(false))
 
     const addCart = product => {
         setCart((prevCart) => [...prevCart, product])

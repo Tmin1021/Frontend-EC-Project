@@ -21,7 +21,6 @@ function List_Item({product}) {
 function List_View() {
   const {current_product} = useProduct()
   const navigate = useNavigate()
-
   const handleClick = (productID) => {
     navigate(`/product/${productID}`)
   }
