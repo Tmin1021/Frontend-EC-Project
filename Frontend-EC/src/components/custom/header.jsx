@@ -44,7 +44,7 @@ function Header() {
                 ))}
             </div>
 
-            {/* Put isSeacrh here will not triiger the exit motion */}
+            {/* Put isSeacrh here will not trigger the exit motion */}
             <Search_Space isSearch={isSearch} closeSearch={()=>setIsSearch(false)}/>
 
         </div>
