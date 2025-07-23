@@ -18,14 +18,14 @@ const accessories = [
     product_id: 'V1',
     name: "Montecito Vase",
     type: 'vase',
-    image_url: demo_3,
+    image_url: [demo_3],
     price: 19,
   },
   {
     product_id: 'V2',
     name: "Montecitosss Vase",
     type: 'vase',
-    image_url: demo_4,
+    image_url: [demo_4],
     price: 25,
   },
 ];
