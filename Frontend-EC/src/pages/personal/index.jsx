@@ -1,5 +1,5 @@
 import { FileUser, ShoppingBag } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 import Personal_Info from './components/personal_info'
 
 const Personal_Index = ({name}) => {
@@ -18,7 +18,7 @@ const Personal_Index = ({name}) => {
 
 function Personal() {
   return (
-    <div className='flex'>
+    <div className='flex px-32 py-16'>
       <div className='w-[40%] flex flex-col gap-2'>
         <Personal_Index name={"Personal Information"}/>
         <Personal_Index name={"Purchased Orders"}/>
