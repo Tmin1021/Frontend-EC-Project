@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "../../context/CartContext";
-import { products } from '../../data/dummy';
+import { accessories, products } from '../../data/dummy';
 import Cart_Item from './components/cart_item';
 import { useEffect, useState } from 'react';
 import Cart_Sum from "./components/cart_sum";
@@ -21,9 +21,11 @@ const Check_Box = ({isChecked, onHandleChecked}) => {
 // fixed component has overflow-hidden at default
 // the floating div is inside the blur div, so even tap the floating div will also propagate that click to the blur div, use e.stoppropagation()
 function Cart() {
-  const {cart, setCart, closeCart, removeCart} = useCart()
+  const {cart, setCart, isCartOpen, closeCart} = useCart()
   const isCartEmpty = cart.length === 0
+  
   const [isChecked, setIsChecked] = useState(Array(cart.length+1).fill(false))    //last position is for delete all
+  const [itemPrice, setItemPrice] = useState(Array(cart.length+1).fill(0))   
 
   const handleChecked = index => {
       const newIsChecked = isChecked.slice()
@@ -44,7 +46,7 @@ function Cart() {
   // Disable background scroll
   // Call the main body and hide overflow. Hidden overflow will hide also the scrollbar
   useEffect(() => {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = 'auto';
 
       return () => {
           document.body.style.overflow = 'auto'; 
@@ -57,11 +59,11 @@ function Cart() {
   // type: spring (linear+bounce+accelerate) - stiffness (how fast) -- damping (bouncing)
   return (
     <AnimatePresence>
-      <motion.div  
+      {isCartOpen && <motion.div  
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            transition={{ type: "spring", stiffness: 350, damping: 25 }}
             className="fixed inset-0 z-150 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm" onClick={closeCart}>
       
           <div className="w-[500px] h-[60vh] bg-white shadow-lg overflow-y-auto p-4 no-scrollbar" onClick={(e) =>e .stopPropagation()}>
@@ -85,17 +87,17 @@ function Cart() {
               {cart.map((cart_item, i) => (
                 <div key={i} className='flex items-center justify-between gap-3'>
                   <Check_Box isChecked={isChecked[i]} onHandleChecked={()=>handleChecked(i)}/>
-                  <Cart_Item key={cart_item} product={products.find((product_item) => product_item.product_id === cart_item.product_id)} product_cart={cart_item}/>
+                  <Cart_Item key={cart_item} index={i} setItemPrice={setItemPrice} product={cart_item.product_id.substring(0,1)==='B'? products.find((product_item) => product_item.product_id === cart_item.product_id) : accessories.find((accessory) => accessory.product_id === cart_item.product_id)} product_cart={cart_item}/>
                  </div>
                   
               ))}
             </div>}
 
           </div>
+          {/* Sum */}
+          {!isCartEmpty && <Cart_Sum selectedItems={isChecked}/>}
 
-          {!isCartEmpty && <Cart_Sum/>}
-
-      </motion.div>
+      </motion.div>}
     </AnimatePresence>
 
   );
