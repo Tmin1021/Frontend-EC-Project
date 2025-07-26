@@ -108,6 +108,7 @@ const products = [
       "grand": { price: 39.99, stems: 15 },
     },
     wrapping_available: true,
+    quantity: 12
   },
   {
     product_id: 'B2',
@@ -126,6 +127,7 @@ const products = [
       "grand": { price: 39.99, stems: 15 },
     },
     wrapping_available: true,
+    quantity: 8
   },
     {
     product_id: 'B3',
@@ -144,6 +146,7 @@ const products = [
       "grand": { price: 39.99, stems: 15 },
     },
     wrapping_available: true,
+    quantity: 4
   },
   {
     product_id: 'B4',
@@ -162,6 +165,7 @@ const products = [
       "grand": { price: 39.99, stems: 15 },
     },
     wrapping_available: true,
+    quantity: 1
   },
 ];
 
