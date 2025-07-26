@@ -1,26 +1,30 @@
 import { Minus, Plus } from 'lucide-react'
 import React, { useState } from 'react'
+import { useProductDetail } from '../../../context/ProductDetailContext'
+import { s } from 'framer-motion/m'
 
-function Product_Quantity({quantity, setQuantity}) {
-  const tmp_max=5
+function Product_Quantity() {
+  const {product, quantity, setQuantity, selectedOption} = useProductDetail()
 
   return (
     <div className='flex w-full justify-between items-center'>
         <p className='font-semibold'>QUANTITY</p>
         <div className='flex justify-between items-center gap-4'>
-            <Minus onClick={()=>setQuantity(Math.max(1, quantity-1))}/>
+            <Minus className='w-5 h-5' onClick={()=>setQuantity(Math.max(1, quantity-1))}/>
 
-              <div className='max-w-[40px] h-[50px] overflow-hidden'>
-                <div className="flex flex-col items-center gap-6 py-3 pl-10 duration-500 ease-in-out" style={{ transform: `translateY(-${quantity/20* 100}%)` }}>
-                  {Array.from({length: 20}, (_, i) => (
-                    <p key={i} className='font-light text-xl w-[50px] aspect-square flex-none'>{i}</p>
+              <div className='w-[50px] h-[50px] overflow-hidden'>
+                <div className="flex flex-col items-center justify-between gap-2 pt-2 duration-500 ease-in-out" style={{ transform: `translateY(-${quantity*100/product.quantity}%)` }}>
+                  {Array.from({length: product.quantity}, (_, i) => (
+                    <div key={i} className='min-h-full min-w-full'>
+                      <p className='font-light text-2xl w-full h-full text-center'>{i}</p>
+                    </div>
                   ))}
                 </div>
               </div>
 
-            <Plus onClick={()=>setQuantity(Math.min(tmp_max, quantity+1))}/>
+            <Plus className='w-5 h-5' onClick={()=>setQuantity(Math.min(product.quantity, quantity+1))}/>
         </div>
-        <p className='font-semibold text-2xl'>180.000</p>
+        <p className='font-semibold text-2xl'>{Math.round(selectedOption.price*quantity*100)/100}</p>
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState} from "react";
+import { createContext, useCallback, useContext, useState} from "react";
 import { accessories, products } from "../data/dummy";
 
 const CartContext = createContext()
@@ -7,32 +7,58 @@ const CartContext = createContext()
 export function CartProvider({children}) {
     const [cart, setCart] = useState([])
     const [isCartOpen, setIsCardOpen] = useState(false)
-    const [selectedItems, setSelectedItems] = useState(Array(cart.length).fill(false))
+    const [selectedItems, setSelectedItems] = useState(Array(cart.length).fill(false))  
+    const [selectedAll, setSelectedAll] = useState(false)
 
+    // format: (product, option, quantity)
     const addCart = product => {
         setCart((prevCart) => [...prevCart, product])
+        setSelectedItems([...selectedItems, false])
     }
 
     const updateCart = (id, quantity) => {
-        const updatedCart = cart.map(cart_item =>
-            cart_item.product_id === id
-            ? { ...cart_item, quantity: quantity } 
-            : cart_item 
+        const updatedCart = cart.map(item =>
+            item.product.product_id === id
+            ? { ...item, quantity: quantity } 
+            : item 
         )
 
         setCart(updatedCart)
     }
 
-    const removeCart = product => {
-        setCart((prevCart) => prevCart.filter(item => item!== product))
+    const removeCart = () => {
+        const newCart = []
+        for (let i=cart.length-1; i>=0; i--) {
+            if (!selectedItems[i]) newCart.push(cart[i])
+        }
+        
+        setCart(newCart)
+        setSelectedItems(Array(cart.length+1).fill(false))
     }
 
     const openCart = () =>  setIsCardOpen(true)
 
     const closeCart = () => setIsCardOpen(false)
 
+    const handleSelectedItems = index => {
+        const newSelectedItems = selectedItems.slice()
+        newSelectedItems[index] = !newSelectedItems[index]
+        const number_of_selected_items = newSelectedItems.filter(Boolean).length
+        if (number_of_selected_items === newSelectedItems.length) setSelectedAll(true)
+        else if (number_of_selected_items === 0) selectedAll(false)
+
+        setSelectedItems(newSelectedItems)
+    }
+
+    const getTotal = useCallback(() => {
+        const number_of_selected_items = selectedItems.filter(Boolean).length
+        const total = Math.round(selectedItems.map((isSelected, index) => isSelected? ((cart[index].option?.price ?? 1)*cart[index].quantity) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
+
+        return [number_of_selected_items, total]
+    }, [cart, selectedItems])
+
     return (
-        <CartContext.Provider value={{cart, setCart, addCart, updateCart, removeCart, isCartOpen, openCart, closeCart}}>
+        <CartContext.Provider value={{cart, setCart, addCart, updateCart, removeCart, isCartOpen, openCart, closeCart, handleSelectedItems, selectedItems, selectedAll, setSelectedItems, getTotal, setSelectedAll}}>
             {children}
         </CartContext.Provider>
     )
