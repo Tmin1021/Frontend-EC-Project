@@ -8,22 +8,25 @@ import Product_Detail from './pages/product_detail'
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Search_Page from './pages/search'
 import { ProductProvider } from './context/ProductContext'
+import { ProductDetailProvider } from './context/ProductDetailContext'
 
 function App() {
 
   return (
-    <Router>
-      <Header/>
-      <Routes>
-        <Route path="/" element={<Dashboard/>}/>
-        <Route path="/product/:id" element={<Product_Detail/>}/>
-        <Route path="/flowers" element={<List_Product/>}/>
-        <Route path="/personal" element={<Personal/>}/>
-        <Route path='/search' element={<ProductProvider><Search_Page/></ProductProvider>} />
-      </Routes>
-      <Cart/>
-    </Router>
-   
+    <div className='max-w-screen-xl min-w-[320px]'>
+      <Router>
+        <Header/>
+        <Routes>
+          <Route path="/" element={<Dashboard/>}/>
+          <Route path="/product/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
+          <Route path="/flowers" element={<List_Product/>}/>
+          <Route path="/personal" element={<Personal/>}/>
+          <Route path='/search' element={<ProductProvider><Search_Page/></ProductProvider>} />
+        </Routes>
+        <Cart/>
+      </Router>
+    </div>
+
   )
 }
 

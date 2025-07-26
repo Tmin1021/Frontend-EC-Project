@@ -120,3 +120,104 @@ function Product_Preview({images}) {
 
 
 export default Product_Preview
+
+function Search_Space_({isSearch, closeSearch}) {
+
+  return (
+    <AnimatePresence>
+        {isSearch && 
+        <motion.div>
+            {/* Blur layer */}
+            <motion.div className='fixed top-12 left-0 w-full h-full bg-black/10 backdrop-blur-sm z-150 flex items-center justify-center' 
+                        onMouseEnter={closeSearch}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+            ></motion.div>
+            {/* White/Black layer */}
+            <motion.div className='fixed top-12 left-0 w-full h-[300px] bg-white dark:bg-black z-151 flex items-center justify-center'
+                        initial={{ y: -30, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -30, opacity: 0 }}
+                        transition={{ duration: 0.5 }}>
+            </motion.div>
+            {/* Search */}
+            <motion.div 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}>
+                <ProductProvider>
+                    <Search_Result closeSearch={closeSearch}/>
+                </ProductProvider>
+            </motion.div>
+           
+        </motion.div>}
+    </AnimatePresence> 
+  )
+}
+
+
+//----
+import React, { useState } from 'react'
+import Product_Preview from './components/product_preview';
+import Product_Option from './components/product_option';
+import Product_Extra from './components/product_extra';
+import Product_Description from './components/product_description';
+import Product_Delivery_Date from './components/product_delivery_date';
+import {products, accessories} from  '../../data/dummy';
+import { useParams } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
+import Product_Comment from './components/product_comment';
+//import {ProductCalendarProvider, useProductCalendar} from '../../context/ProductCalendarContext';
+import Product_Quantity from './components/product_quantity';
+import { ProductDetailProvider, useProductDetail } from '../../context/ProductDetailContext';
+
+
+function Product_Detail() {
+ const {id} = useParams(); // return a tuple with many info, the first is id in url
+ //const product = products.find((p) => p.product_id === id) // callback func
+
+ const [date, setDate] = useState({Year: 2025, Month: 0, Day: 1})
+ 
+ const updateDate = (year, month, day) => {
+    const new_date = {
+    Year: year,
+    Month: month,
+    Day: day };
+    
+    setDate(new_date)
+ }
+
+ if (!product) return <div>Product not found</div>;
+
+ return (
+    <ProductDetailProvider product={products.find((p) => p.product_id === id)}>
+        <div className='relative w-full px-4 md:px-10 lg:px-32'>
+            <div className='flex flex-col justify-between items-center md:items-start gap-4 md:gap-14 md:flex-row'>
+                {/* Preview and Description */}
+                <p className='font-semibold text-4xl mx-auto md:hidden'>{product.name}</p>
+                <div className='w-full '><Product_Preview images={product.image_url}/></div>
+
+                {/* Option */}
+                <div className='w-full flex flex-col gap-4'>
+                    <p className='font-semibold text-4xl mx-auto hidden md:flex'>{product.name}</p>
+                    <Product_Option product={product} whichOption={option} setOption={setOption}/>
+                    <Product_Extra product={product} whichExtra={extra} setExtra={setExtra}/>
+                    <Product_Quantity quantity={quantity} setQuantity={setQuantity}/>
+
+                    <div className='min-w-[300px] h-[50px] bg-green-800 flex items-center' onClick={() => {if(product.options.length!==0 && option!=="") {addCart({product_id: product.product_id, quantity: quantity, delivery_date: date, option: option}); if(extra) {addCart({product_id: extra.product_id, quantity: 1, delivery_date: date})}} }}>
+                        <p className='font-semibold text-lg text-white mx-auto'>ADD TO CART</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <Product_Comment product_id={product.product_id}/>
+        </div>
+    </ProductDetailProvider>
+  );
+}
+
+export default Product_Detail

@@ -6,10 +6,10 @@ import Dashboard_Why from "./components/dashboard_why";
 function Dashboard() {
 
     return ( 
-        <div className="px-30 pt-10">
+        <div className="flex flex-col items-center w-full">
             <Dashboard_Banner/>
             <Dashboard_Bestselling/>
-            <Dashboard_Why/>
+            {/*<Dashboard_Why/>*/}
         </div>
     )
 }
