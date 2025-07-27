@@ -45,7 +45,7 @@ export function CartProvider({children}) {
         newSelectedItems[index] = !newSelectedItems[index]
         const number_of_selected_items = newSelectedItems.filter(Boolean).length
         if (number_of_selected_items === newSelectedItems.length) setSelectedAll(true)
-        else if (number_of_selected_items === 0) selectedAll(false)
+        else selectedAll(false)
 
         setSelectedItems(newSelectedItems)
     }
