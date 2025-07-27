@@ -116,7 +116,9 @@ function Header_Item({name}) {
     const {openCart} = useCart()
     const navigate = useNavigate()
     const navigateMap = {
-        "All Flowers": "/flowers"
+        "All Flowers": "/flowers",
+        "Accessories": "/accessories",
+        "Support": "/support",
     }
 
     const handleClick = (name) => {
@@ -138,9 +140,11 @@ function Header() {
     const header_items = ["All Flowers", "Accessories", "Support", "Search", "User", "Cart"]
     const [isSearch, setIsSearch] = useState(false)
 
+    const usenavigate = useNavigate();
     return (
         <div>
             <div className='relative flex justify-between items-center w-[60%] mx-auto p-4'>
+                <button onClick={() => usenavigate('/')}>Back to dashboard</button>
                 {header_items.map(header_item => (
                     <Header_Item key={header_item} name={header_item}/>
                 ))}
