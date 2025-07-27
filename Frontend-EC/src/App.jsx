@@ -6,6 +6,10 @@ import List_Product from './pages/list_product'
 import Personal from './pages/personal'
 import Product_Detail from './pages/product_detail'
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import SupportPage from './pages/support'
+import Login from './pages/login'
+import Signup from './pages/signup/components/signup'
+import BlogDetail from './pages/blog_detail';
 import Search_Page from './pages/search'
 import { ProductProvider } from './context/ProductContext'
 import { ProductDetailProvider } from './context/ProductDetailContext'
@@ -22,11 +26,14 @@ function App() {
           <Route path="/flowers" element={<List_Product/>}/>
           <Route path="/personal" element={<Personal/>}/>
           <Route path='/search' element={<ProductProvider><Search_Page/></ProductProvider>} />
-        </Routes>
+          <Route path="/support" element={<SupportPage/>}/>
+          <Route path="/login" element={<Login/>}/>
+          <Route path="/signup" element={<Signup/>}/>
+          <Route path="/blog/:slug" element={<BlogDetail />} />
+          </Routes>
         <Cart/>
       </Router>
     </div>
-
   )
 }
 

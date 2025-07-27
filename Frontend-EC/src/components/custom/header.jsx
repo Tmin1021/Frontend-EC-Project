@@ -56,6 +56,8 @@ function Header() {
     }, [isDropdownOpen]);
 
 
+    const usenavigate = useNavigate();
+  
     return (
         <div className='relative w-full'>
             <div className='w-[90%] md:w-[80%] mx-auto py-4'>

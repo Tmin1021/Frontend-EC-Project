@@ -1,0 +1,119 @@
+[
+    {
+        "id": 1,
+        "title": "Sunflower: The flower of sun",
+        "image": "/assets/sunflower.png",
+        "date": "2023-10-01",
+        "tags": ["Facts", "Sunflower", "Nature"],
+        "content":[
+            {
+                "type": "paragraph",
+                "content": "Sunflowers are known for their large, bright yellow flowers that turn to face the sun. \n - Growth and Adaptability \n - Seasonal Blooming \n - Cultural Significance"
+            },
+            {
+                "type": "image",
+                "content": "/assets/blog_content_image.png"
+            },
+            {
+                "type": "paragraph",
+                "content": "Sunflowers also have a rich history, often symbolizing adoration and loyalty in various cultures. Originating from the Americas, they were cultivated by Native American tribes for both their beauty and their seeds long before European settlers arrived."
+            },
+            {
+                "type": "paragraph",
+                "content": "They are not only beautiful but also useful, as their seeds can be eaten or used to produce oil. Additionally, the plant's sturdy stalks have been used historically for building materials and the leaves for animal fodder."
+            },
+            {
+                "type": "paragraph",
+                "content": "The sunflower’s heliotropic nature, where young blooms track the sun’s movement, is a fascinating adaptation. This behavior, known as heliotropism, helps the plant maximize sunlight exposure for photosynthesis."
+            },
+            {
+                "type": "paragraph",
+                "content": "In modern times, sunflowers are also popular in gardens and farms due to their vibrant appearance and ecological benefits. They attract pollinators like bees and butterflies, supporting biodiversity."
+            },
+            {
+                "type": "paragraph",
+                "content": "Beyond their practical uses, sunflowers have inspired art and literature. Vincent van Gogh’s famous paintings, such as 'Sunflowers,' highlight their enduring appeal and cultural impact."
+            },
+            {
+                "type": "image",
+                "content": "/assets/blog_content_image.png"
+            },
+            {
+                "type": "paragraph",
+                "content": "Growing sunflowers can be a rewarding experience for gardeners. They thrive in well-drained soil and require plenty of sunlight, making them ideal for sunny climates."
+            },
+            {
+                "type": "paragraph",
+                "content": "Their seeds are also a nutritious snack, rich in vitamins like E and B6, and minerals such as magnesium and selenium, offering health benefits when included in a balanced diet."
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "Gladiolus: The beauty of nature",
+        "image": "/assets/gladiolus.png",
+        "date": "2023-10-05",
+        "tags": ["Facts", "Gladiolus", "Nature"],
+        "content":[
+            {
+                "type": "paragraph",
+                "content": "Gladiolus flowers are known for their tall spikes and come in a variety of colors."
+            },
+            {
+                "type": "image",
+                "content": "/assets/blog_content_image.png"
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Rose: Queen of flower",
+        "image": "/assets/rose.png",
+        "date": "2023-10-10",
+        "tags": ["Facts", "Rose", "Nature"],
+        "content":[
+            {
+                "type": "paragraph",
+                "content": "Roses are one of the most popular flowers, known for their beauty and fragrance."
+            },
+            {
+                "type": "image",
+                "content": "/assets/blog_content_image.png"
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Tulip: Flower of loyalty",
+        "image": "/assets/tuplip.png",
+        "date": "2023-10-15",
+        "tags": ["Facts", "Tulip", "Nature"],
+        "content":[
+            {
+                "type": "paragraph",
+                "content": "Tulips are spring-blooming perennials that grow from bulbs and come in many colors."
+            },
+            {
+                "type": "image",
+                "content": "/assets/blog_content_image.png"
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "title": "Daffodil: Legend of Narcissus",
+        "image": "/assets/daffodils.png",
+        "date": "2023-10-20",
+        "tags": ["Facts", "Daffodil", "Nature"],
+        "content":[
+            {
+                "type": "paragraph",
+                "content": "Daffodils are known for their trumpet-shaped flowers and are often associated with spring."
+            },
+            {
+                "type": "image",
+                "content": "/assets/blog_content_image.png"
+            }
+        ]
+    }
+]
