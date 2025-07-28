@@ -7,9 +7,9 @@ import { products } from '../../data/dummy'
 function List_Product({isSearchPage=false, result=[]}) {
 
   return (
-    <ProductProvider initialProduct={isSearchPage? result: products}>
+    <ProductProvider initialProduct={isSearchPage? result : products.filter(product=>product.type==='flower')}>
       {(!isSearchPage || (isSearchPage&&result.length!==0)) &&
-        <div className='w-full flex flex-col gap-4 px-4 md:px-10 lg:px-32'>
+        <div className='flex flex-col gap-4 px-4 md:px-10 lg:px-32'>
             <List_Filter/>
             <List_View/>
         </div> }

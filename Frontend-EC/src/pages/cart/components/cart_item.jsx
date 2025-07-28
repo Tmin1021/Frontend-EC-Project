@@ -15,7 +15,7 @@ const Cart_Item = ({product}) => {
                 <p className='text-base md:text-lg'>{product.product.name}</p>
                 {/* Price */}
                 <div className='flex items-center gap-4'>
-                    <p className='text-red-500 font-semibold text-lg w-[50px] md:w-[80px]'>{Math.round(100*product.option.price * product.quantity)/100}</p>
+                    <p className='text-red-500 font-semibold text-lg w-[50px] md:w-[80px]'>{Math.round(100*(product.option?.price ?? product.product.price) * product.quantity)/100}</p>
                     <div className='flex items-center gap-1'>
                         <TicketPercent className='text-blue-500'/>
                         <p className='line-through text-sm '>300.000</p>
@@ -28,9 +28,9 @@ const Cart_Item = ({product}) => {
                 </div>*/}
                 {/* Modify quantity */}
                 <div className=' w-[46%] flex items-center justify-between'>
-                    <Minus className='w-4 h-4' onClick={()=>updateCart(product.product.product_id, Math.max(1, product.quantity-1))}/>
+                    <Minus className='w-4 h-4' onClick={()=>updateCart(product, Math.max(1, product.quantity-1))}/>
                     <p className='text-lg pr-1'> {product.quantity} </p>
-                    <Plus className='w-4 h-4' onClick={()=>updateCart(product.product.product_id, Math.min(product.product.quantity, product.quantity+1))}/>
+                    <Plus className='w-4 h-4' onClick={()=>updateCart(product, Math.min(product.product.quantity, product.quantity+1))}/>
                 </div>
             </div>
         

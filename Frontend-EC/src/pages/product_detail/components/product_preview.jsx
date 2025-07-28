@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, {useState} from 'react'
+import {useState} from 'react'
 
 function Preview_Slide({images, setIndex}) {
   const [indexSlide, setIndexSlide] = useState(0)

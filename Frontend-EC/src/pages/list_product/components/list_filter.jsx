@@ -84,7 +84,7 @@ function List_Filter() {
   }
 
   return (
-    <div className='w-full flex items-center justify-between'>
+    <div className='min-w-full flex items-center justify-between'>
       {/* Filter */}
       <div >
         <div className='flex gap-1 items-center md:hidden' onClick={()=>setIsOpen(true)}>

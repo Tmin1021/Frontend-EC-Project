@@ -16,9 +16,9 @@ export function CartProvider({children}) {
         setSelectedItems([...selectedItems, false])
     }
 
-    const updateCart = (id, quantity) => {
+    const updateCart = (product, quantity) => {
         const updatedCart = cart.map(item =>
-            item.product.product_id === id
+            item === product
             ? { ...item, quantity: quantity } 
             : item 
         )
@@ -28,12 +28,12 @@ export function CartProvider({children}) {
 
     const removeCart = () => {
         const newCart = []
-        for (let i=cart.length-1; i>=0; i--) {
+        for (let i=0; i<cart.length; i++) {
             if (!selectedItems[i]) newCart.push(cart[i])
         }
         
         setCart(newCart)
-        setSelectedItems(Array(cart.length+1).fill(false))
+        setSelectedItems(Array(cart.length).fill(false))
     }
 
     const openCart = () =>  setIsCardOpen(true)
@@ -45,14 +45,14 @@ export function CartProvider({children}) {
         newSelectedItems[index] = !newSelectedItems[index]
         const number_of_selected_items = newSelectedItems.filter(Boolean).length
         if (number_of_selected_items === newSelectedItems.length) setSelectedAll(true)
-        else selectedAll(false)
+        else setSelectedAll(false)
 
         setSelectedItems(newSelectedItems)
     }
 
     const getTotal = useCallback(() => {
         const number_of_selected_items = selectedItems.filter(Boolean).length
-        const total = Math.round(selectedItems.map((isSelected, index) => isSelected? ((cart[index].option?.price ?? 1)*cart[index].quantity) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
+        const total = Math.round(selectedItems.map((isSelected, index) => isSelected? ((cart[index].option?.price ?? cart[index].product.price)*cart[index].quantity) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
 
         return [number_of_selected_items, total]
     }, [cart, selectedItems])

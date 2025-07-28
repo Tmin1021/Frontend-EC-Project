@@ -3,7 +3,7 @@ import {products} from '../../../data/dummy'
 import { useNavigate } from 'react-router-dom'
 
 export function Bestselling_Item({product}) {
-    const findStartingPrice = () => (Math.min(...Object.values(product.options).map(option => option.price)))
+    const findStartingPrice = () => (Math.min(...product.flower_details.options.map(option => option.price)))
 
     return (
         <div className="min-w-[170px]">
@@ -31,7 +31,7 @@ const Dashboard_Bestselling = () => {
 
             {/* Items */}
             <div className="flex overflow-x-auto no-scrollbar gap-2 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4 lg:gap-8 scroll-smooth">
-            {products.slice(0, 4).map((product) => (
+            {products.filter(product=>product.type==='flower').slice(0, 4).map((product) => (
                 <div key={product.product_id} className="cursor-pointer" onClick={() => handleClick(product.product_id)}>
                     <Bestselling_Item product={product} />
                 </div>

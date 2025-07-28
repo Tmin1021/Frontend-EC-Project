@@ -20,8 +20,8 @@ function Product_Option() {
 
   return (
     <div className="w-full flex justify-around gap-2">
-        {Object.keys(product.options).map((name) => (
-            <Option_Item key={name} option={{name:name, price:product.options[name].price, stems:product.options[name].stems}}/>
+        {(product.flower_details.options).map((option) => (
+            <Option_Item key={option.name} option={option}/>
         ))}
     </div>
   )
