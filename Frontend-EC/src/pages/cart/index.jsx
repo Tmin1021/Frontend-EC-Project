@@ -55,7 +55,7 @@ function Cart() {
               {/* Delete tab */}
                 <div className="w-full flex items-center justify-between pb-4">
                   <div className='flex items-center justify-between gap-4'>
-                    <Check_Box isSelected={selectedAll} onHandleSelectedItems={()=>{setSelectedItems(Array(selectedItems.length).fill(!selectedAll)); setSelectedAll(!selectedAll)}} />
+                    <Check_Box isSelected={selectedAll} onHandleSelectedItems={()=>{setSelectedItems(Array(cart.length).fill(!selectedAll)); setSelectedAll(!selectedAll)}} />
                     <p>All</p>
                 </div>
 

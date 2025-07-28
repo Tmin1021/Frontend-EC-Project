@@ -1,17 +1,17 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProductProvider, useProduct } from "../../context/ProductContext";
 import { Search, Flower, Flower2, ExternalLink, X } from "lucide-react";
 
-function Search_Item({product, isSelected ,closeSearch}) {
+function Search_Item({product, isSelected, closeSearch}) {
     const navigate = useNavigate()
     const [isHover, setIsHover] = useState(false)
 
     return (
         <div className={`flex items-center gap-2 px-1 ${isSelected? 'bg-gray-100 shadow-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product.product_id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
             {isHover||isSelected? <Flower2 className='w-4 h-4 text-pink-500'/> : <Flower className='w-4 h-4 text-pink-300'/>}
-            <p className={`py-1 font-light text-lg hover:font-semibold ${isSelected? 'font-semibold':""}`}>{product.name}</p>
+            <p className={`py-1 font-light md:text-sm text-lg hover:font-semibold ${isSelected? 'font-semibold':""}`}>{product.name}</p>
         </div>
     )
 }
@@ -88,7 +88,7 @@ function Search_Inner({closeSearch}) {
                 <Search className='w-8 h-8 text-gray-500' />
 
                 <div className='relative min-w-[200px]'>
-                    <div className='text-3xl font-medium text-gray-500 dark:text-white'>
+                    <div className='text-3xl md:text-2xl font-medium text-gray-500 dark:text-white'>
                         {input===""? "Search Hoa" : <p>{input}<b>{prediction}</b></p>}
                     </div>
 

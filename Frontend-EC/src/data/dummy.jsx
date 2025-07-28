@@ -1,3 +1,4 @@
+import { address } from "framer-motion/client"
 import demo from "/src/assets/demo.png"
 import demo_1 from "/src/assets/demo_1.png"
 import demo_2 from "/src/assets/demo_2.png"
@@ -32,12 +33,12 @@ const accessories = [
 
 // B
 const bonus_gifts = [
-  { bouquet_id: "B1",
-    accessories_id: "V1",
+  { flower_id: "B1",
+    accessory_id: "V1",
     off_price: 5,
   },
-  { bouquet_id: "B1",
-    accessories_id: "V2",
+  { flower_id: "B1",
+    accessory_id: "V2",
     off_price: 5,
   }
 ]
@@ -46,8 +47,7 @@ const bonus_gifts = [
 const carts = [
   {
     user_id: 1,
-    //product_id: ['B1', 'V1', 'V2']
-    products: [{product_id: 'B1', quantity: 2, delivery_date: "25/08/2025"}, {product_id: 'B3', quantity: 3, delivery_date: "25/08/2025"}]
+    products: [{product_id: 'B1', quantity: 2}, {product_id: 'B3', quantity: 3}]
   }
 ]
 
@@ -93,80 +93,126 @@ const comments = [
 const products = [
   {
     product_id: 'B1',
+    type: 'flower',
     name: "Red Rose Bouquet",
-    flower_type: "Roses",
-    occasion: "Wedding",
-    color: 'Pink Flowers',
+    price: 40,
+    stock: 12,
+    available: true,
     description: "Assorted stems of seasonal peonies.",
-    description_detail: "Turning heads wherever they go, our picture-perfect premium peonies are a must. Our farmers select the freshest blooms for you, and these stems of lush, petal-soft ruffles are some of the prettiest we’ve seen.",
-    caution: "Colors may vary.",
-    tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
     image_url: [demo, demo_1, demo_2],
-    options: {
-      "original": { price: 19.99, stems: 5},
-      "deluxe": { price: 29.99, stems: 10 },
-      "grand": { price: 39.99, stems: 15 },
-    },
-    wrapping_available: true,
-    quantity: 12
+    flower_details: {
+      occasion: ["Wedding"],
+      color: ['Pink Flowers'],
+      flower_type: "Roses",
+      options: [
+        {name: "original", price: 19.99, stems: 5},
+        {name: "deluxe", price: 29.99, stems: 10 },
+        {name: "grand", price: 39.99, stems: 15 }
+      ],
+    }
   },
+
   {
     product_id: 'B2',
+    type: 'flower',
     name: "Farmer's Choice Peonies",
-    flower_type: 'Lilies',
-    occasion: "Housewarming",
-    color: 'Yellow Flowers',
+    price: 40,
+    stock: 12,
+    available: true,
     description: "Assorted stems of seasonal peonies.",
-    description_detail: "Turning heads wherever they go, our picture-perfect premium peonies are a must. Our farmers select the freshest blooms for you, and these stems of lush, petal-soft ruffles are some of the prettiest we’ve seen.",
-    caution: "Colors may vary.",
-    tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
-    image_url: [demo, demo_1, demo_2, demo_3, demo_4],
-    options: {
-      "original": { price: 19.99, stems: 5},
-      "deluxe": { price: 29.99, stems: 10 },
-      "grand": { price: 39.99, stems: 15 },
-    },
-    wrapping_available: true,
-    quantity: 8
+    image_url: [demo, demo_1, demo_2],
+    flower_details: {
+      occasion: ["New Baby", "Thank you"],
+      color: ['White Flowers'],
+      flower_type: "Roses",
+      options: [
+        {name: "original", price: 19.99, stems: 5},
+        {name: "deluxe", price: 29.99, stems: 10 },
+        {name: "grand", price: 39.99, stems: 15 }
+      ],
+    }
+  },
+
+  {
+    product_id: 'V1',
+    type: 'vase',
+    name: "Montecito Vase",
+    price: 40,
+    stock: 12,
+    available: true,
+    description: "Assorted stems of seasonal peonies.",
+    image_url: [demo_3],
+  },
+
+  {
+    product_id: 'V2',
+    type: 'vase',
+    name: "Montecitoss Vase",
+    price: 40,
+    stock: 12,
+    available: true,
+    description: "Assorted stems of seasonal peonies.",
+    image_url: [demo_4],
+  },
+
+];
+
+// I
+const inventory = [
+  {
+    product_id: 'B1',
+    stock: 15, 
+    available: 1
+  },
+    {
+    product_id: 'B2',
+    stock: 12,
+    available: 1
   },
     {
     product_id: 'B3',
-    name: "Red Rose Bouquet",
-    flower_type: 'Roses',
-    occasion: "Get Well",
-    color: "Pink Flowers",
-    description: "Assorted stems of seasonal peonies.",
-    description_detail: "Turning heads wherever they go, our picture-perfect premium peonies are a must. Our farmers select the freshest blooms for you, and these stems of lush, petal-soft ruffles are some of the prettiest we’ve seen.",
-    caution: "Colors may vary.",
-    tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
-    image_url: [demo, demo_1, demo_2],
-    options: {
-      "original": { price: 19.99, stems: 5},
-      "deluxe": { price: 29.99, stems: 10 },
-      "grand": { price: 39.99, stems: 15 },
-    },
-    wrapping_available: true,
-    quantity: 4
+    stock: 18,
+    available: 1
+  },
+    {
+    product_id: 'B4',
+    stock: 15,
+    available: 1
+  },
+];
+
+// O
+// status: Required, Confirmed, Canceled, Prepared, On the way, Suspended, Done
+const orders = [
+  {
+    order_id: 1,
+    user_id: 1,
+    order_date: "02/07/2025",
+    shipping_address: "Q5, TPHCM",
+    total_amount: 200,
+    off_price: 0,
+    status: "Required",
   },
   {
-    product_id: 'B4',
-    name: "Farmer's Choice Peonies",
-    flower_type: 'Roses',
-    occasion: "Wedding",
-    color: "Red Flowers",
-    description: "Assorted stems of seasonal peonies.",
-    description_detail: "Turning heads wherever they go, our picture-perfect premium peonies are a must. Our farmers select the freshest blooms for you, and these stems of lush, petal-soft ruffles are some of the prettiest we’ve seen.",
-    caution: "Colors may vary.",
-    tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
-    image_url: [demo, demo_1, demo_2],
-    options: {
-      "original": { price: 19.99, stems: 5},
-      "deluxe": { price: 29.99, stems: 10 },
-      "grand": { price: 39.99, stems: 15 },
-    },
-    wrapping_available: true,
-    quantity: 1
+    order_id: 1,
+    user_id: 1,
+    order_date: "02/07/2025",
+    shipping_address: "Q5, TPHCM",
+    total_amount: 200,
+    off_price: 0,
+    status: "Done",
   },
+];
+
+const order_items = [
+  { 
+    order_id: 1,
+    products: [{product_id: "B1", option: {name: "original", price: 19.99, stems: 5}, quantity: 1, off_price: 0}],
+  },
+  {
+    order_id: 2,
+    products: [{product_id: "B2", option: {name: "original", price: 19.99, stems: 5}, quantity: 2, off_price: 0}],
+  }
 ];
 
 // U
@@ -176,29 +222,33 @@ const users = [
     name: "demo1hihihi",
     phone: "0901234567",
     mail: "demo1@gmail.com",
-    password: "bimat"
+    password: "bimat",
+    address: "Q5, TPHCM"
   },
   {
     user_id: 2,
     name: "demo1hehehe",
     phone: "0901234567",
     mail: "demo1@gmail.com",
-    password: "bimat"
+    password: "bimat",
+    address: "Q1, TPHCM"
   },
     {
     user_id: 3,
     name: "demo1hihihi",
     phone: "0901234567",
     mail: "demo1@gmail.com",
-    password: "bimat"
+    password: "bimat",
+    address: "Q3, TPHCM"
   },
   {
     user_id: 4,
     name: "demo1hehehe",
     phone: "0901234567",
     mail: "demo1@gmail.com",
-    password: "bimat"
+    password: "bimat",
+    address: "Q10, TPHCM"
   }
 ]
 
-export {products, carts, comments, bonus_gifts, accessories, users};
+export {products, carts, comments, bonus_gifts, accessories, users, inventory, orders, order_items};

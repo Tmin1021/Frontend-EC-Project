@@ -1,5 +1,5 @@
 import React from 'react'
-import { accessories, bonus_gifts } from '../../../data/dummy'
+import { bonus_gifts, products } from '../../../data/dummy'
 import { useProductDetail } from '../../../context/ProductDetailContext'
 
 function Extra_Item({extra}) {
@@ -22,8 +22,8 @@ function Extra_Item({extra}) {
 
 function Product_Extra() {
   const {product} = useProductDetail()
-  const matched_accessories_id = bonus_gifts.filter(bonus_gift => bonus_gift.bouquet_id === product.product_id).map(bonus_gift => bonus_gift.accessories_id)
-  const extras = accessories.filter(accessory => matched_accessories_id.includes(accessory.product_id))
+  const matched_extras_id = bonus_gifts.filter(bonus_gift => bonus_gift.flower_id === product.product_id).map(bonus_gift => bonus_gift.accessory_id)
+  const extras = products.filter(product => matched_extras_id.includes(product.product_id))
 
   return (
     <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-2">
