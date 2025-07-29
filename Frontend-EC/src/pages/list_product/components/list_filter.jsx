@@ -4,7 +4,7 @@ import { Check, ChevronDown, Funnel, Plus, Minus, ArrowUpDown } from 'lucide-rea
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from 'react-dom';
 
-const filter_types = {
+export const filter_types = {
   "Flower Type": ["Anemones", "Dried Flowers", "Hydrangeas", "Lilies", "Orchids", "Peonies", "Ranunculus", "Roses", "Succulents", "Sunflowers", "Tropical"],
   "Occassions": ["Birthday", "Sympathy", "Just Because", "Anniversary", "Housewarming", "Get Well", "Congrats", "I'm sorry", "New Baby", "Thank you", "Party Boxes"],
   "Colors": ["Pink Flowers", "Red Flowers", "White Flowers", "Yellow Flowers"],

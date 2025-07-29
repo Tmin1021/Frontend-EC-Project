@@ -207,11 +207,13 @@ const orders = [
 const order_items = [
   { 
     order_id: 1,
-    products: [{product_id: "B1", option: {name: "original", price: 19.99, stems: 5}, quantity: 1, off_price: 0}],
+    products: [{product_id: "B1", option: {name: "original", price: 19.99, stems: 5}, price: 0, quantity: 1, off_price: 0}, 
+               {product_id: "B2", option: {name: "original", price: 19.99, stems: 5}, price: 0, quantity: 2, off_price: 0}
+    ],
   },
   {
     order_id: 2,
-    products: [{product_id: "B2", option: {name: "original", price: 19.99, stems: 5}, quantity: 2, off_price: 0}],
+    products: [{product_id: "B2", option: {name: "original", price: 19.99, stems: 5}, price: 0, quantity: 2, off_price: 0}],
   }
 ];
 

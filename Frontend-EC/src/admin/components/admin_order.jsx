@@ -2,18 +2,19 @@ import { useState } from 'react'
 import { useAdmin } from '../../context/AdminContext'
 import { order_items } from '../../data/dummy'
 import { useNavigate, useParams } from 'react-router-dom'
+import Admin_Universal_Item from './admin_universal'
 
 export const Admin_Order_Detail = ({updateStatusOrder}) => {
   const status = ["Required", "Confirmed", "Canceled", "Pended", "On the way", "Done"]
   const {id} = useParams()
-  console.log(order_items)
   const order_item = order_items.find(i => i.order_id.toString()===id)
   if (!order_item) return <p>ERROR</p>
 
   return (
     <div>
+      <Admin_Universal_Item key={-1} which={'order_item'} header={1}/>
       {order_item.products.map((product) => (
-        <p>{product.product_id}</p>
+        <Admin_Universal_Item key={product.product_id} which={'order_item'} info={product}/>
       ))}
       {status.map((i) => (
         <div onClick={()=>{updateStatusOrder(order_item.order_id, i)}}><p>{i}</p></div>
