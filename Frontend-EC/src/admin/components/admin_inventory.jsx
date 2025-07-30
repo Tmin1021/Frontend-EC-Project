@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useAdmin } from '../../context/AdminContext'
-import { Check } from 'lucide-react'
+import { Check, ChevronDown } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { filter_types } from '../../pages/list_product/components/list_filter'
 import { AnimatePresence, motion } from "framer-motion";
 import Admin_Universal_Item, { Admin_Universal_Page } from './admin_universal'
 
-const Inventory_Item = ({name, content, isEditable, onHandleInput}) => {
+const Detail_Item = ({name, content, isEditable, onHandleInput}) => {
   const types = ['flower', 'vase', 'ribbon']
   const [isTypeClicked, setIsTypeClicked] = useState(false)
 
@@ -16,15 +16,15 @@ const Inventory_Item = ({name, content, isEditable, onHandleInput}) => {
 
       { name==='Available' ? 
       <div className='relative w-[60%]'>
-            <div className='absolute left-0 border-gray-300 border-1 w-[30px] h-[30px] flex justify-center items-center' onClick={()=>{if(isEditable) {onHandleInput(!content)}}}><Check className={`${content? '':'hidden'}`}/></div>
+            <div className='absolute left-2 border-gray-300 border-1 w-[30px] h-[30px] flex justify-center items-center' onClick={()=>{if(isEditable) {onHandleInput(!content)}}}><Check className={`${content? '':'hidden'}`}/></div>
       </div>
 
       : name==='Type' ?
-        <div class='relative w-[60%] px-2 text-lg font-light'>
-          <div onClick={()=>setIsTypeClicked(!isTypeClicked)}><p>{content}</p></div>
-          {isTypeClicked && <div className='absolute right-0 bg-white shadow-sm rounded-lg w-[150px] py-2 px-4 overflow-auto'>
+        <div className='relative w-[60%] px-2 text-lg font-light'>
+          <div className='flex gap-4 items-center' onClick={()=>setIsTypeClicked(!isTypeClicked)}><p>{content}</p><ChevronDown className={`${isTypeClicked ? 'rotate-[-180deg]' : ''} transition-all`}/></div>
+          {isTypeClicked && <div className='absolute left-0 bg-white shadow-sm rounded-lg w-[150px] py-2 px-4 overflow-auto z-50'>
             {types.map((type) => (
-              <div onClick={()=>{onHandleInput(type); setIsTypeClicked(!isTypeClicked)}}>{type}</div>
+              <div className='cursor-pointer' onClick={()=>{onHandleInput(type); setIsTypeClicked(!isTypeClicked)}}>{type}</div>
             ))}
           </div>}
         </div>
@@ -84,9 +84,9 @@ export const Admin_Inventory_Detail = () => {
   const mapping = {
     'Name': [name, setName],
     'Product ID': [productId, setProductId],
-    'Type': [type, setType],
     'Description': [description, setDescription],
     'Stock': [stock, setStock],
+    'Type': [type, setType],
     'Available': [available, setAvailable],
   }
 
@@ -102,53 +102,70 @@ export const Admin_Inventory_Detail = () => {
   }
 
   return (
-    <div className='flex flex-col gap-2 p-4'>
-      {/* Product detail */}
-      <p className='font-semibold text-3xl'>Product detail</p>
+    <div className='flex flex-col gap-4 p-1'>
+      {/* ID */}
+      <p className='font-semibold text-3xl'>Product #<span className="font-bold text-pink-500">{id}</span></p>
+
       <button onClick={() => {if(isEditable) {updateInventory(product, {...product, name: name, product_id: productId, description: description, stock: stock, available: available})} setIsEditable(!isEditable)}} className="self-start text-blue-500">
-        {isEditable ? 'Done' : 'Edit'}
+          {isEditable ? 'Done' : 'Edit'}
       </button>
 
-      {Object.entries(mapping).map(([key, [value, setter]]) => (
-        <Inventory_Item
-          key={key}
-          name={key}
-          content={value}
-          isEditable={isEditable}
-          onHandleInput={setter}
-        />
-      ))}
+      {/* Product detail */}
+      <div className='bg-white dark:bg-black rounded-lg shadow-sm p-4 hover:shadow-lg'>
+        <p className='font-semibold text-3xl pb-4'>Product detail</p>
+
+        {Object.entries(mapping).map(([key, [value, setter]]) => (
+          <Detail_Item
+            key={key}
+            name={key}
+            content={value}
+            isEditable={isEditable}
+            onHandleInput={setter}
+          />
+        ))}
+      </div>
 
       {/* Flower Option */}
       <AnimatePresence>
         {type==='flower' && <motion.div  initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      transition={{ type: "spring", stiffness: 450, damping: 35}} >
-          <p className='font-semibold text-3xl'>Flower configuration</p>
-          {Object.entries(mapping_flower).map(([key, [value, setter]]) => (
-            <div key={key} className='flex justify-between'>
-              <p className='w-[40%]'>{key}</p>
-              <div className='w-[60%] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2'>
-                {filter_types[key]?.map((option) => (
-                  <div key={option} className={`${value.includes(option)? 'bg-blue-400 text-white' : 'bg-gray-100'} rounded-lg p-1 flex justify-between items-center font-light transition-all`} onClick={()=>handleFlower(key, value, setter, option)}>{option}</div>
-                ))}
+                      transition={{ type: "spring", stiffness: 450, damping: 35}} 
+                      className='bg-white dark:bg-black rounded-lg shadow-sm p-4 hover:shadow-lg'>
+          {/* Title */}
+          <p className='font-semibold text-3xl pb-4'>Flower configuration</p>
+          {/* Option */}
+          <div className='flex flex-col gap-2'>
+            {Object.entries(mapping_flower).map(([key, [value, setter]]) => (
+              <div key={key} className='flex justify-between'>
+                {/* Title */}
+                <p className='font-semibold text-lg w-[40%]'>{key}</p>
+                {/* Options */}
+                <div className='w-[60%] grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2'>
+                  {filter_types[key]?.map((option) => (
+                    <div key={option} className={`${value.includes(option)? 'bg-blue-400 text-white' : 'bg-gray-100'} text-sm md:text-base cursor-pointer rounded-lg p-2 flex justify-between items-center font-light transition-all`} onClick={()=>handleFlower(key, value, setter, option)}>{option}</div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
         </motion.div>}
       </AnimatePresence>
 
       {/* Preview */}
-      <p className='font-semibold text-3xl'>Preview</p>
-      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1'>
-        {product.image_url.map((image, i) => (
-          <div className='w-full aspect-square overflow-hidden'>
-             <img key={i} src={image} className='w-full h-full object-cover'/>
-          </div>
+      <div className='bg-white dark:bg-black rounded-lg shadow-sm p-4 hover:shadow-lg'>
+        <p className='font-semibold text-3xl pb-4'>Preview</p>
+        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1'>
+          {product.image_url.map((image, i) => (
+            <div key={i} className='w-full aspect-square overflow-hidden'>
+              <img src={image} className='w-full h-full object-cover'/>
+            </div>
 
-        ))}
+          ))}
+        </div>
       </div>
+
     </div>
   )
 }
