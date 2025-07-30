@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { products } from '../data/dummy'
 
 const ProductContext = createContext()
@@ -6,6 +6,10 @@ const ProductContext = createContext()
 export function ProductProvider({children, initialProduct=products}) {
   const [currentProduct, setCurrentProduct] = useState(initialProduct)
   const [currentValues, setCurrentValues] = useState({"Flower Type": new Set([""]), "Occassions": new Set([""]), "Colors": new Set([""]), "Sort": new Set([""])})
+
+  useEffect(() => {
+    setCurrentProduct(initialProduct)
+  }, [initialProduct]) 
 
   const filterProduct = ({type, value, isChosen}) => { 
     let new_product = initialProduct

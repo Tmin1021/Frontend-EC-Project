@@ -11,16 +11,37 @@ export function CartProvider({children}) {
     const [selectedAll, setSelectedAll] = useState(false)
 
     // format: (product, option, quantity)
-    const addCart = product => {
-        setCart((prevCart) => [...prevCart, product])
-        setSelectedItems([...selectedItems, false])
-    }
+    const addCart = (product) => {
+        setCart((prevCart) => {
+            let found = false;
+
+            const updatedCart = prevCart.map(item => {
+                const isSameProduct = item.product.product_id === product.product.product_id;
+                const isSameOption =
+                    (item.option && product.option && item.option.name === product.option.name) ||
+                    (!item.option && !product.option);
+
+                if (isSameProduct && isSameOption) {
+                    found = true;
+                    return { ...item, quantity: item.quantity + product.quantity };
+                }
+                return item;
+            });
+
+            if (!found) {
+                setSelectedItems(prev => [...prev, false]); 
+                return [...updatedCart, product];
+            }
+
+            return updatedCart;
+        });
+    };
 
     const updateCart = (product, quantity) => {
         const updatedCart = cart.map(item =>
-            item === product
-            ? { ...item, quantity: quantity } 
-            : item 
+                item === product
+                ? { ...item, quantity: quantity }
+                : item
         )
 
         setCart(updatedCart)

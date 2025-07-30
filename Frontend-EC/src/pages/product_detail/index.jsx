@@ -29,12 +29,15 @@ function Product_Detail() {
             {/* Option */}
             <div className='w-full flex flex-col gap-4'>
                 <p className='font-semibold text-4xl mx-auto hidden md:flex'>{product.name}</p>
-                <Product_Option/>
-                <Product_Extra/>
-                <Product_Quantity/>
+                {product.type==='flower' && <Product_Option/>}
+                {product.type==='flower' && <Product_Extra/>}
+                {product.stock && <Product_Quantity/>}
 
-                <div className='min-w-[300px] h-[50px] bg-green-800 flex items-center' onClick={() => {{addCart({product: product, option: selectedOption, quantity: quantity})} if (selectedExtra) {addCart({product: selectedExtra, option: null, quantity: 1})}}}>
-                    <p className='font-semibold text-lg text-white mx-auto cursor-pointer'>ADD TO CART</p>
+                {product.stock && <p className={`${product.stock <11 ? 'text-red-500 font-semibold':''} `}>In stock: {product.stock}</p>}
+                
+                <div className={`${!product.stock ? 'bg-gray-500 disabled-div': 'bg-green-800'} min-w-[300px] h-[50px] flex items-center`} onClick={() => {addCart({ product: product, option: selectedOption, quantity: quantity });
+                                                                                                        if (selectedExtra) {addCart({ product: selectedExtra, option: null, quantity: 1 });}}}>
+                    <p className='font-semibold text-lg text-white mx-auto cursor-pointer'>{!product.stock ? 'OUT OF STOCK' : "ADD TO CART"}</p>
                 </div>
 
             </div>

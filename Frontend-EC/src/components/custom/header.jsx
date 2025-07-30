@@ -37,7 +37,8 @@ function Header() {
     const {openCart} = useCart()
     const navigate = useNavigate()
     const navigateMap = {
-        "All Flowers": "/flowers", 
+        "All Flowers": "/flower", 
+        "Accessories": "/accessory", 
         "Personal": "/personal"
     }
 
@@ -55,8 +56,6 @@ function Header() {
       };
     }, [isDropdownOpen]);
 
-
-    const usenavigate = useNavigate();
   
     return (
         <div className='relative w-full'>

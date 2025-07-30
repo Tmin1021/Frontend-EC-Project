@@ -37,8 +37,8 @@ function App() {
           <Routes>
             <Route element={<UserLayout/>}>
               <Route path="/" element={<Dashboard/>}/>
-              <Route path="/product/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
-              <Route path="/flowers" element={<List_Product/>}/>
+              <Route path="/:type" element={<List_Product/>}/>
+              <Route path="/:type/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
               <Route path="/personal" element={<Personal/>}/>
               <Route path='/search' element={<ProductProvider><Search_Page/></ProductProvider>} />
               <Route path="/support" element={<SupportPage/>}/>

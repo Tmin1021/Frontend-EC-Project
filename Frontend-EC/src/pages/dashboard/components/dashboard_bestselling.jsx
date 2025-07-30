@@ -1,14 +1,14 @@
 import React from 'react'
 import {products} from '../../../data/dummy'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export function Bestselling_Item({product}) {
-    const findStartingPrice = () => (Math.min(...product.flower_details.options.map(option => option.price)))
+    const findStartingPrice = () => product.type==='flower' ? (Math.min(...product.flower_details.options.map(option => option.price))) : product.price
 
     return (
-        <div className="min-w-[170px]">
+        <div className="min-w-[170px] bg-white dark:bg-black">
             <div className='w-full aspect-square overflow-hidden'>
-                <img src={product.image_url[1]} className='w-full h-full object-cover'/>
+                <img src={product.image_url[0]} className='w-full h-full object-cover'/>
             </div>
             <p className='font-bold text-sm md:text-base pt-3'>{product.name}</p>
             <p className='font-light text-sm py-1'>from <span className='font-bold text-lg'>${findStartingPrice()}</span></p>
@@ -21,7 +21,7 @@ const Dashboard_Bestselling = () => {
       const navigate = useNavigate()
 
       const handleClick = (productID) => {
-        navigate(`/product/${productID}`)
+        navigate(`flower/${productID}`)
       }
   
       return (
@@ -40,7 +40,7 @@ const Dashboard_Bestselling = () => {
 
             {/* Button */}
             <div className="w-[250px] min-w-[80px] flex items-center justify-between mx-auto cursor-pointer bg-green-700 hover:bg-green-900 transition-all py-2 px-6 rounded-sm" 
-                 onClick={()=>navigate("/flowers")}>
+                 onClick={()=>navigate("/flower")}>
                 <p className="text-sm md:text-base mx-auto font-bold text-white">SHOP ALL BEST SELLERS</p>
             </div>
           </div>
