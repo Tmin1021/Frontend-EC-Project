@@ -1,13 +1,14 @@
 import React from 'react'
 import { useProduct } from '../../../context/ProductContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Bestselling_Item } from '../../dashboard/components/dashboard_bestselling'
 
 function List_View() {
   const {currentProduct} = useProduct()
+  const {type} = useParams()
   const navigate = useNavigate()
   const handleClick = (productID) => {
-    navigate(`/product/${productID}`)
+    navigate(`/${type}/${productID}`)
   }
 
   return (

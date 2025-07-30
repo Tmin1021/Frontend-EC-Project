@@ -17,7 +17,7 @@ function Preview_Slide({images, setIndex}) {
   return (
     <div className='w-full flex justify-center gap-4 items-center'>
       
-      <div className={`${images.length===3? 'hidden':''}`} onClick={prevImage}><ChevronLeft className="w-10 h-10"/></div>
+      <div className={`${images.length<=3? 'hidden':''}`} onClick={prevImage}><ChevronLeft className="w-10 h-10"/></div>
 
       <div className="w-[200px] overflow-hidden mx-auto">
         <div className="flex gap-2 duration-500 ease-in-out" style={{ transform: `translateX(-${indexSlide/3 * 100}%)` }}>
@@ -29,7 +29,7 @@ function Preview_Slide({images, setIndex}) {
         </div>
       </div>
 
-      <div className={`${images.length===3? 'hidden':''}`} onClick={nextImage}><ChevronRight className="w-10 h-10"/></div>
+      <div className={`${images.length<=3? 'hidden':''}`} onClick={nextImage}><ChevronRight className="w-10 h-10"/></div>
     </div>
 
   )

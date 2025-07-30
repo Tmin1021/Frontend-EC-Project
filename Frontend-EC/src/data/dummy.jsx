@@ -99,7 +99,7 @@ const products = [
     stock: 12,
     available: true,
     description: "Assorted stems of seasonal peonies.",
-    image_url: [demo, demo_1, demo_2],
+    image_url: [demo_1, demo, demo_2, demo_3],
     flower_details: {
       occasion: ["Wedding"],
       color: ['Pink Flowers'],
@@ -117,10 +117,10 @@ const products = [
     type: 'flower',
     name: "Farmer's Choice Peonies",
     price: 40,
-    stock: 12,
+    stock: 1,
     available: true,
     description: "Assorted stems of seasonal peonies.",
-    image_url: [demo, demo_1, demo_2],
+    image_url: [demo_1, demo, demo_2],
     flower_details: {
       occasion: ["New Baby", "Thank you"],
       color: ['White Flowers'],
@@ -194,8 +194,8 @@ const orders = [
     status: "Required",
   },
   {
-    order_id: 1,
-    user_id: 1,
+    order_id: 2,
+    user_id: 3,
     order_date: "02/07/2025",
     shipping_address: "Q5, TPHCM",
     total_amount: 200,

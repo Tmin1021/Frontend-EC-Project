@@ -41,6 +41,11 @@ export function AdminProvider({children}) {
         setCurrentOrder(updatedOrders)
     }
 
+    const filterStatus = status => {
+        if (status === 'All') setCurrentOrder(orders)
+        else setCurrentOrder(orders.filter(order => order.status === status))
+    }
+
     // for universal
     const sortUniversal = (from, by) => {
         const mapping = {
@@ -85,7 +90,7 @@ export function AdminProvider({children}) {
     }
     
     return (
-        <AdminContext.Provider value={{currentInventory, currentUser, currentOrder, updateStatusOrder, sortUniversal, updateInventory, removeInventory, searchUniversal}}>
+        <AdminContext.Provider value={{currentInventory, currentUser, currentOrder, updateStatusOrder, filterStatus, sortUniversal, updateInventory, removeInventory, searchUniversal}}>
             {children}
         </AdminContext.Provider>
     )

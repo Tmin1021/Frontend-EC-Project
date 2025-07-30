@@ -3,6 +3,7 @@ import { useProduct } from '../../../context/ProductContext';
 import { Check, ChevronDown, Funnel, Plus, Minus, ArrowUpDown } from 'lucide-react';
 import { AnimatePresence, motion } from "framer-motion";
 import { createPortal } from 'react-dom';
+import { useParams } from 'react-router-dom';
 
 export const filter_types = {
   "Flower Type": ["Anemones", "Dried Flowers", "Hydrangeas", "Lilies", "Orchids", "Peonies", "Ranunculus", "Roses", "Succulents", "Sunflowers", "Tropical"],
@@ -12,18 +13,22 @@ export const filter_types = {
 }
 
 function Filter_Option({type, whichOption, onHandleClick}) {
-
+  // Sort: allow 1 option only, must appear that option in <p>
   return (
-    <div className={`${type==="Sort"? 'flex flex-col gap-0 absolute right-0 w-[150px] h-[125px] py-2 px-4 overflow-auto rounded-lg bg-white shadow-sm' : 'grid grid-cols-2 gap-2 h-full'} 
-                    md:flex md:flex-col md:gap-0 md:absolute md:right-0 md:translate-x-1/4 md:w-[150px] md:h-[125px] md:py-2 md:px-4 md:overflow-auto no-scrollbar md:rounded-lg md:bg-white md:shadow-sm`}>
+    <div className={`${type==="Sort"? 'flex flex-col gap-0 absolute right-0 w-[160px] h-[125px] py-2 px-4 overflow-auto rounded-lg bg-white shadow-sm' : 'grid grid-cols-2 gap-2 h-full'} 
+                    md:flex md:flex-col md:gap-0 md:absolute md:right-0 md:translate-x-1/4 md:w-[160px] md:h-[125px] md:py-2 md:px-4 md:overflow-auto no-scrollbar md:rounded-lg md:bg-white md:shadow-sm`}>
+      
       {filter_types[type].map((option, index) => (
-        <div key={option} className={`${type==='Sort'? '': (whichOption[index]? 'border-3 border-green-700' : 'border-1 border-gray-200')} md:border-0 md:w-full flex items-center justify-between`} onClick={() => onHandleClick(type, option, index)}>
+        <div key={option} className={`${type==='Sort'? '': (whichOption[index]? 'border-3 border-green-700' : 'border-1 border-gray-200')} 
+                                      md:border-0 md:w-full flex items-center justify-between`} 
+                          onClick={() => onHandleClick(type, option, index)}>
+
           <p className={`${whichOption[index]? 'font-semibold':'font-light'} text-sm md:font-light py-2 mx-auto md:mx-0`}>{option}</p>
-          <div className='hidden md:flex'>
-            {whichOption[index] && <Check/> }
-          </div>
+          <div className='hidden md:flex'>{whichOption[index] && <Check/> }</div>
+
         </div>
       ))}
+
     </div>
   )
 }
@@ -31,26 +36,36 @@ function Filter_Option({type, whichOption, onHandleClick}) {
 export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) {
   const [whichOption, setWhichOption] = useState(Array(filter_types[name].length).fill(false))
   const {filterProduct} = useProduct()
+  const [sortOption, setSortOption] = useState('Best sellers')
 
   const handleOption = (type, value, index) => {
-    const newWhichOption = whichOption.slice()
-    newWhichOption[index] = !newWhichOption[index]
-    
-    filterProduct({type: type, value: value, isChosen: newWhichOption[index]})
-    setWhichOption(newWhichOption)
+    if(type!=='Sort') {
+      const newWhichOption = whichOption.slice()
+      newWhichOption[index] = !newWhichOption[index]
+      filterProduct({type: type, value: value, isChosen: newWhichOption[index]})
+      setWhichOption(newWhichOption)
+    }
+    else {
+      const newWhichOption = Array(filter_types[name].length).fill(false)
+      newWhichOption[index] = !newWhichOption[index]
+      setWhichOption(newWhichOption)
+      setSortOption(filter_types[name][index])
+    }
 }
 
   // click Filter_Option will propagate that click to the parent --> trigger onHandleClick --> had better to separate or stopPropagation
+  //         
   return (
     <div className=' md:relative' >
       {/* Title */}
       <div className='w-full flex items-center justify-between 
                       md:border-1 md:py-1 md:px-2' onClick={onHandleClick}>
 
-        <ArrowUpDown className={`${name==='Sort'? '': 'hidden'} md-hidden`}/>
-        <p className={`${name==='Sort'? 'hidden':''} font-extralight`}>{name}</p>
+         
+        <ArrowUpDown className={`${name==='Sort'? '': 'hidden'} md:hidden`}/>  
+        <p className={`${name==='Sort' ? 'font-semibold pl-1' : ''} md:font-extralight`}>{name==='Sort' ? sortOption : name}</p>  
         <ChevronDown className={`transition-transform duration-500 ${isOpenFilter ? 'rotate-[-180deg]' : ''} hidden md:flex`}/>
-        <div className={`${name==='Sort'? 'opacity-0 w-1 h-1':''} md:hidden`}>{isOpenFilter? <Minus/> : <Plus/>}</div>
+        <div className={`${name==='Sort'? 'hidden':''} md:hidden`}>{isOpenFilter? <Minus/> : <Plus/>}</div>
 
       </div>
 
@@ -71,9 +86,10 @@ export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) 
   )
 }
 
-function List_Filter() {
+function List_Filter({isFlower=false}) {
   const [isOpenFilters, setIsOpenFilters] = useState(Array(4).fill(false))
   const [isOpen, setIsOpen] = useState(false)
+  const {type} = useParams()
 
   const handleClick = (index) => {
     const current_index = !isOpenFilters[index]
@@ -86,7 +102,7 @@ function List_Filter() {
   return (
     <div className='min-w-full flex items-center justify-between'>
       {/* Filter */}
-      <div >
+      <div className={`${(type==='flower' || isFlower) ? '':'hidden'}`}>
         <div className='flex gap-1 items-center md:hidden' onClick={()=>setIsOpen(true)}>
           <Funnel/>
           <p className='font-semibold'>FILTER BY</p>
@@ -110,7 +126,7 @@ function List_Filter() {
 
       {/* Sort */}
       <div className='flex items-center gap-1 md:gap-2 lg:gap-4'>
-          <p className='font-semibold'>SORT</p>
+          <p className='hidden md:flex font-semibold'>SORT</p>
           <Filter name={"Sort"} isOpenFilter={isOpenFilters[3]} onHandleClick={() => handleClick(3)}/>
       </div>
     </div>

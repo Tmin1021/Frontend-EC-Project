@@ -30,7 +30,7 @@ const Cart_Item = ({product}) => {
                 <div className=' w-[46%] flex items-center justify-between'>
                     <Minus className='w-4 h-4' onClick={()=>updateCart(product, Math.max(1, product.quantity-1))}/>
                     <p className='text-lg pr-1'> {product.quantity} </p>
-                    <Plus className='w-4 h-4' onClick={()=>updateCart(product, Math.min(product.product.quantity, product.quantity+1))}/>
+                    <Plus className='w-4 h-4' onClick={()=>updateCart(product, Math.min(product.product.stock, product.quantity+1))}/>
                 </div>
             </div>
         

@@ -36,8 +36,6 @@ function Cart_Empty() {
                 <p>Let's explore other products you might be interested in.</p>
             </div>
         </div>
-
-        <Recommend_Product/>
     </div>
   )
 
