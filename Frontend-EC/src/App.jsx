@@ -33,19 +33,6 @@ const UserLayout = () => {
 function App() {
 
   return (
-    <Router>
-      <Header/>
-      <Routes>
-        <Route path="/" element={<Dashboard/>}/>
-        <Route path="/product/:id" element={<Product_Detail/>}/>
-        <Route path="/flowers" element={<List_Product/>}/>
-        <Route path="/support" element={<SupportPage/>}/>
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/signup" element={<Signup/>}/>
-        <Route path="/blog/:slug" element={<BlogDetail />} />
-      </Routes>
-      {isCartOpen && <Cart/>}
-    </Router>
       <div className='max-w-screen-xl min-w-[320px]'>
         <Router>
           <Routes>
