@@ -1,32 +1,36 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { products } from '../data/dummy'
 
 const ProductContext = createContext()
 
-export function ProductProvider({children}) {
-  const [current_product, setCurrentProduct] = useState(products)
-  const [current_values, setCurrentValues] = useState({"Flower Type": new Set([""]), "Occassions": new Set([""]), "Colors": new Set([""]), "Sort": new Set([""])})
+export function ProductProvider({children, initialProduct=products}) {
+  const [currentProduct, setCurrentProduct] = useState(initialProduct)
+  const [currentValues, setCurrentValues] = useState({"Flower Type": new Set([""]), "Occassions": new Set([""]), "Colors": new Set([""]), "Sort": new Set([""])})
+
+  useEffect(() => {
+    setCurrentProduct(initialProduct)
+  }, [initialProduct]) 
 
   const filterProduct = ({type, value, isChosen}) => { 
-    let new_product = products
-    let new_values = current_values
+    let new_product = initialProduct
+    let new_values = currentValues
 
     isChosen ? new_values[type].add(value) : new_values[type].delete(value)
-    new_product = (new_values["Flower Type"].size!==1 ? products.filter((product) => new_values["Flower Type"].has(product.flower_type)) : new_product)
-    new_product = (new_values["Occassions"].size!==1 ? new_product.filter((product) => new_values["Occassions"].has(product.occasion)) : new_product)
-    new_product = (new_values["Colors"].size!==1? new_product.filter((product) => new_values["Colors"].has(product.color)) : new_product)
-    console.log(new_values)
+    new_product = (new_values["Flower Type"]?.size!==1 ? initialProduct.filter((product) => new_values["Flower Type"].has(product.flower_details.flower_type)) : new_product)
+    new_product = (new_values["Occassions"]?.size!==1 ? new_product.filter((product) => product.flower_details.occasion.some(i=>new_values["Occassions"].has(i))): new_product)
+    new_product = (new_values["Colors"]?.size!==1? new_product.filter((product) => product.flower_details.color.some(i=>new_values["Colors"].has(i))) : new_product)
     
     setCurrentValues(new_values)
     setCurrentProduct(new_product)
   }
 
   const searchProduct = (input) => {
+    const new_input = input.toLowerCase()
     const matches = [
-      ...products.filter(product => product.name.includes(input)),
-      ...products.filter(product => product.flower_type.includes(input)),
-      ...products.filter(product => product.occasion.includes(input)),
-      ...products.filter(product => product.color.includes(input)),
+      ...products.filter(product => product.name.toLowerCase().includes(new_input)),
+      ...products.filter(product => product.type === 'flower' && product.flower_details.flower_type.toLowerCase().includes(new_input)),
+      ...products.filter(product => product.type === 'flower' && product.flower_details.occasion.some(i => i.toLowerCase().includes(new_input))),
+      ...products.filter(product => product.type === 'flower' && product.flower_details.color.some(i => i.toLowerCase().includes(new_input))),
     ]
 
     const uniqueMatches = Array.from(new Set(matches))
@@ -42,7 +46,7 @@ export function ProductProvider({children}) {
 
       if (index !== -1 && index + input.length < name.length) {
         const remaining = name.slice(index + input.length)
-        if (name.toLowerCase().split(" ").includes((input+remaining).split(" ")[0])) {predictions.push(remaining.trim())}
+        if (name.toLowerCase().split(" ").includes((input+remaining).split(" ")[0])) {predictions.push(remaining)}
       }
     })
 
@@ -51,7 +55,7 @@ export function ProductProvider({children}) {
 
 
   return (
-    <ProductContext.Provider value={{current_product, filterProduct, searchProduct, searchPrediction}}>
+    <ProductContext.Provider value={{currentProduct, setCurrentProduct, filterProduct, searchProduct, searchPrediction}}>
       {children}
     </ProductContext.Provider>
   )

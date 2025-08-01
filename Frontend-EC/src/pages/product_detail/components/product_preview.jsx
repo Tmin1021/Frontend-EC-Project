@@ -1,11 +1,11 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import React, {useState} from 'react'
+import {useState} from 'react'
 
 function Preview_Slide({images, setIndex}) {
   const [indexSlide, setIndexSlide] = useState(0)
 
   const nextImage = () => {
-    if (indexSlide+3>images.length) setIndexSlide(0)
+    if (indexSlide+3>=images.length) setIndexSlide(0)
     else setIndexSlide(indexSlide+3)
   }
 
@@ -15,10 +15,11 @@ function Preview_Slide({images, setIndex}) {
   }
 
   return (
-    <div className='w-full flex justify-between items-center px-10 pt-10'>
-      <div onClick={prevImage}><ChevronLeft className="w-10 h-10"/></div>
+    <div className='w-full flex justify-center gap-4 items-center'>
+      
+      <div className={`${images.length<=3? 'hidden':''}`} onClick={prevImage}><ChevronLeft className="w-10 h-10"/></div>
 
-      <div className="w-[200px] overflow-hidden">
+      <div className="w-[200px] overflow-hidden mx-auto">
         <div className="flex gap-2 duration-500 ease-in-out" style={{ transform: `translateX(-${indexSlide/3 * 100}%)` }}>
         {images.map((image, i) => (
           <div key ={i} className="flex-none" onClick={(()=>setIndex(i))}>
@@ -28,7 +29,7 @@ function Preview_Slide({images, setIndex}) {
         </div>
       </div>
 
-      <div onClick={nextImage}><ChevronRight className="w-10 h-10"/></div>
+      <div className={`${images.length<=3? 'hidden':''}`} onClick={nextImage}><ChevronRight className="w-10 h-10"/></div>
     </div>
 
   )
@@ -38,13 +39,16 @@ function Product_Preview({images}) {
  const [index, setIndex] = useState(0)
 
  return (
-  <div>
-    <div className='w-full max-w-[500px] overflow-hidden'>
+  <div className='flex flex-col gap-4 items-center'>
+    {/* Main images */}
+    <div className='max-w-[600px] md:min-w-full overflow-hidden'>
       <div
         className="flex duration-500 ease-in-out"
         style={{ transform: `translateX(-${index * 100}%)` }}>
         {images.map((img, i) => (
-            <img key={i} src={img} className="w-full aspect-square object-cover"/>
+          <div key={i} className='min-w-full aspect-square'>
+              <img src={img} className="w-full h-full object-cover"/>
+          </div>
         ))}
       </div>
     </div>

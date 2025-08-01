@@ -1,17 +1,15 @@
-//import { useState } from 'react'
 import Header from './components/custom/header'
 import { useCart } from './context/CartContext'
 import Cart from './pages/cart'
 import Dashboard from './pages/dashboard'
 import List_Product from './pages/list_product'
+import Personal from './pages/personal'
 import Product_Detail from './pages/product_detail'
-import {BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import {BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom'
 import SupportPage from './pages/support'
 import Login from './pages/login'
 import Signup from './pages/signup/components/signup'
 import BlogDetail from './pages/blog_detail';
-<<<<<<< Updated upstream
-=======
 import Search_Page from './pages/search'
 import { ProductProvider } from './context/ProductContext'
 import { ProductDetailProvider } from './context/ProductDetailContext'
@@ -31,13 +29,10 @@ const UserLayout = () => {
     </>
   )
 }
->>>>>>> Stashed changes
 
 function App() {
-  const {isCartOpen} = useCart()
 
   return (
-<<<<<<< Updated upstream
     <Router>
       <Header/>
       <Routes>
@@ -51,8 +46,6 @@ function App() {
       </Routes>
       {isCartOpen && <Cart/>}
     </Router>
-   
-=======
       <div className='max-w-screen-xl min-w-[320px]'>
         <Router>
           <Routes>
@@ -80,7 +73,6 @@ function App() {
           </Routes>
         </Router>
       </div>
->>>>>>> Stashed changes
   )
 }
 

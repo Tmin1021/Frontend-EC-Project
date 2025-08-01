@@ -19,10 +19,9 @@ function My_Day({day, isActive}) {
   )
 }
 
-function My_Month({date}) {
+function My_Month({date, updateDate}) {
   const today = new Date()
   const firstPosition = (new Date(date.getFullYear(), date.getMonth(), 1)).getDay()
-  const {updateDate} = useProductCalendar()
 
   return (
     <div className='flex flex-col'>
@@ -49,10 +48,9 @@ function My_Month({date}) {
 }
 
 // padStart(2, '0'): If input has 1 digit, pad 0
-function Product_Delivery_Date() {
+function Product_Delivery_Date({date, updateDate}) {
   const now = new Date()
   const [isOpenCalendar, setIsOpenCalendar] = useState(false)
-  const {date} = useProductCalendar()
 
   return (
     <div className="relative py-5">
@@ -67,9 +65,9 @@ function Product_Delivery_Date() {
       </div>
 
       {isOpenCalendar &&
-      <div className='absolute w-[140%] bg-white shadow-lg top-20 right-0 translate-x-1/4 flex px-5 py-10 gap-5'>
-        <My_Month date={now}/>
-        <My_Month date={new Date(now.getFullYear(), now.getMonth()+1, 1)}/>
+      <div className='absolute z-100 w-[140%] bg-white shadow-lg top-20 right-0 translate-x-1/4 flex px-5 py-10 gap-5'>
+        <My_Month date={now} updateDate={updateDate}/>
+        <My_Month date={new Date(now.getFullYear(), now.getMonth()+1, 1)} updateDate={updateDate}/>
       </div>}
     </div>
 )

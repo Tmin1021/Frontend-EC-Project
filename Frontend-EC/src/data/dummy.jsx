@@ -1,11 +1,3 @@
-<<<<<<< Updated upstream
-import demo from "/src/assets/demo.png"
-import demo_1 from "/src/assets/demo_1.png"
-import demo_2 from "/src/assets/demo_2.png"
-import demo_3 from "/src/assets/demo_3.png"
-import demo_4 from "/src/assets/demo_4.png"
-import demo_5 from "/src/assets/demo_5.png"
-=======
 import { address } from "framer-motion/client";
 import demo from "/src/assets/demo.png";
 import demo_1 from "/src/assets/demo_1.png";
@@ -13,7 +5,6 @@ import demo_2 from "/src/assets/demo_2.png";
 import demo_3 from "/src/assets/demo_3.png";
 import demo_4 from "/src/assets/demo_4.png";
 import demo_5 from "/src/assets/demo_5.png";
->>>>>>> Stashed changes
 
 // Categories
 const categories = [
@@ -26,64 +17,35 @@ const accessories = [
   {
     product_id: "V1",
     name: "Montecito Vase",
-<<<<<<< Updated upstream
-    type: 'vase',
-    image_url: demo_3,
-=======
     type: "vase",
     image_url: [demo_3],
->>>>>>> Stashed changes
     price: 19,
   },
   {
     product_id: "V2",
     name: "Montecitosss Vase",
-<<<<<<< Updated upstream
-    type: 'vase',
-    image_url: demo_4,
-=======
     type: "vase",
     image_url: [demo_4],
->>>>>>> Stashed changes
     price: 25,
   },
 ];
 
 // Bonus Gifts
 const bonus_gifts = [
-<<<<<<< Updated upstream
-  { bouquet_id: "B1",
-    accessories_id: "V1",
-    off_price: 5,
-  },
-  { bouquet_id: "B1",
-    accessories_id: "V2",
-    off_price: 5,
-  }
-]
-=======
   { flower_id: "B1", accessory_id: "V1", off_price: 5 },
   { flower_id: "B1", accessory_id: "V2", off_price: 5 },
 ];
->>>>>>> Stashed changes
 
 // Carts
 const carts = [
   {
     user_id: 1,
-<<<<<<< Updated upstream
-    product_id: ['B1', 'V1', 'V2']
-    // products: [{product_id, date}]
-  }
-]
-=======
     products: [
       { product_id: "B1", quantity: 2 },
       { product_id: "B3", quantity: 3 },
     ],
   },
 ];
->>>>>>> Stashed changes
 
 // Comments
 const comments = [
@@ -126,102 +88,6 @@ const comments = [
 // Products
 const products = [
   {
-<<<<<<< Updated upstream
-    product_id: 'B1',
-    name: "Red Rose Bouquet",
-    flower_type: "Roses",
-    occasion: "Wedding",
-    color: 'Pink Flowers',
-    description: "Assorted stems of seasonal peonies.",
-    description_detail: "Turning heads wherever they go, our picture-perfect premium peonies are a must. Our farmers select the freshest blooms for you, and these stems of lush, petal-soft ruffles are some of the prettiest we’ve seen.",
-    caution: "Colors may vary.",
-    tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
-    image_url: [demo, demo_1, demo_2],
-    options: {
-      "original": { price: 19.99, stems: 5},
-      "deluxe": { price: 29.99, stems: 10 },
-      "grand": { price: 39.99, stems: 15 },
-    },
-    wrapping_available: true,
-  },
-  {
-    product_id: 'B2',
-    name: "Farmer's Choice Peonies",
-    flower_type: 'Lilies',
-    occasion: "Housewarming",
-    color: 'Yellow Flowers',
-    description: "Assorted stems of seasonal peonies.",
-    description_detail: "Turning heads wherever they go, our picture-perfect premium peonies are a must. Our farmers select the freshest blooms for you, and these stems of lush, petal-soft ruffles are some of the prettiest we’ve seen.",
-    caution: "Colors may vary.",
-    tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
-    image_url: [demo, demo_1, demo_2, demo_3, demo_4],
-    options: {
-      "original": { price: 19.99, stems: 5},
-      "deluxe": { price: 29.99, stems: 10 },
-      "grand": { price: 39.99, stems: 15 },
-    },
-    wrapping_available: true,
-  },
-    {
-    product_id: 'B3',
-    name: "Red Rose Bouquet",
-    flower_type: 'Roses',
-    occasion: "Get Well",
-    color: "Pink Flowers",
-    description: "Assorted stems of seasonal peonies.",
-    description_detail: "Turning heads wherever they go, our picture-perfect premium peonies are a must. Our farmers select the freshest blooms for you, and these stems of lush, petal-soft ruffles are some of the prettiest we’ve seen.",
-    caution: "Colors may vary.",
-    tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
-    image_url: [demo, demo_1, demo_2],
-    options: {
-      "original": { price: 19.99, stems: 5},
-      "deluxe": { price: 29.99, stems: 10 },
-      "grand": { price: 39.99, stems: 15 },
-    },
-    wrapping_available: true,
-  },
-  {
-    product_id: 'B4',
-    name: "Farmer's Choice Peonies",
-    flower_type: 'Roses',
-    occasion: "Wedding",
-    color: "Red Flowers",
-    description: "Assorted stems of seasonal peonies.",
-    description_detail: "Turning heads wherever they go, our picture-perfect premium peonies are a must. Our farmers select the freshest blooms for you, and these stems of lush, petal-soft ruffles are some of the prettiest we’ve seen.",
-    caution: "Colors may vary.",
-    tip:"our flowers will arrive fresh in our recyclable Bouqs box and may still be in bud form. This maximizes their shelf life, so they’ll last as long as possible! Please allow 2–3 days for your new buds to open and reach full bloom.",
-    image_url: [demo, demo_1, demo_2],
-    options: {
-      "original": { price: 19.99, stems: 5},
-      "deluxe": { price: 29.99, stems: 10 },
-      "grand": { price: 39.99, stems: 15 },
-    },
-    wrapping_available: true,
-  },
-];
-
-// U
-const users = [
-  {
-    user_id: 1,
-    name: "demo1hihihi"
-  },
-  {
-    user_id: 2,
-    name: "demo1hehehe"
-  },
-    {
-    user_id: 3,
-    name: "demo1hihihi"
-  },
-  {
-    user_id: 4,
-    name: "demo1hehehe"
-  }
-]
-
-export {products, carts, comments, bonus_gifts, accessories, users};
-=======
     product_id: "B1",
     type: "flower",
     name: "Red Rose Bouquet",
@@ -506,4 +372,3 @@ const users = [
 ];
 
 export { products, carts, comments, bonus_gifts, accessories, users, inventory, orders, order_items, categories };
->>>>>>> Stashed changes
