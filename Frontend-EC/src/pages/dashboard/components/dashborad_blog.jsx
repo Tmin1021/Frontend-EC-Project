@@ -83,12 +83,12 @@ const Dashboard_Blog = () => {
     setStartIdx((prev) => (prev - 1 + blogs.length) % blogs.length);
     };
   return (
-    <div className="bg-gray-100 py-10 mt-12">
-      <h1 className="text-3xl font-bold text-center mb-8">Blogging</h1>
-      <div className="flex flex-wrap justify-center gap-8 items-center">
+    <div className="bg-gray-100 w-full flex flex-col gap-4 pt-4 px-4 md:px-8 lg:px-16">
+      <p className="font-semibold text-2xl mx-auto">Blogging</p>
+      <div className="flex w-full overflow-auto justify-between gap-8 items-center">
         {/* Left arrow */}
         <button 
-          className="p-2 rounded-full bg-white shadow" 
+          className="hidden md:flex p-2 rounded-full bg-white shadow" 
           onClick={handlePrev}
           disabled={blogs.length <= BLOGS_PER_ROW}  
         >
@@ -96,7 +96,7 @@ const Dashboard_Blog = () => {
         </button>
         {getVisibleBlogs().map(blog => (
           blog && (
-            <div key={blog.id} className="bg-white rounded-xl shadow-lg p-6 w-[300px] md:w-[350px]">
+            <div key={blog.id} className="bg-white flex-none rounded-xl shadow-lg p-6 w-[300px] md:w-[350px]">
             <img src={blog.image} alt={blog.title} className="w-full h-64 object-cover rounded-lg" />
             <h2 className="h-[50px] mt-6 text-2xl font-bold text-green-700">
               {truncateTitle(blog.title)}
@@ -113,7 +113,7 @@ const Dashboard_Blog = () => {
         ))}
         {/* Right arrow */}
         <button
-          className="p-2 rounded-full bg-white shadow flex items-center justify-center h-10 w-10 ml-2"
+          className="hidden md:flex p-2 rounded-full bg-white shadow items-center justify-center h-10 w-10 ml-2"
           onClick={handleNext}
           disabled={blogs.length <= BLOGS_PER_ROW}  
         >

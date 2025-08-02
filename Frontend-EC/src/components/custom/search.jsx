@@ -2,16 +2,17 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProductProvider, useProduct } from "../../context/ProductContext";
-import { Search, Flower, Flower2, ExternalLink, X } from "lucide-react";
+import { Search, Flower, Flower2, ExternalLink, X, Box } from "lucide-react";
 
 function Search_Item({product, isSelected, closeSearch}) {
     const navigate = useNavigate()
     const [isHover, setIsHover] = useState(false)
 
     return (
-        <div className={`flex items-center gap-2 px-1 ${isSelected? 'bg-gray-100 shadow-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product.product_id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
-            {isHover||isSelected? <Flower2 className='w-4 h-4 text-pink-500'/> : <Flower className='w-4 h-4 text-pink-300'/>}
-            <p className={`py-1 font-light md:text-sm text-lg hover:font-semibold ${isSelected? 'font-semibold':""}`}>{product.name}</p>
+        <div className={`flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-gray-100 shadow-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product.product_id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
+            {product.type === 'flower' ? <Box className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-green-500' : 'text-green-300'}`}/>
+            : <Flower className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-pink-500' : 'text-pink-300'}`}/>}
+            <p className={`py-1 font-light md:text-sm text-lg hover:font-semibold transition-all ${isSelected? 'font-semibold':""}`}>{product.name}</p>
         </div>
     )
 }

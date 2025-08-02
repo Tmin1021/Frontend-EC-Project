@@ -82,7 +82,7 @@ export function Admin_Universal_Page({name}) {
         <div className='flex flex-col gap-2'>
           {/* For order only */}
           {name==='Order' && 
-          <div className='flex gap-1 md: gap-4'>
+          <div className='flex gap-1 md:gap-4'>
             {Object.keys(order_status).map((key)=> (
               <div key={key} className={`${order_status[key][0]} ${order_status[key][1]} ${statusChosen===key? 'border-2':'border-0'} shadow font-semibold p-2 rounded-lg`}
                    onClick={()=>{if (statusChosen!==key) {setStatusChosen(key)} filterStatus(key)}}>{key}</div>

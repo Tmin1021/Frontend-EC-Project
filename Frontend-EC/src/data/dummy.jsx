@@ -40,6 +40,10 @@ const bonus_gifts = [
   { flower_id: "B1",
     accessory_id: "V2",
     off_price: 5,
+  },   
+  { flower_id: "B2",
+    accessory_id: "V1",
+    off_price: 8,
   }
 ]
 
@@ -95,7 +99,7 @@ const products = [
     product_id: 'B1',
     type: 'flower',
     name: "Red Rose Bouquet",
-    price: 40,
+    price: 19.99,
     stock: 12,
     available: true,
     description: "Assorted stems of seasonal peonies.",
@@ -116,7 +120,7 @@ const products = [
     product_id: 'B2',
     type: 'flower',
     name: "Farmer's Choice Peonies",
-    price: 40,
+    price: 21.99,
     stock: 1,
     available: true,
     description: "Assorted stems of seasonal peonies.",
@@ -126,7 +130,7 @@ const products = [
       color: ['White Flowers'],
       flower_type: "Roses",
       options: [
-        {name: "original", price: 19.99, stems: 5},
+        {name: "original", price: 21.99, stems: 5},
         {name: "deluxe", price: 29.99, stems: 10 },
         {name: "grand", price: 39.99, stems: 15 }
       ],

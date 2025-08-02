@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { products } from '../data/dummy'
+import { order_items, products } from '../data/dummy'
 
 const ProductContext = createContext()
 
@@ -22,6 +22,30 @@ export function ProductProvider({children, initialProduct=products}) {
     
     setCurrentValues(new_values)
     setCurrentProduct(new_product)
+  }
+
+  const sortProduct = value => {
+    let new_product = currentProduct.slice()
+
+    if (value === 'Price: Low to High') new_product = new_product.sort((a,b) => a.price-b.price)
+    else if (value === 'Price: High to Low') new_product = new_product.sort((a,b) => b.price-a.price)
+
+    else if (value === 'Best Sellers') {
+      new_product = new_product
+        .map(product => [product, getTotalSold(product.product_id)])
+        .sort((a, b) => b[1] - a[1])
+        .map(pair => pair[0])
+    }
+
+    setCurrentProduct([...new_product])
+  }
+
+
+  const getTotalSold = product_id => {
+    return order_items.reduce((total, order_item) => {
+      const product = order_item.products.find(p => p.product_id === product_id)
+      return product ? total + product.quantity : total
+    }, 0)
   }
 
   const searchProduct = (input) => {
@@ -55,7 +79,7 @@ export function ProductProvider({children, initialProduct=products}) {
 
 
   return (
-    <ProductContext.Provider value={{currentProduct, setCurrentProduct, filterProduct, searchProduct, searchPrediction}}>
+    <ProductContext.Provider value={{currentProduct, setCurrentProduct, filterProduct, searchProduct, searchPrediction, sortProduct}}>
       {children}
     </ProductContext.Provider>
   )
