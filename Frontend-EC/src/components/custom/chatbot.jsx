@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { MessageSquare, X } from 'lucide-react';
 
@@ -10,10 +10,18 @@ function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const chatRef = useRef(null);
 
-  const handleSubmit = useCallback(async (e) => {
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
+
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!message.trim() || loading) return;
 
+    // Currently set the time limit for sending the request
     const now = Date.now();
     const minInterval = 0;
     if (now - lastSubmitTime < minInterval) {
@@ -29,7 +37,7 @@ function Chatbot() {
 
     setLoading(true);
     const userMessage = { role: 'user', content: message };
-    setChatHistory((prev) => [...prev, userMessage]);
+    setChatHistory((prev) => [...prev, userMessage]); // concate the chat history
 
     try {
       const res = await axios.post('http://127.0.0.1:5000/api/chat', { message }, { timeout: 0 });
@@ -51,7 +59,7 @@ function Chatbot() {
 
     setMessage('');
     setLoading(false);
-  }, [message, loading, lastSubmitTime]);
+  }
 
   return (
     <>
@@ -82,8 +90,15 @@ function Chatbot() {
                     ? 'bg-blue-600 text-white ml-auto text-right'
                     : 'bg-gray-300 text-gray-800 mr-auto text-left'
                 }`}
-                dangerouslySetInnerHTML={{ __html: msg.content.replace(/\n/g, '<br />').replace(/<br \/>(\s+)/g, '<br />&nbsp;$1') }}
-              />
+                dangerouslySetInnerHTML={{
+                  __html: msg.content
+                    .replace(/\n/g, '<br />')
+                    .replace(/<br \/>([ \t]+)/g, (match, spaces) => {
+                      return '<br />' + '&nbsp;'.repeat(spaces.length);
+                    }),
+                }}
+              >
+              </div>
             ))}
           </div>
 

@@ -12,7 +12,8 @@ const contact_form = () => {
   const [submitted, setSubmitted] = useState(false);
 
   // Handle input changes
-  const handleChange = (e) => {
+  // Create a copy that include on the attribute, then overwrite the new changed attribute
+  const handleChange = (e) => { 
     setForm({
       ...form,
       // .target: element that triggered the event
@@ -78,8 +79,8 @@ const contact_form = () => {
               className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-200"
             />
           </div>
-          <button
-            type="submit"
+          <button // No need to assign handleSubmit as the form component do that
+            type="submit" // Assign the submit button to the form
             className="w-full py-3 px-4 text-black font-bold text-lg rounded-lg shadow-lg hover:bg-black-500 transition-all duration-200"
           >
             Submit

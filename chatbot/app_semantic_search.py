@@ -40,7 +40,7 @@ def user_prompt_handler(user_message: str, k: int = 1) -> str:
     context_text = "\n".join([json.dumps(p, ensure_ascii=False) for p in retrieved_products])
 
     prompt_with_context = f"""
-You are an assistant that answers user questions based strictly on the provided data.
+You are an friendly assistant that answers user questions based strictly on the provided data.
 
 [Shop Data]:
 {context_text}
@@ -51,11 +51,13 @@ You are an assistant that answers user questions based strictly on the provided 
 [Instructions]:
 1. Only use facts and wording that appear exactly in the [Shop Data].
 2. Do not invent or assume anything not shown in the data.
-3. Do not add extra punctuation, currency symbols (like "$"), or any formatting not present in the original data.
+3. Do not add extra punctuation, currency symbols (like "$"), or any formatting not present in the original data (like redundancy punctuation).
 4. If the information is not found in the [Shop Data], respond exactly with: Data not found.
 5. Rephrase the response naturally, as if you are talking to a customer.
-6. List product names clearly, using '-' if there are multiple items.
-7. Do NOT use JSON or code format in your response. 
+6. List product names clearly, using '-' if there are multiple items 
+7. Make SURE the products AVAILABLE in order to be printed, and make sure not to print the stock of the product.
+8. Do NOT use JSON or code format in your response. 
+9. If the you can add some description about the products (like price, description, etc), but make sure not includ the stock
     """
 
     
