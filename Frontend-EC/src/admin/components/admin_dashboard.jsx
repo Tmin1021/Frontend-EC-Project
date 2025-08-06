@@ -84,32 +84,32 @@ const Admin_Dashboard = () => {
 
   // === TOP-SELLING PRODUCTS ===
     const topProducts = useMemo(() => {
-    const productSales = {}
+      const productSales = {}
 
-    allOrderItems.forEach(order => {
-        const matchedOrder = allOrders.find(o => o.order_id === order.order_id)
-        if (!isDateInFilter(matchedOrder.order_date, productFilter)) return
+      allOrderItems.forEach(order => {
+          const matchedOrder = allOrders.find(o => o.order_id === order.order_id)
+          if (!isDateInFilter(matchedOrder.order_date, productFilter)) return
 
-        order.products.forEach(item => {
-        const productId = item.product_id
-        const quantity = item.quantity
-        const actualPrice = item.option ? item.option.price : item.price
-        if (!productSales[productId]) {
-            productSales[productId] = { quantity: 0, revenue: 0 }
-        }
-        productSales[productId].quantity += quantity
-        productSales[productId].revenue += quantity * actualPrice
-        })
-    })
+          order.products.forEach(item => {
+            const productId = item.product_id
+            const quantity = item.quantity
+            const actualPrice = item.option ? item.option.price : item.price
+            if (!productSales[productId]) {
+                productSales[productId] = { quantity: 0, revenue: 0 }
+          }
+            productSales[productId].quantity += quantity
+            productSales[productId].revenue += quantity * actualPrice
+          })
+      })
 
-    const sorted = Object.entries(productSales)
-        .map(([id, data]) => {
-        const product = allProducts.find(p => p.product_id === id)
-        return { name: product?.name || id, quantity: data.quantity, revenue: data.revenue }
-        })
-        .sort((a, b) => b.quantity - a.quantity)
+      const sorted = Object.entries(productSales)
+          .map(([id, data]) => {
+          const product = allProducts.find(p => p.product_id === id)
+          return { name: product?.name || id, quantity: data.quantity, revenue: data.revenue }
+          })
+          .sort((a, b) => b.quantity - a.quantity)
 
-    return sorted.slice(0, 3)
+      return sorted.slice(0, 3)
     }, [productFilter])
 
 const topByQuantity = topProducts[0]
@@ -185,11 +185,11 @@ const topByRevenue = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]
                             - By quantity sold – <span className="font-semibold">{topByQuantity.name}</span> – {topByQuantity.quantity} sold
                         </p>
                         )}
-                        {topByRevenue && (
-                        <p>
-                            - By revenue – <span className="font-semibold">{topByRevenue.name}</span> – ${topByRevenue.revenue.toFixed(2)}
-                        </p>
-                        )}
+                    {topByRevenue && (
+                     <p>
+                        - By revenue – <span className="font-semibold">{topByRevenue.name}</span> – ${topByRevenue.revenue.toFixed(2)}
+                      </p>
+                    )}
                 </div>
           </div>
         </div>

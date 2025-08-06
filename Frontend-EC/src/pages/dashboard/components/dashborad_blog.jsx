@@ -57,7 +57,7 @@ const Dashboard_Blog = () => {
 
     const getVisibleBlogs = () => {
         if (!blogs.length) return [];
-        if (blogs.length <= BLOGS_PER_ROW) {
+        if (blogs.length <= BLOGS_PER_ROW) { // In the case blog have < blog per row
           return blogs;
         }
         let visible = [];

@@ -9,6 +9,8 @@ const BlogDetail = () => {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
 
+  //console.log(slug)
+
   useEffect(() => {
     fetch('/assets/blog.json')
       .then(res => res.json())
