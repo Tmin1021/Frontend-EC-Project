@@ -12,15 +12,9 @@ function List_Product({isSearchPage=false, result=[]}) {
   if (type!='flower' && type!='accessory' && !isSearchPage) return (
     <p className='text-2xl md:text-3xl font-bold px-4 md:px-8 lg:px-12'><span className='line-through'>Sorry</span>, <span className= 'text-pink-500'>no matches were found</span>.</p>
   )
-
-  const initialProduct = isSearchPage
-                        ? result.filter(item => initialOption === 'flower' ? item.type===initialOption : item.type!='flower') : 
-                          type==='flower' ? 
-                          products.filter(product => product.type === 'flower')
-                        : products.filter(product => product.type !== 'flower')
- 
+  
   return (
-    <ProductProvider initialProduct={initialProduct}>
+    <ProductProvider isSearch={isSearchPage} searchResult={result.filter(item => initialOption === 'flower' ? item.type===initialOption : item.type!='flower') }>
 
       {(isSearchPage&&result.length!==0) &&
         <div className='flex flex-row gap-4 px-4 md:px-10 lg:px-32'>
@@ -30,7 +24,7 @@ function List_Product({isSearchPage=false, result=[]}) {
 
       {(!isSearchPage || (isSearchPage&&result.length!==0)) &&
         <div className='flex flex-col gap-4 px-4 md:px-10 lg:px-32'>
-            <List_Filter isFlower={initialOption==='flower'}/>
+            <List_Filter isFlower={initialOption==='flower'&&isSearchPage}/>
             <List_View/>
         </div> }
     </ProductProvider>

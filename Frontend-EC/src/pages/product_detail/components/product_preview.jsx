@@ -53,7 +53,7 @@ function Product_Preview({images}) {
       </div>
     </div>
           
-    <Preview_Slide images={images} setIndex={setIndex}/>
+    {images.length>=3 && <Preview_Slide images={images} setIndex={setIndex}/>}
   </div>
 
   );

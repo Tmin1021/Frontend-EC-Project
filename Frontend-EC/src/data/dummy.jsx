@@ -13,6 +13,8 @@ import demo_5 from "/src/assets/demo_5.png"
 //add accesories
 //rebuild category
 
+const isDummy = 1
+
 // A
 const accessories = [
   {
@@ -46,6 +48,18 @@ const bonus_gifts = [
     off_price: 8,
   }
 ]
+/*
+vr7nhymdm6sy1nef87xr7124
+l23fcdml6c0cuf4mwcfas7aa
+fsslor1xcmpvzmm6gr0a3xrq
+r6pg13k3125krw6oma3wea3l
+
+lbdqwwht5c453g0o8xbcresm
+vfizsmk3jlcq4tpwln9bumxx
+fd7uu75eoq2tx3829uhncx9b
+
+mp3ir8rh52ys3wwmf5qxenki
+rv0djgr8t342iyk5ilthxyka*/
 
 // C
 const carts = [
@@ -92,6 +106,15 @@ const comments = [
   },
 ];
 
+// D
+const dummyUser = {
+  user_id: 1,
+  name: "demo1hihihi",
+  phone: "0901234567",
+  mail: "demo1@gmail.com",
+  address: "Q5, TPHCM",
+  role: 'user'
+}
 
 // P
 const products = [
@@ -109,9 +132,9 @@ const products = [
       color: ['Pink Flowers'],
       flower_type: "Roses",
       options: [
-        {name: "original", price: 19.99, stems: 5},
-        {name: "deluxe", price: 29.99, stems: 10 },
-        {name: "grand", price: 39.99, stems: 15 }
+        {name: "original", price: 19.99, stems: 5, stock: 3},
+        {name: "deluxe", price: 29.99, stems: 10, stock: 0 },
+        {name: "grand", price: 39.99, stems: 15, stock: 0 }
       ],
     }
   },
@@ -130,9 +153,9 @@ const products = [
       color: ['White Flowers'],
       flower_type: "Roses",
       options: [
-        {name: "original", price: 21.99, stems: 5},
-        {name: "deluxe", price: 29.99, stems: 10 },
-        {name: "grand", price: 39.99, stems: 15 }
+        {name: "original", price: 21.99, stems: 5, stock: 0},
+        {name: "deluxe", price: 29.99, stems: 10, stock: 5 },
+        {name: "grand", price: 39.99, stems: 15, stock: 4 }
       ],
     }
   },
@@ -153,7 +176,7 @@ const products = [
     type: 'vase',
     name: "Montecitoss Vase",
     price: 40,
-    stock: 12,
+    stock: 0,
     available: true,
     description: "Assorted stems of seasonal peonies.",
     image_url: [demo_4],
@@ -229,7 +252,8 @@ const users = [
     phone: "0901234567",
     mail: "demo1@gmail.com",
     password: "bimat",
-    address: "Q5, TPHCM"
+    address: "Q5, TPHCM",
+    role: 'user'
   },
   {
     user_id: 2,
@@ -237,7 +261,8 @@ const users = [
     phone: "0901234567",
     mail: "demo1@gmail.com",
     password: "bimat",
-    address: "Q1, TPHCM"
+    address: "Q1, TPHCM",
+    role: 'user'
   },
     {
     user_id: 3,
@@ -245,7 +270,8 @@ const users = [
     phone: "0901234567",
     mail: "demo1@gmail.com",
     password: "bimat",
-    address: "Q3, TPHCM"
+    address: "Q3, TPHCM",
+    role: 'user'
   },
   {
     user_id: 4,
@@ -253,8 +279,9 @@ const users = [
     phone: "0901234567",
     mail: "demo1@gmail.com",
     password: "bimat",
-    address: "Q10, TPHCM"
+    address: "Q10, TPHCM",
+    role: 'admin'
   }
 ]
 
-export {products, carts, comments, bonus_gifts, accessories, users, inventory, orders, order_items};
+export {products, carts, comments, bonus_gifts, accessories, users, inventory, orders, order_items, dummyUser, isDummy};

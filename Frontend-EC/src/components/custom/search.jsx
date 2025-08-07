@@ -10,7 +10,7 @@ function Search_Item({product, isSelected, closeSearch}) {
 
     return (
         <div className={`flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-gray-100 shadow-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product.product_id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
-            {product.type === 'flower' ? <Box className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-green-500' : 'text-green-300'}`}/>
+            {product.type !== 'flower' ? <Box className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-green-500' : 'text-green-300'}`}/>
             : <Flower className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-pink-500' : 'text-pink-300'}`}/>}
             <p className={`py-1 font-light md:text-sm text-lg hover:font-semibold transition-all ${isSelected? 'font-semibold':""}`}>{product.name}</p>
         </div>

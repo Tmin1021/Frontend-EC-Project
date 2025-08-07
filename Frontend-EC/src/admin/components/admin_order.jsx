@@ -1,20 +1,109 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAdmin } from '../../context/AdminContext'
-import { order_items, orders, users } from '../../data/dummy'
+import { isDummy, order_items, orders, users } from '../../data/dummy'
 import { useNavigate, useParams } from 'react-router-dom'
 import Admin_Universal_Item, {Admin_Universal_Page} from './admin_universal'
+import GlobalApi from '../../../service/GlobalApi'
 
 export const Admin_Order_Detail = () => {
   const status = ["Required", "Confirmed", "Canceled", "Pended", "Delivering", "Done"]
 
   const {id} = useParams()
-  const order_item = order_items.find(i => i.order_id.toString()===id)
-  if (!order_item) return <p>ERROR</p>
+  const [orderItem, setOrderItem] = useState(null)
+  const [orderInfo, setOrderInfo] = useState(null)
+  const [userInfo, setUserInfo] = useState(null)
 
-  const order_info = orders.find(order => order.order_id === order_item.order_id)
-  const user_info = users.find(user => order_info.user_id===user.user_id)
-  const info = {user_id: ["User ID", user_info?.user_id], name: ["Name", user_info?.name], mail: ["Mail", user_info?.mail],
-                     phone: ['Phone', user_info?.phone], order_date: ['Order date', order_info.order_date], shipping_address: ['Shipping address', order_info?.shipping_address]}
+  useEffect(() => {
+      const fetchOrderItem = async () => {
+        try {
+            const res = await GlobalApi.OrderItemApi.getById(id);
+            const item = res.data.data;
+            console.log(item)
+            if (item) {
+              const data = {
+                order_id: item[0]?.order_id,
+                products: item[0]?.products
+              }
+            
+            console.log(data)
+            setOrderItem(data);
+            } else {
+            console.warn("No product found for", id);
+            }
+        } catch (error) {
+            console.error("Failed to fetch product:", error);
+        }
+      };
+
+      const fetchOrderInfo = async () => {
+        try {
+            const res = await GlobalApi.OrderApi.getById(id);
+            const item = res.data.data;
+
+            if (item) {
+                const data = {
+                    order_id: item?.documentId,
+                    user_id: item?.user_id,
+                    order_date: item?.order_date,
+                    total_amount: item?.total_amount,
+                    off_price: item?.off_price,
+                    shipping_address: item?.shipping_address,
+                    status: item?.order_status
+                }
+
+            setOrderInfo(data);
+            } else {
+            console.warn("No product found for", id);
+            }
+        } catch (error) {
+            console.error("Failed to fetch product:", error);
+        }
+      };
+
+      const fetchUserInfo = async () => {
+        try {
+            const res = await GlobalApi.OrderItemApi.getById(id);
+            const item = res.data.data;
+
+            if (item) {
+              const data = {
+              user_id: item?.documentId,
+              name: item?.name,
+              mail: item?.mail,
+              phone: item?.phone,
+              address: item?.address,
+              role: item?.role
+            }
+
+            setUserInfo(data);
+            } else {
+            console.warn("No product found for", id);
+            }
+        } catch (error) {
+            console.error("Failed to fetch product:", error);
+        }
+      };
+
+      if (isDummy) {
+        const new_orderItem = order_items.find(order_item => order_item.order_id.toString() === id)
+        const new_orderInfo = orders.find(order => order.order_id.toString()===id)
+        const new_userInfo = users.find(user=>user.user_id===new_orderInfo?.user_id)
+
+        setOrderItem(new_orderItem)
+        setOrderInfo(new_orderInfo)
+        setUserInfo(new_userInfo)
+      }
+      else {
+        fetchOrderItem()
+        fetchOrderInfo()
+        fetchUserInfo()
+      }
+  }, [id])
+
+  if (!orderItem) return <p>ERROR</p>
+
+  const info = {user_id: ["User ID", userInfo?.user_id], name: ["Name", userInfo?.name], mail: ["Mail", userInfo?.mail],
+                     phone: ['Phone', userInfo?.phone], order_date: ['Order date', orderInfo?.order_date], shipping_address: ['Shipping address', orderInfo?.shipping_address]}
 
   return (
     <div className='flex flex-col gap-2'>
@@ -34,7 +123,7 @@ export const Admin_Order_Detail = () => {
       {/* Items */}
       <div>
         <Admin_Universal_Item key={-1} which={'order_item'} header={1}/>
-        {order_item.products.map((item, i) => (
+        {orderItem.products.map((item, i) => (
           <div key={i} className={`${i%2===0?  'bg-gray-100':''} `}>
             <Admin_Universal_Item key={item.product_id} which={'order_item'} info={item}/>
           </div>

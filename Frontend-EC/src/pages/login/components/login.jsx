@@ -1,7 +1,12 @@
 import React, {useState} from 'react'
 import login_wallpaper from '/src/assets/login-wallpaper.png'
+import { useAuth } from '../../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
+    const {login} = useAuth()
+    const navigate = useNavigate()
+
     const [form, setForm] = useState({
         email: '',
         password: ''
@@ -17,9 +22,8 @@ export const Login = () => {
 
     // Handle form submission
     const handleSubmit = (e) => {
-        e.preventDefault();
-        // You can use 'form' to send data to backend here
-        console.log(form);
+        e.preventDefault()
+        login(form.email, form.password, navigate)
     };
 
     return (

@@ -11,6 +11,7 @@ export function CartProvider({children}) {
     const [selectedAll, setSelectedAll] = useState(false)
 
     // format: (product, option, quantity)
+    // a
     const addCart = (product) => {
         setCart((prevCart) => {
             let found = false;
@@ -23,7 +24,7 @@ export function CartProvider({children}) {
 
                 if (isSameProduct && isSameOption) {
                     found = true;
-                    return { ...item, quantity: item.quantity + product.quantity };
+                    return { ...item, quantity: Math.min(item.quantity + product.quantity, product.product.stock)};
                 }
                 return item;
             });
@@ -37,6 +38,10 @@ export function CartProvider({children}) {
         });
     };
 
+    // c
+    const closeCart = () => setIsCardOpen(false)
+
+    // g
     const getOptimizedPromotions = (cartOverride, selectedItemsOverride) => {
         const flowerCounts = {}
         const accessoryCounts = {}
@@ -98,43 +103,6 @@ export function CartProvider({children}) {
         setCart(newCart)
     }
 
-
-    const updateCart = (product, quantity) => {
-        const updatedCart = cart.map(item =>
-                item === product
-                ? { ...item, quantity: quantity }
-                : item
-        )
-
-        getOptimizedPromotions(updatedCart, selectedItems)
-    }
-
-
-    const removeCart = () => {
-        const newCart = []
-        for (let i=0; i<cart.length; i++) {
-            if (!selectedItems[i]) newCart.push(cart[i])
-        }
-        
-        setCart(newCart)
-        setSelectedItems(Array(cart.length).fill(false))
-    }
-
-    const openCart = () =>  setIsCardOpen(true)
-
-    const closeCart = () => setIsCardOpen(false)
-
-    const handleSelectedItems = index => {
-        const newSelectedItems = selectedItems.slice()
-        newSelectedItems[index] = !newSelectedItems[index]
-        const number_of_selected_items = newSelectedItems.filter(Boolean).length
-        if (number_of_selected_items === newSelectedItems.length) setSelectedAll(true)
-        else setSelectedAll(false)
-
-        setSelectedItems(newSelectedItems)
-        getOptimizedPromotions(cart, newSelectedItems)
-    }
-
     const getTotal = useCallback(() => {
         const number_of_selected_items = selectedItems.filter(Boolean).length
         const total = Math.round(selectedItems.map((isSelected, index) => isSelected? ((cart[index].option?.price ?? cart[index].product.price)*cart[index].quantity) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
@@ -146,8 +114,45 @@ export function CartProvider({children}) {
         return cart.reduce((acc, item) => acc+item.off_price,0)
     }
 
+    // h
+    const handleSelectedItems = index => {
+        const newSelectedItems = selectedItems.slice()
+        newSelectedItems[index] = !newSelectedItems[index]
+        const number_of_selected_items = newSelectedItems.filter(Boolean).length
+        if (number_of_selected_items === newSelectedItems.length) setSelectedAll(true)
+        else setSelectedAll(false)
+
+        setSelectedItems(newSelectedItems)
+        getOptimizedPromotions(cart, newSelectedItems)
+    }
+
+    // o
+    const openCart = () =>  setIsCardOpen(true)
+
+    // r
+    const removeCart = () => {
+        const newCart = []
+        for (let i=0; i<cart.length; i++) {
+            if (!selectedItems[i]) newCart.push(cart[i])
+        }
+        
+        setCart(newCart)
+        setSelectedItems(Array(cart.length).fill(false))
+    }
+
+    // u
+    const updateCart = (product, quantity) => {
+        const updatedCart = cart.map(item =>
+                item === product
+                ? { ...item, quantity: quantity }
+                : item
+        )
+
+        getOptimizedPromotions(updatedCart, selectedItems)
+    }
+
     return (
-        <CartContext.Provider value={{cart, setCart, addCart, updateCart, removeCart, isCartOpen, openCart, closeCart, handleSelectedItems, selectedItems, selectedAll, setSelectedItems, getTotal, getTotalOff, setSelectedAll, getOptimizedPromotions}}>
+        <CartContext.Provider value={{addCart, cart, closeCart, getOptimizedPromotions, getTotal, getTotalOff, handleSelectedItems, isCartOpen, openCart, removeCart, setCart, selectedItems, selectedAll, setSelectedItems, setSelectedAll, updateCart}}>
             {children}
         </CartContext.Provider>
     )

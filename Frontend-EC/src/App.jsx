@@ -5,7 +5,7 @@ import Dashboard from './pages/dashboard'
 import List_Product from './pages/list_product'
 import Personal from './pages/personal'
 import Product_Detail from './pages/product_detail'
-import {BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom'
+import {BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom'
 import SupportPage from './pages/support'
 import Login from './pages/login'
 import Signup from './pages/signup/components/signup'
@@ -17,6 +17,8 @@ import Admin from './admin'
 import Admin_Order, { Admin_Order_Detail } from './admin/components/admin_order'
 import Admin_User from './admin/components/admin_user'
 import Admin_Inventory, { Admin_Inventory_Detail } from './admin/components/admin_inventory'
+import { Children } from 'react'
+import { useAuth } from './context/AuthContext'
 
 const UserLayout = () => {
 
@@ -29,17 +31,22 @@ const UserLayout = () => {
   )
 }
 
+const ProtectedRoute = ({children}) => {
+  const {isAuthenticated} = useAuth()
+  return isAuthenticated ? children : <Navigate to='/login'/>
+}
+
 function App() {
 
   return (
-      <div className='max-w-screen-xl min-w-[320px]'>
+      <div className='min-w-[320px]'>
         <Router>
           <Routes>
             <Route element={<UserLayout/>}>
               <Route path="/" element={<Dashboard/>}/>
               <Route path="/:type" element={<List_Product/>}/>
               <Route path="/:type/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
-              <Route path="/personal" element={<Personal/>}/>
+              <Route path="/personal" element={<ProtectedRoute><Personal/></ProtectedRoute>}/>
               <Route path='/search' element={<ProductProvider><Search_Page/></ProductProvider>} />
               <Route path="/support" element={<SupportPage/>}/>
               <Route path="/login" element={<Login/>}/>

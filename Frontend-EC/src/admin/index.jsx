@@ -67,11 +67,11 @@ function Admin() {
 
 
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex md:w-1/4 lg:w-1/5 bg-gray-100 pt-4 h-full">
+      <div className="hidden md:flex md:w-1/4 lg:w-1/5 pt-4 h-full">
         <div className="flex flex-col w-full px-2">
-          <p className="font-bold pl-4 pb-4 text-4xl">Admin</p>
+          <p className="font-bold pl-4 pb-4 text-3xl">Admin</p>
           {Object.keys(managements).map((key, i) => (
-            <div key={key} onClick={() => {handleNavigate(managements[key][0]); handleChosen(i)}} className={`${isChosen[i]? 'bg-blue-500 text-white':''} rounded-lg flex items-center gap-2 px-4 py-4 cursor-pointer transition-all text-xl`}>
+            <div key={key} onClick={() => {handleNavigate(managements[key][0]); handleChosen(i)}} className={`${isChosen[i]? 'bg-purple-100 text-purple-600 font-semibold shadow-lg py-4':'py-3'} rounded-lg flex items-center gap-2 px-4 cursor-pointer transition-all text-lg`}>
               {managements[key][1]}
               {key}
             </div>
@@ -80,7 +80,7 @@ function Admin() {
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 p-4 mt-16 md:mt-0 overflow-auto">
+      <div className="flex-1 p-4 mt-16 md:mt-0 overflow-auto bg-gray-100 ">
         <Outlet />
       </div>
     </div>
