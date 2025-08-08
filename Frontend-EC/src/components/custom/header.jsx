@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import Search_Space from "./search";
 import { useAuth } from '../../context/AuthContext'
+import Chatbot from './chatbot';
+
 
 function Header_Item({name, onHandleClick}) {
     const iconMap = {
@@ -107,7 +109,7 @@ function Header() {
 
             {/* Put isSeacrh here will not trigger the exit motion */}
             <Search_Space isSearch={isSearch} closeSearch={()=>setIsSearch(false)}/>
-
+        <Chatbot />
         </div>
     )
 }

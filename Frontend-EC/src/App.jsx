@@ -17,8 +17,11 @@ import Admin from './admin'
 import Admin_Order, { Admin_Order_Detail } from './admin/components/admin_order'
 import Admin_User from './admin/components/admin_user'
 import Admin_Inventory, { Admin_Inventory_Detail } from './admin/components/admin_inventory'
+
 import { Children } from 'react'
 import { useAuth } from './context/AuthContext'
+import Admain_Dashboard from './admin/components/admin_dashboard'
+
 
 const UserLayout = () => {
 
@@ -61,6 +64,7 @@ function App() {
               <Route path="inventory/:id" element={<Admin_Inventory_Detail/>} />
               <Route path="order" element={<Admin_Order />} />
               <Route path="order/:id" element={<Admin_Order_Detail />} />
+              <Route path="dashboard" element={<Admain_Dashboard />} />
             </Route>
           </Routes>
         </Router>
