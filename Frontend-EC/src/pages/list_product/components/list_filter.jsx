@@ -9,14 +9,14 @@ export const filter_types = {
   "Flower Type": ["Anemones", "Dried Flowers", "Hydrangeas", "Lilies", "Orchids", "Peonies", "Ranunculus", "Roses", "Succulents", "Sunflowers", "Tropical"],
   "Occassions": ["Birthday", "Sympathy", "Just Because", "Anniversary", "Housewarming", "Get Well", "Congrats", "I'm sorry", "New Baby", "Thank you", "Party Boxes"],
   "Colors": ["Pink Flowers", "Red Flowers", "White Flowers", "Yellow Flowers"],
-  "Sort": ["Best Sellers", "Featured", "Price: Low to High", "Price: High to Low", "First Available"]
+  "Sort": ["Best Sellers", "Price: Low to High", "Price: High to Low"]
 }
 
 function Filter_Option({type, whichOption, onHandleClick}) {
   // Sort: allow 1 option only, must appear that option in <p>
   return (
-    <div className={`${type==="Sort"? 'flex flex-col gap-0 absolute right-0 w-[160px] h-[125px] py-2 px-4 overflow-auto rounded-lg bg-white shadow-sm' : 'grid grid-cols-2 gap-2 h-full'} 
-                    md:flex md:flex-col md:gap-0 md:absolute md:right-0 md:translate-x-1/4 md:w-[160px] md:h-[125px] md:py-2 md:px-4 md:overflow-auto no-scrollbar md:rounded-lg md:bg-white md:shadow-sm`}>
+    <div className={`${type==="Sort"? 'flex flex-col gap-0 absolute right-0 w-[180px] h-[125px] py-2 px-4 overflow-auto rounded-lg bg-white shadow-sm' : 'grid grid-cols-2 gap-2 h-full'} 
+                    md:flex md:flex-col md:gap-0 md:absolute md:right-0 md:translate-x-1/4 md:w-[180px] md:h-[125px] md:py-2 md:px-4 md:overflow-auto no-scrollbar md:rounded-lg md:bg-white md:shadow-sm`}>
       
       {filter_types[type].map((option, index) => (
         <div key={option} className={`${type==='Sort'? '': (whichOption[index]? 'border-3 border-green-700' : 'border-1 border-gray-200')} 
@@ -35,7 +35,7 @@ function Filter_Option({type, whichOption, onHandleClick}) {
 
 export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) {
   const [whichOption, setWhichOption] = useState(Array(filter_types[name].length).fill(false))
-  const {filterProduct} = useProduct()
+  const {filterProduct, sortProduct} = useProduct()
   const [sortOption, setSortOption] = useState('Best sellers')
 
   const handleOption = (type, value, index) => {
@@ -48,6 +48,7 @@ export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) 
     else {
       const newWhichOption = Array(filter_types[name].length).fill(false)
       newWhichOption[index] = !newWhichOption[index]
+      sortProduct(value)
       setWhichOption(newWhichOption)
       setSortOption(filter_types[name][index])
     }
@@ -56,7 +57,7 @@ export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) 
   // click Filter_Option will propagate that click to the parent --> trigger onHandleClick --> had better to separate or stopPropagation
   //         
   return (
-    <div className=' md:relative' >
+    <div className=' md:relative'>
       {/* Title */}
       <div className='w-full flex items-center justify-between 
                       md:border-1 md:py-1 md:px-2' onClick={onHandleClick}>
@@ -100,9 +101,9 @@ function List_Filter({isFlower=false}) {
   }
 
   return (
-    <div className='min-w-full flex items-center justify-between'>
+    <div className='min-w-full flex items-center justify-between' onClick={()=>setIsOpenFilters(Array(4).fill(false))}>
       {/* Filter */}
-      <div className={`${(type==='flower' || isFlower) ? '':'hidden'}`}>
+      <div className={`${(type==='flower' || isFlower) ? '':'hidden'}`} onClick={(e) => e.stopPropagation()}>
         <div className='flex gap-1 items-center md:hidden' onClick={()=>setIsOpen(true)}>
           <Funnel/>
           <p className='font-semibold'>FILTER BY</p>
@@ -125,7 +126,7 @@ function List_Filter({isFlower=false}) {
       </div>
 
       {/* Sort */}
-      <div className='flex items-center gap-1 md:gap-2 lg:gap-4'>
+      <div className='flex items-center gap-1 md:gap-2 lg:gap-4' onClick={(e) => e.stopPropagation()}>
           <p className='hidden md:flex font-semibold'>SORT</p>
           <Filter name={"Sort"} isOpenFilter={isOpenFilters[3]} onHandleClick={() => handleClick(3)}/>
       </div>

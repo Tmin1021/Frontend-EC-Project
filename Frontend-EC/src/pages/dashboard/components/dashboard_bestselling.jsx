@@ -8,7 +8,7 @@ export function Bestselling_Item({product}) {
     return (
         <div className="min-w-[170px] bg-white dark:bg-black">
             <div className='w-full aspect-square overflow-hidden'>
-                <img src={product.image_url[0]} className='w-full h-full object-cover'/>
+                <img src={product?.image_url[0]} className='w-full h-full object-cover'/>
             </div>
             <p className='font-bold text-sm md:text-base pt-3'>{product.name}</p>
             <p className='font-light text-sm py-1'>from <span className='font-bold text-lg'>${findStartingPrice()}</span></p>
@@ -32,7 +32,7 @@ const Dashboard_Bestselling = () => {
             {/* Items */}
             <div className="flex overflow-x-auto no-scrollbar gap-2 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4 lg:gap-8 scroll-smooth">
             {products.filter(product=>product.type==='flower').slice(0, 4).map((product) => (
-                <div key={product.product_id} className="cursor-pointer" onClick={() => handleClick(product.product_id)}>
+                <div key={product.product_id} className="cursor-pointer" onClick={() => handleClick(product.uuid)}>
                     <Bestselling_Item product={product} />
                 </div>
             ))}

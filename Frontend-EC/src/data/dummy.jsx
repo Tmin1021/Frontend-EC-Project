@@ -12,6 +12,9 @@ const categories = [
   { id: "vase", name: "Vases" },
 ];
 
+const isDummy = 1
+
+// A
 // Accessories
 const accessories = [
   {
@@ -32,9 +35,31 @@ const accessories = [
 
 // Bonus Gifts
 const bonus_gifts = [
-  { flower_id: "B1", accessory_id: "V1", off_price: 5 },
-  { flower_id: "B1", accessory_id: "V2", off_price: 5 },
-];
+  { flower_id: "B1",
+    accessory_id: "V1",
+    off_price: 5,
+  },
+  { flower_id: "B1",
+    accessory_id: "V2",
+    off_price: 5,
+  },   
+  { flower_id: "B2",
+    accessory_id: "V1",
+    off_price: 8,
+  }
+]
+/*
+vr7nhymdm6sy1nef87xr7124
+l23fcdml6c0cuf4mwcfas7aa
+fsslor1xcmpvzmm6gr0a3xrq
+r6pg13k3125krw6oma3wea3l
+
+lbdqwwht5c453g0o8xbcresm
+vfizsmk3jlcq4tpwln9bumxx
+fd7uu75eoq2tx3829uhncx9b
+
+mp3ir8rh52ys3wwmf5qxenki
+rv0djgr8t342iyk5ilthxyka*/
 
 // Carts
 const carts = [
@@ -85,14 +110,24 @@ const comments = [
   },
 ];
 
-// Products
+// D
+const dummyUser = {
+  user_id: 1,
+  name: "demo1hihihi",
+  phone: "0901234567",
+  mail: "demo1@gmail.com",
+  address: "Q5, TPHCM",
+  role: 'user'
+}
+
+// P
 const products = [
   {
     product_id: "B1",
     type: "flower",
     name: "Red Rose Bouquet",
-    price: 40,
-    stock: 15,
+    price: 19.99,
+    stock: 12,
     available: true,
     description: "Assorted stems of seasonal roses.",
     description_detail: "A classic bouquet of vibrant red roses, perfect for romantic occasions.",
@@ -105,9 +140,9 @@ const products = [
       color: ["Pink Flowers"],
       flower_type: "Roses",
       options: [
-        { name: "original", price: 19.99, stems: 5 },
-        { name: "deluxe", price: 29.99, stems: 10 },
-        { name: "grand", price: 39.99, stems: 15 },
+        {name: "original", price: 19.99, stems: 5, stock: 3},
+        {name: "deluxe", price: 29.99, stems: 10, stock: 0 },
+        {name: "grand", price: 39.99, stems: 15, stock: 0 }
       ],
       accessories: ["V1", "V2"],
     },
@@ -116,8 +151,8 @@ const products = [
     product_id: "B2",
     type: "flower",
     name: "Farmer's Choice Peonies",
-    price: 40,
-    stock: 12,
+    price: 21.99,
+    stock: 1,
     available: true,
     description: "Assorted stems of seasonal peonies.",
     description_detail: "A rustic mix of peonies, hand-picked for freshness.",
@@ -130,9 +165,9 @@ const products = [
       color: ["White Flowers"],
       flower_type: "Peonies",
       options: [
-        { name: "original", price: 19.99, stems: 5 },
-        { name: "deluxe", price: 29.99, stems: 10 },
-        { name: "grand", price: 39.99, stems: 15 },
+        {name: "original", price: 21.99, stems: 5, stock: 0},
+        {name: "deluxe", price: 29.99, stems: 10, stock: 5 },
+        {name: "grand", price: 39.99, stems: 15, stock: 4 }
       ],
       accessories: ["V1", "V2"],
     },
@@ -205,8 +240,8 @@ const products = [
     product_id: "V2",
     type: "vase",
     name: "Montecitoss Vase",
-    price: 25,
-    stock: 12,
+    price: 40,
+    stock: 0,
     available: true,
     description: "A beautiful vase for your flowers.",
     description_detail: "Stylish vase with a unique finish.",
@@ -365,10 +400,42 @@ const order_items = [
 
 // Users
 const users = [
-  { user_id: 1, name: "demo1hihihi", phone: "0901234567", mail: "demo1@gmail.com", password: "bimat", address: "Q5, TPHCM" },
-  { user_id: 2, name: "demo1hehehe", phone: "0901234567", mail: "demo1@gmail.com", password: "bimat", address: "Q1, TPHCM" },
-  { user_id: 3, name: "demo1hihihi", phone: "0901234567", mail: "demo1@gmail.com", password: "bimat", address: "Q3, TPHCM" },
-  { user_id: 4, name: "demo1hehehe", phone: "0901234567", mail: "demo1@gmail.com", password: "bimat", address: "Q10, TPHCM" },
-];
+  {
+    user_id: 1,
+    name: "demo1hihihi",
+    phone: "0901234567",
+    mail: "demo1@gmail.com",
+    password: "bimat",
+    address: "Q5, TPHCM",
+    role: 'user'
+  },
+  {
+    user_id: 2,
+    name: "demo1hehehe",
+    phone: "0901234567",
+    mail: "demo1@gmail.com",
+    password: "bimat",
+    address: "Q1, TPHCM",
+    role: 'user'
+  },
+    {
+    user_id: 3,
+    name: "demo1hihihi",
+    phone: "0901234567",
+    mail: "demo1@gmail.com",
+    password: "bimat",
+    address: "Q3, TPHCM",
+    role: 'user'
+  },
+  {
+    user_id: 4,
+    name: "demo1hehehe",
+    phone: "0901234567",
+    mail: "demo1@gmail.com",
+    password: "bimat",
+    address: "Q10, TPHCM",
+    role: 'admin'
+  }
+]
 
-export { products, carts, comments, bonus_gifts, accessories, users, inventory, orders, order_items, categories };
+export { products, carts, comments, bonus_gifts, accessories, users, inventory, orders, order_items, categories, isDummy, dummyUser };

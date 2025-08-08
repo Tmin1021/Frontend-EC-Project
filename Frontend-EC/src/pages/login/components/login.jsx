@@ -1,25 +1,23 @@
-import React, { useState } from 'react';
-import login_wallpaper from '/src/assets/login-wallpaper.png';
+import React, {useState} from 'react'
+import login_wallpaper from '/src/assets/login-wallpaper.png'
+import { useAuth } from '../../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export const Login = () => {
-  const [form, setForm] = useState({
-    email: '',
-    password: ''
-  });
+    const {login} = useAuth()
+    const navigate = useNavigate()
 
-  // Handle input changes
-  const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
+    const [form, setForm] = useState({
+        email: '',
+        password: ''
     });
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(form);
-  };
+    // Handle form submission
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        login(form.email, form.password, navigate)
+    };
 
   return (
     <div className="relative min-h-screen">

@@ -4,7 +4,9 @@ import {User, Search, ShoppingCart, Menu, X, ChevronRight} from 'lucide-react'
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import Search_Space from "./search";
+import { useAuth } from '../../context/AuthContext'
 import Chatbot from './chatbot';
+
 
 function Header_Item({name, onHandleClick}) {
     const iconMap = {
@@ -24,6 +26,7 @@ function Header_Item({name, onHandleClick}) {
     )
 }
 
+
 function Header() {
     // fixed z-10 top-10 left-1/2 -translate-x-1/2 
     // mx-auto: place the div in the middle of the space it take
@@ -35,6 +38,7 @@ function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
     const {openCart} = useCart()
+    const {isAuthenticated} = useAuth()
     const navigate = useNavigate()
     const navigateMap = {
         "All Flowers": "/flower", 
@@ -44,7 +48,8 @@ function Header() {
 
     const handleClick = (name) => {
         if (name === "Cart") {openCart()}
-        if (name == "Search") {setIsSearch(!isSearch)}
+        if (name ===  "Search") {setIsSearch(!isSearch)}
+        if (name === "Personal") {navigate(isAuthenticated? '/personal' : '/login')}
         else if (navigateMap[name]) {navigate(navigateMap[name])}
     }
     

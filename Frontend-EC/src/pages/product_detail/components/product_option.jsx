@@ -5,11 +5,13 @@ function Option_Item({option}) {
    const {selectedOption, setSelectedOption} = useProductDetail()
 
     return (
-    <div className={`max-w-[200px] w-full h-[120px] flex flex-col justify-around items-center py-5 ${selectedOption.name===option.name? 'border-3 border-green-700' : 'border-1 border-gray-200'}`}
+    <div className={`max-w-[200px] w-full h-[120px] flex flex-col justify-around items-center py-5 
+                    ${selectedOption.name===option.name? 'border-3 border-green-700' : 'border-1 border-gray-200'}
+                    ${option.stock===0? 'pointer-events-none' : ''}`}
          onClick={()=>setSelectedOption(option)}>
-        <p className='font-bold text-xl'>${option.price}</p>
-        <p className='font-medium text-xs'>{option.name.toUpperCase()}</p>
-        <p className='font-extralight text-xs text-gray-500'>{option.stems} stems</p>
+        <p className={`font-bold text-xl ${option.stock===0? 'text-gray-300' : ''}`}>${option.price}</p>
+        <p className={`font-medium text-xs ${option.stock===0? 'text-gray-300' : ''}`}>{option.name.toUpperCase()}</p>
+        <p className={`font-extralight text-xs ${option.stock===0? 'text-gray-300' : 'text-gray-500'}`}>{option.stems} stems</p>
     </div>
   )
 }

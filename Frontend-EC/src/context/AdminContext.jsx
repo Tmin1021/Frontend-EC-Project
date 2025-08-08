@@ -1,13 +1,90 @@
-import { createContext, useContext, useState } from "react";
-import {  inventory, orders, products, users } from "../data/dummy";
+import { createContext, useContext, useEffect, useState } from "react";
+import {isDummy, orders, products, users } from "../data/dummy";
+import GlobalApi from '../../service/GlobalApi';
 
 const AdminContext = createContext()
+const BASE_URL = 'http://localhost:1337';
 
 export function AdminProvider({children}) {
-    // for inventory
-    const [currentInventory, setCurrentInventory] = useState(products)
-    const [inventoryAscendings, setInventoryAscendings] = useState({product_id: true, name: true, type: true, stock: true, available: true})
+    const [currentUser, setCurrentUser] = useState([])
+    const [currentInventory, setCurrentInventory] = useState([])
+    const [currentOrder, setCurrentOrder] = useState([])
 
+    useEffect(()=> {
+        async function fetchUsers() {
+            try {
+                const res = await GlobalApi.UserApi.getAll()
+                const data = res.data.data.map(item => ({
+                    user_id: item?.documentId,
+                    name: item?.name,
+                    mail: item?.mail,
+                    phone: item?.phone,
+                    address: item?.address,
+                    role: item?.role
+                }))
+
+                const new_data = data.filter(item => item.role==='user')
+                setCurrentUser(new_data)
+            } catch (err) {
+                console.error("Failed to fetch users", err);
+            }
+        }
+
+        async function fetchProducts() {
+            try {
+                const res = await GlobalApi.ProductApi.getAll()
+                const data = res.data.data.map(item => ({
+                    product_id: item?.documentId,
+                    type: item?.type,
+                    name: item?.name,
+                    price: item?.price,
+                    stock: item?.stock,
+                    available: item?.available,
+                    description: item?.description,
+                    image_url: item.image_url.map(image => BASE_URL+image.url),
+                    flower_details: item?.flower_details
+            }))
+
+            setCurrentInventory(data)
+
+            } catch (err) {
+                console.error("Failed to fetch products", err);
+            }
+        }
+
+        async function fetchOrders() {
+            try {
+                const res = await GlobalApi.OrderApi.getAll()
+                const data = res.data.data.map(item => ({
+                    order_id: item?.documentId,
+                    user_id: item?.user_id,
+                    order_date: item?.order_date,
+                    total_amount: item?.total_amount,
+                    off_price: item?.off_price,
+                    shipping_address: item?.shipping_address,
+                    status: item?.order_status
+                }))
+
+                setCurrentOrder(data)
+            } catch (err) {
+                console.error("Failed to fetch users", err);
+            }
+        }
+
+        function fetchDummy() {
+            setCurrentUser(users)
+            setCurrentInventory(products)
+            setCurrentOrder(orders)
+        }
+
+        if (isDummy) fetchDummy() 
+        else {
+        fetchUsers()
+        fetchProducts()
+        fetchOrders()}
+    }, [])
+
+    // for inventory
     const updateInventory = (old_product, new_product) => {
         const updatedInventory = currentInventory.map(product =>
             product.product_id === old_product.product_id
@@ -23,14 +100,7 @@ export function AdminProvider({children}) {
         setCurrentInventory(newInventory)
     }
 
-    // for user
-    const [currentUser, setCurrentUser] = useState(users)
-    const [userAscendings, setUserAscendings] = useState({user_id: true, name: true, phone: true, mail: true, address: true})
-
     // for order
-    const [currentOrder, setCurrentOrder] = useState(orders)
-    const [orderAscendings, setOrderAscendings] = useState({order_id: true, user_id: true, order_date: true, shipping_address: true, total_amount: true})
-
     const updateStatusOrder = (order_id, newStatus) => {
         const updatedOrders = currentOrder.map(order =>
             order.order_id === order_id
@@ -47,29 +117,26 @@ export function AdminProvider({children}) {
     }
 
     // for universal
-    const sortUniversal = (from, by) => {
+    const sortUniversal = (from, by, isAscending) => {
         const mapping = {
-            inventory: [currentInventory, setCurrentInventory, inventoryAscendings, setInventoryAscendings],
-            user: [currentUser, setCurrentUser, userAscendings, setUserAscendings],
-            order: [currentOrder, setCurrentOrder, orderAscendings, setOrderAscendings],
+            inventory: [currentInventory, setCurrentInventory],
+            user: [currentUser, setCurrentUser],
+            order: [currentOrder, setCurrentOrder],
         }
-        const [dataList, setter, isAscending, setAscendings] = mapping[from]
+        const [dataList, setter] = mapping[from]
 
         const sorted = [...dataList].sort((a, b) => {
         const aVal = a[by]  
         const bVal = b[by]
 
         if (typeof aVal === 'string') {
-            return isAscending[by]
+            return isAscending
                 ? aVal.localeCompare(bVal)
                 : bVal.localeCompare(aVal)} 
-        else if (typeof aVal === 'number' || typeof aVal === 'boolean') return isAscending[by] ? aVal - bVal : bVal - aVal
+        else if (typeof aVal === 'number' || typeof aVal === 'boolean') return isAscending ? aVal - bVal : bVal - aVal
         else return 0 })
 
         setter(sorted)
-        const newAscendings = {...dataList}
-        newAscendings[by] = !newAscendings[by]
-        setAscendings(newAscendings)
     }
 
     const searchUniversal = (from, input) => {

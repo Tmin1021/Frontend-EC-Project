@@ -74,7 +74,7 @@ function Product_Rating({comments}) {
 
 function Product_Comment({product_id}) {
   const [index, setIndex] = useState(0)
-  const this_product_comments = comments.filter((comment) => comment.product_id == product_id)
+  const this_product_comments = comments //comments.filter((comment) => comment.product_id == product_id)
 
   return (
     <div>
