@@ -6,32 +6,7 @@ import demo_3 from "/src/assets/demo_3.png";
 import demo_4 from "/src/assets/demo_4.png";
 import demo_5 from "/src/assets/demo_5.png";
 
-// Categories
-const categories = [
-  { id: "flower", name: "Bouquets" },
-  { id: "vase", name: "Vases" },
-];
-
 const isDummy = 1
-
-// A
-// Accessories
-const accessories = [
-  {
-    product_id: "V1",
-    name: "Montecito Vase",
-    type: "vase",
-    image_url: [demo_3],
-    price: 19,
-  },
-  {
-    product_id: "V2",
-    name: "Montecitosss Vase",
-    type: "vase",
-    image_url: [demo_4],
-    price: 25,
-  },
-];
 
 // Bonus Gifts
 const bonus_gifts = [
@@ -130,11 +105,7 @@ const products = [
     stock: 12,
     available: true,
     description: "Assorted stems of seasonal roses.",
-    description_detail: "A classic bouquet of vibrant red roses, perfect for romantic occasions.",
-    tip: "Keep stems trimmed and water fresh daily.",
-    caution: "Avoid direct sunlight for prolonged periods.",
     image_url: [demo_1, demo, demo_2, demo_3],
-    care: { sun: "Partial" },
     flower_details: {
       occasion: ["Wedding"],
       color: ["Pink Flowers"],
@@ -144,7 +115,6 @@ const products = [
         {name: "deluxe", price: 29.99, stems: 10, stock: 0 },
         {name: "grand", price: 39.99, stems: 15, stock: 0 }
       ],
-      accessories: ["V1", "V2"],
     },
   },
   {
@@ -155,11 +125,7 @@ const products = [
     stock: 1,
     available: true,
     description: "Assorted stems of seasonal peonies.",
-    description_detail: "A rustic mix of peonies, hand-picked for freshness.",
-    tip: "Place in a cool area away from heat sources.",
-    caution: "Petals are delicate; handle with care.",
     image_url: [demo_1, demo, demo_2],
-    care: { sun: "Full" },
     flower_details: {
       occasion: ["New Baby", "Thank you"],
       color: ["White Flowers"],
@@ -169,7 +135,6 @@ const products = [
         {name: "deluxe", price: 29.99, stems: 10, stock: 5 },
         {name: "grand", price: 39.99, stems: 15, stock: 4 }
       ],
-      accessories: ["V1", "V2"],
     },
   },
   {
@@ -180,11 +145,7 @@ const products = [
     stock: 18,
     available: true,
     description: "Beautiful peony flowers.",
-    description_detail: "Lush peonies symbolizing prosperity and love.",
-    tip: "Change water every two days for longevity.",
-    caution: "Keep away from fruit to avoid ethylene gas exposure.",
     image_url: [demo_5],
-    care: { sun: "Partial" },
     flower_details: {
       occasion: ["Wedding", "Graduation"],
       color: ["Pink Flowers"],
@@ -194,32 +155,6 @@ const products = [
         { name: "deluxe", price: 29.99, stems: 10 },
         { name: "grand", price: 39.99, stems: 15 },
       ],
-      accessories: ["V1", "V2"],
-    },
-  },
-  {
-    product_id: "B4",
-    type: "flower",
-    name: "Sunflower Arrangement",
-    price: 35,
-    stock: 15,
-    available: true,
-    description: "Bright and cheerful sunflowers.",
-    description_detail: "A sunny arrangement to brighten any day.",
-    tip: "Support stems with a tall vase.",
-    caution: "Avoid overwatering.",
-    image_url: [demo_2],
-    care: { sun: "Full" },
-    flower_details: {
-      occasion: ["Thank you", "Get Well"],
-      color: ["Yellow Flowers"],
-      flower_type: "Sunflowers",
-      options: [
-        { name: "original", price: 15.99, stems: 3 },
-        { name: "deluxe", price: 25.99, stems: 6 },
-        { name: "grand", price: 35.99, stems: 9 },
-      ],
-      accessories: ["V1", "V2"],
     },
   },
   {
@@ -230,11 +165,7 @@ const products = [
     stock: 12,
     available: true,
     description: "A beautiful vase for your flowers.",
-    description_detail: "Elegant glass vase with a sleek design.",
-    tip: "Clean with mild soap to maintain clarity.",
-    caution: "Fragile; handle with care.",
     image_url: [demo_3],
-    care: { sun: "N/A" },
   },
   {
     product_id: "V2",
@@ -244,21 +175,10 @@ const products = [
     stock: 0,
     available: true,
     description: "A beautiful vase for your flowers.",
-    description_detail: "Stylish vase with a unique finish.",
-    tip: "Fill with decorative stones for added stability.",
-    caution: "Avoid abrasive cleaners.",
     image_url: [demo_4],
-    care: { sun: "N/A" },
   },
 ];
 
-// Inventory
-const inventory = [
-  { product_id: "B1", stock: 15, available: 1 },
-  { product_id: "B2", stock: 12, available: 1 },
-  { product_id: "B3", stock: 18, available: 1 },
-  { product_id: "B4", stock: 15, available: 1 },
-];
 
 // Orders
 const orders = [
@@ -438,4 +358,4 @@ const users = [
   }
 ]
 
-export { products, carts, comments, bonus_gifts, accessories, users, inventory, orders, order_items, categories, isDummy, dummyUser };
+export { products, carts, comments, bonus_gifts, users, inventory, orders, order_items, isDummy, dummyUser };
