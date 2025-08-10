@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
-import { MessageSquare, X } from 'lucide-react';
+import { BotMessageSquare, MessageSquare, X } from 'lucide-react';
 
 function Chatbot() {
   const [message, setMessage] = useState('');
@@ -61,34 +61,33 @@ function Chatbot() {
     setLoading(false);
   }
 
+
   return (
     <>
       {/* Floating Chat Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-5 right-5 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50"
-      >
-        <MessageSquare size={24} />
-      </button>
+      <div  onClick={() => setIsOpen(!isOpen)}
+            className="fixed bottom-6 right-6 p-4 bg-white/60 backdrop-blur-sm shadow-gray-300 shadow-md rounded-full text-pink-700 hover:text-pink-500 hover:shadow-lg transition-all z-50">
+        <BotMessageSquare className='w-8 h-8' />
+      </div>
 
       {/* Chatbot Panel */}
       {isOpen && (
-        <div className="fixed bottom-20 right-5 z-50 w-[90%] sm:w-[400px] h-[500px] bg-white shadow-xl border rounded-lg flex flex-col">
+        <div className="fixed bottom-20 right-5 z-50 w-[90%] sm:w-[400px] h-[500px] shadow-gray-300 shadow-md border-1 border-gray-100 rounded-lg flex flex-col">
           {/* Header */}
-          <div className="flex justify-between items-center p-3 border-b bg-blue-600 text-white rounded-t-lg">
-            <h2 className="text-lg font-semibold">Chatbot</h2>
+          <div className="flex justify-between items-center p-3 text-gray-700 bg-white/80 backdrop-blur-sm">
+            <h2 className="text-xl font-semibold">Chatbot of Hoa</h2>
             <X className="cursor-pointer" onClick={() => setIsOpen(false)} />
           </div>
 
           {/* Chat History */}
-          <div ref={chatRef} className="flex-1 overflow-y-auto p-4 bg-gray-100">
+          <div ref={chatRef} className="bg-white/10 backdrop-blur-lg flex-1 overflow-y-auto p-4 ">
             {chatHistory.map((msg, index) => (
               <div
                 key={index}
                 className={`mb-2 p-2 rounded-md text-sm max-w-[75%] ${
                   msg.role === 'user'
-                    ? 'bg-blue-600 text-white ml-auto text-right'
-                    : 'bg-gray-300 text-gray-800 mr-auto text-left'
+                    ? 'bg-blue-200 shadow-gray-100 shadow-lg text-shadow-gray-800 ml-auto text-right'
+                    : 'bg-pink-200 shadow-gray-100 shadow-lg text-gray-800 mr-auto text-left'
                 }`}
                 dangerouslySetInnerHTML={{
                   __html: msg.content
@@ -103,7 +102,7 @@ function Chatbot() {
           </div>
 
           {/* Input */}
-          <form onSubmit={handleSubmit} className="p-3 border-t bg-white">
+          <form onSubmit={handleSubmit} className="p-3 bg-white/20 backdrop-blur-sm">
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -118,7 +117,7 @@ function Chatbot() {
               className={`w-full mt-2 py-2 rounded-md text-white font-semibold ${
                 loading
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 transition-colors'
+                  : 'bg-blue-500/60 hover:bg-blue-700/60 backdrop-blur-lg transition-colors'
               }`}
             >
               {loading ? 'Sending...' : 'Send'}

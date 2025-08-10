@@ -1,6 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCart } from "../../context/CartContext";
-import { accessories, products } from '../../data/dummy';
 import Cart_Item from './components/cart_item';
 import { useEffect } from 'react';
 import Cart_Sum from "./components/cart_sum";
@@ -38,16 +37,20 @@ function Cart() {
   // animate: "x:0" --> set the div to the leftmmost (targeted position)
   // exit: set the position when the div is unmounted
   // type: spring (linear+bounce+accelerate) - stiffness (how fast) -- damping (bouncing)
+
+  const isSmallScreen = window.innerWidth < 640; 
+
   return (
     <AnimatePresence>
       {isCartOpen && <motion.div  
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 350, damping: 25 }}
-            className="fixed inset-0 z-150 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm" onClick={closeCart}>
+            initial={isSmallScreen ? { x: "100%", opacity: 0 } : { scale: 0, opacity: 0 }}
+            animate={isSmallScreen ? { x: 0, opacity: 1 } : { scale: 1, opacity: 1 }}
+            exit={isSmallScreen ? { x: "100%", opacity: 0 } : { scale: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeInOut"}}
+            style={{ originX: 0.5, originY: 0.5 }}
+            className="fixed inset-0 z-150 flex flex-col items-center justify-center bg-black/20 backdrop-blur-xs" onClick={closeCart}>
       
-          <div className="absolute right-0 md:relative w-5/6 h-screen md:w-[500px] md:h-[500px] bg-white shadow-lg overflow-y-auto p-2 md:p-4 no-scrollbar" onClick={(e) =>e .stopPropagation()}>
+          <div className="absolute right-0 md:relative w-5/6 h-screen md:w-[500px] md:h-[500px] p-2 md:p-4 bg-white/80 backdrop-blur-lg rounded-t-lg overflow-y-auto no-scrollbar" onClick={(e) =>e .stopPropagation()}>
             {isCartEmpty ? 
             <Cart_Empty/>
             : 

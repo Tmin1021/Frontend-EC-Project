@@ -1,15 +1,21 @@
 import React, {useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {User, Search, ShoppingCart, Menu, X, ChevronRight} from 'lucide-react'
+import {User, Search, ShoppingCart, Menu, X, ChevronRight, Clover, Leaf, Shrub} from 'lucide-react'
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import Search_Space from "./search";
 import { useAuth } from '../../context/AuthContext'
 import Chatbot from './chatbot';
+import logo from "/src/assets/logo.PNG";
 
 
 function Header_Item({name, onHandleClick}) {
     const iconMap = {
+        Home: <div className='flex justify-center items-center group-hover:gap-1 transition-all w-[80px] duration-300'>
+                <Shrub className="w-5 h-5 text-green-700 group-hover:text-green-500 transition-all"/>
+                <Clover className="w-5 h-5 text-pink-700 group-hover:text-pink-500 transition-all"/> 
+                <Leaf className="w-5 h-5 text-amber-700 group-hover:text-amber-500 transition-all"/>
+             </div>,
         Search: <Search className="w-6 h-6"/>,
         Personal: <User className="w-6 h-6"/>,
         Cart: <ShoppingCart className="w-6 h-6"/>
@@ -19,8 +25,8 @@ function Header_Item({name, onHandleClick}) {
         <div className="flex items-center cursor-pointer group" onClick={onHandleClick}>
             {iconMap[name] || 
             <div className='flex w-full items-center justify-between'>
-                <p className="text-2xl font-bold md:text-lg md:font-light hover:font-semibold transition-all">{name}</p>
-                <ChevronRight className='md:hidden w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300'/>
+                <p className="text-2xl font-bold md:text-base md:font-light hover:font-semibold transition-all">{name}</p>
+                <ChevronRight className='md:hidden w-7 h-7 opacity-0 group-hover:opacity-100 transition-opacity duration-300'/>
             </div>}
         </div>
     )
@@ -30,7 +36,7 @@ function Header_Item({name, onHandleClick}) {
 function Header() {
     // fixed z-10 top-10 left-1/2 -translate-x-1/2 
     // mx-auto: place the div in the middle of the space it take
-    const header_items = ["All Flowers", "Accessories", "Support", "Search", "Personal", "Cart"]
+    const header_items = ["Home", "All Flowers", "Accessories", "Support", "Search", "Personal", "Cart"]
     const navItems = ["All Flowers", "Accessories", "Support"];
     const iconItems = ["Search", "Personal", "Cart"];
 
@@ -41,6 +47,7 @@ function Header() {
     const {isAuthenticated} = useAuth()
     const navigate = useNavigate()
     const navigateMap = {
+        "Home": "/",
         "All Flowers": "/flower", 
         "Accessories": "/accessory", 
         "Personal": "/personal"
@@ -63,25 +70,30 @@ function Header() {
 
   
     return (
-        <div className='relative w-full'>
-            <div className='w-[90%] md:w-[80%] mx-auto py-4'>
+        <div className='relative flex w-full'>
+            <div className='w-full py-4 md:bg-gray-50 mb-4'>
                 {/* Desktop version*/}
-                <div className="hidden md:flex gap-6 items-center justify-between">
+                <div className="mx-auto w-[80%] hidden md:flex gap-6 items-center justify-between h-full">
                     {header_items.map(header_item => (
                         <Header_Item key={header_item} name={header_item} onHandleClick={()=>handleClick(header_item)}/>
                 ))}
                 
                 </div>
                 {/* Mobile: Icons only */}
-                <div className="flex md:hidden items-center justify-end gap-6">
-                    {iconItems.map((item) => (
-                        <Header_Item key={item} name={item} onHandleClick={() => handleClick(item)} />
-                    ))}
+                <div className="mx-auto w-[90%] flex md:hidden justify-between items-center">
+                    {<Header_Item name='Home' onHandleClick={() => handleClick('Home')}/>}
 
-                    {/* Menu button */}
-                    <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                        <Menu className="w-6 h-6" />
-                    </button>
+                    <div className="flex items-center justify-end gap-4">
+                        {iconItems.map((item) => (
+                            <Header_Item key={item} name={item} onHandleClick={() => handleClick(item)} />
+                        ))}
+
+                        {/* Menu button */}
+                        <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                            <Menu className="w-6 h-6" />
+                        </button>
+                    </div>
+
                 </div>
             </div>
 

@@ -10,10 +10,12 @@ import Dashboard from '../pages/dashboard'
 
 function Admin() {
   const managements = 
-  {"Dashboard" : ['dashboard', <LayoutDashboard/>],
-    "User": ['user', <User/>],
+  {
+   "User": ['user', <User/>],
    "Inventory": ['inventory', <Store/>], 
-   "Order": ['order', <Box/>]}
+   "Order": ['order', <Box/>],
+   "Dashboard" : ['dashboard', <LayoutDashboard/>],
+  }
 
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
@@ -82,7 +84,7 @@ function Admin() {
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 p-4 mt-16 md:mt-0 overflow-auto bg-gray-100 ">
+      <div className="flex-1 p-2 md:p-4 mt-16 md:mt-0 overflow-auto bg-gray-100 ">
         <Outlet />
       </div>
     </div>

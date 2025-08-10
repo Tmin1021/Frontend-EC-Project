@@ -7,7 +7,7 @@ function Cart_Sum() {
   const totalOff = getTotalOff()
 
   return (
-    <div className='absolute bottom-0 right-0 md:relative w-5/6 md:w-[500px] px-2 pb-4 flex flex-col bg-white' onClick={(e) =>e .stopPropagation()}>
+    <div className='absolute bottom-0 right-0 md:relative w-5/6 md:w-[500px] px-2 py-4 flex flex-col bg-white/90 backdrop-blur-lg rounded-b-lg z-60' onClick={(e) =>e .stopPropagation()}>
         <p className='font-light'>{count>0 ? `Total (${count} ${count === 1 ? 'product' : 'products'})`: ""}</p>
         <div className='flex items-center justify-between'>
           <div className='flex flex-col'>

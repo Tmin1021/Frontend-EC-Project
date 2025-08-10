@@ -4,11 +4,20 @@ import { Check, ListFilter, Search, Settings, Plus, ChevronDown, Package, Shoppi
 import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from "framer-motion";
 
+
+const order_status = {
+  "All": ['bg-black dark:bg-white', 'bg-black dark:bg-white', 'text-white dark:text-black', 'text-white dark:text-black', <Package/>],
+  "Required": ['bg-blue-400', 'bg-blue-100', 'text-white', 'text-blue-500', <ShoppingCart/>],
+  "Confirmed": ['bg-green-400', 'bg-green-100', 'text-white', 'text-green-500', <CalendarCheck/>],
+  "Canceled": ['bg-red-400', 'bg-red-100', 'text-white', 'text-red-500', <CircleX/>], 
+  "Delivering": ['bg-yellow-400', 'bg-yellow-100','text-white', 'text-yellow-500', <TruckElectric/>], 
+  "Done": ['bg-purple-400', 'bg-purple-100', 'text-white', 'text-purple-500', <PackageCheck/>]}
+
 export default function Admin_Universal_Item({which, info=null, header=0, lastRow=false}) {
   const {sortUniversal} = useAdmin() 
   const main_infos = {
-    inventory:  {product_id: ["Product ID", info?.product_id], name: ["Name", info?.name], type: ['Type', info?.type], 
-                 stock: ['Stock', info?.stock], available: ['Available', info?.available]},
+    inventory:  {product_id: ["Product ID", info?.product_id], name: ["Name", info?.name], type: ['Type', info?.type], price: ['Price', info?.price],
+                 stock: ['Stock', info?.stock], available: ['Status', info?.available]},
     user:       {user_id: ["User ID", info?.user_id], name: ["Name", info?.name], mail: ["Mail", info?.mail],
                  phone: ['Phone', info?.phone], address: ['Address', info?.address]},
     order:      {order_id: ['Order ID', info?.order_id], user_id: ['User ID', info?.user_id], order_date: ['Order date', info?.order_date],
@@ -38,15 +47,20 @@ export default function Admin_Universal_Item({which, info=null, header=0, lastRo
 
   return (
     <div className='flex flex-col gap-4 justify-between min-w-xl overflow-auto'>
-      <div className={`grid grid-cols-${colCount} gap-2 my-auto`}>
+      <div className={`grid gap-2 my-auto`} style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`}}>
         {Object.keys(main_info).map((key)=> (
           <div key={key} className={`${header ? 'text-xs font-medium text-gray-500' : 'text-sm'} transition-all cursor-pointer overflow-hidden`} 
                         onClick={() => {if(header) handleClickedHeader(key)}}>
 
             {(key==='available' && !header) ?  
-            <div>{main_info[key][1]? <Check/> : <div></div>}</div>
-            : 
-            <div className='flex items-center gap-2 transition-all'>
+            <div>{main_info[key][1]? 
+                                    <div className='flex justify-center py-1 items-center bg-green-100 border-1 border-green-200 rounded-sm text-sm font-semibold text-green-700'>Published</div>
+                                    : <div className='flex justify-center py-1 items-center bg-red-100 border-1 border-red-200 rounded-sm text-sm font-semibold text-red-700'>Unpublished</div>}</div>
+            
+            : (key==='status' && !header) ?
+              <div className={`flex justify-center py-2 items-center ${order_status[main_info[key][1]][1]} ${order_status[main_info[key][1]][3]} rounded-sm text-sm font-semibold `}>{main_info[key][1]}</div>
+
+            : <div className='flex items-center gap-2 transition-all'>
               <p>{header ? main_info[key][0].toString().toUpperCase() : main_info[key][1]}</p>
               {header===1 && key===clickedHeader && (<ChevronDown className={`w-4 h-4 ${isAscending ? 'rotate-180' : ''} transition-transform`} />)}
             </div>}
@@ -76,7 +90,7 @@ export function Admin_Universal_Search({name, isSearch, setIsSearch}) {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -10 }}
                   transition={{ duration: 0.2 }}
-                  className='w-[32px] aspect-square flex items-center justify-center bg-white border-1 border-gray-300 rounded-sm'
+                  className='w-[32px] aspect-square flex items-center justify-center bg-white border-1 border-gray-300 rounded-sm hover:bg-gray-100 transition-all'
                   onClick={()=>setIsSearch(!isSearch)}>
         <Search className='w-4 h-4 text-gray-500'/>
       </motion.div>}
@@ -113,8 +127,10 @@ export function Admin_Universal_Filter() {
 export function Admin_Universal_Setting() {
 
   return (
-    <div className='w-[32px] aspect-square flex items-center justify-center bg-white border-1 border-gray-300 rounded-sm'>
+    <div className='relative w-[32px] aspect-square flex items-center justify-center bg-white border-1 border-gray-300 rounded-sm hover:bg-gray-100 transition-all'>
       <Settings className='w-4 h-4 text-gray-700'/>
+
+      
     </div>
   )
 }
@@ -137,16 +153,10 @@ export function Admin_Universal_Page({name}) {
         "Inventory": ['inventory', 'product_id', currentInventory], 
         "Order": ['order', 'order_id', currentOrder]}
 
-    const order_status = {
-      "All": ['bg-black dark:bg-white', 'text-white dark:text-black', <Package/>],
-      "Required": ['bg-blue-400', 'text-white', <ShoppingCart/>],
-      "Confirmed": ['bg-green-400', 'text-white', <CalendarCheck/>],
-      "Canceled": ['bg-red-400', 'text-white', <CircleX/>], 
-      "Delivering": ['bg-yellow-400', 'text-white', <TruckElectric/>], 
-      "Done": ['bg-purple-400', 'text-white', <PackageCheck/>]}
     const [statusChosen, setStatusChosen] = useState('All')
 
     const [type, primaryKey, dataList] = mapping[name];
+    const dataListLength = dataList.length
 
     return (
       <div className='flex flex-col overflow-y-auto px-2 md:px-4 lg:px-8 gap-4' onClick={()=>setIsSearch(false)}>
@@ -154,17 +164,14 @@ export function Admin_Universal_Page({name}) {
         <div className='flex items-center justify-between'>
           <div>
             <p className='font-semibold text-3xl'>{name}</p>
-            <p className='text-gray-500'>{dataList.length}{dataList.length<2? ' entry found' : ' entries found'}</p>
+            <p className='text-gray-500'>{dataListLength>1 ? dataListLength + ' entries found' : dataListLength===1 ? dataListLength + ' entries found' : 'No entry found'}</p>
           </div>
           <Admin_Universal_Create/>
         </div>
 
         {/* Search */}
         <div className='h-[40px] flex items-center justify-between' onClick={(e)=>e.stopPropagation()}>
-          <div className='flex gap-2'>
-            <Admin_Universal_Search name={name} isSearch={isSearch} setIsSearch={setIsSearch}/>
-            <Admin_Universal_Filter/>
-          </div>
+          <Admin_Universal_Search name={name} isSearch={isSearch} setIsSearch={setIsSearch}/>
           <Admin_Universal_Setting/>
         </div>
 
@@ -174,10 +181,10 @@ export function Admin_Universal_Page({name}) {
           <motion.div className='flex gap-1 md:gap-4 transition-all'>
             {Object.keys(order_status).map((key)=> (
               <motion.div key={key} 
-                          className={`${order_status[key][1]} ${statusChosen===key? order_status[key][0]: 'bg-gray-200 text-gray-800'} flex gap-2 justify-between items-center shadow font-semibold p-2 rounded-lg transition-all`}
+                          className={`${order_status[key][2]} ${statusChosen===key? order_status[key][0]: 'bg-gray-200 text-gray-800'} flex gap-2 justify-between items-center shadow font-semibold p-2 rounded-lg transition-all`}
                           onClick={()=>{if (statusChosen!==key) {setStatusChosen(key)} filterStatus(key)}}>
                 
-                {order_status[key][2]}
+                {order_status[key][4]}
                 {statusChosen===key && <motion.div 
                             key="label"
                             initial={{ opacity: 0, x: -10 }}

@@ -1,4 +1,3 @@
-import { address } from "framer-motion/client";
 import demo from "/src/assets/demo.png";
 import demo_1 from "/src/assets/demo_1.png";
 import demo_2 from "/src/assets/demo_2.png";
@@ -143,9 +142,29 @@ const products = [
     name: "Peony Bouquet",
     price: 40,
     stock: 18,
-    available: true,
+    available: false,
     description: "Beautiful peony flowers.",
-    image_url: [demo_5],
+    image_url: [demo_2],
+    flower_details: {
+      occasion: ["Wedding", "Graduation"],
+      color: ["Pink Flowers"],
+      flower_type: "Peonies",
+      options: [
+        { name: "original", price: 19.99, stems: 5 },
+        { name: "deluxe", price: 29.99, stems: 10 },
+        { name: "grand", price: 39.99, stems: 15 },
+      ],
+    },
+  },
+    {
+    product_id: "B4",
+    type: "flower",
+    name: "Peony Bouquet",
+    price: 40,
+    stock: 18,
+    available: false,
+    description: "Beautiful peony flowers.",
+    image_url: [demo_2],
     flower_details: {
       occasion: ["Wedding", "Graduation"],
       color: ["Pink Flowers"],
@@ -184,22 +203,22 @@ const products = [
 const orders = [
   { order_id: 1, user_id: 1, order_date: "02/07/2025", shipping_address: "Q5, TPHCM", total_amount: 200, off_price: 0, status: "Required" },
   { order_id: 2, user_id: 3, order_date: "02/07/2025", shipping_address: "Q5, TPHCM", total_amount: 200, off_price: 0, status: "Done" },
-  { order_id: 3, user_id: 2, order_date: "08/07/2025", shipping_address: "Q1, TPHCM", total_amount: 120, off_price: 10, status: "Prepared" },
+  { order_id: 3, user_id: 2, order_date: "08/07/2025", shipping_address: "Q1, TPHCM", total_amount: 120, off_price: 10, status: "Confirmed" },
   { order_id: 4, user_id: 4, order_date: "15/07/2025", shipping_address: "Q10, TPHCM", total_amount: 180, off_price: 0, status: "Confirmed" },
   { order_id: 5, user_id: 1, order_date: "21/06/2025", shipping_address: "Q5, TPHCM", total_amount: 99, off_price: 0, status: "Done" },
   { order_id: 6, user_id: 2, order_date: "28/06/2025", shipping_address: "Q1, TPHCM", total_amount: 75, off_price: 5, status: "Canceled" },
-  { order_id: 7, user_id: 3, order_date: "01/07/2025", shipping_address: "Q3, TPHCM", total_amount: 210, off_price: 15, status: "Suspended" },
-  { order_id: 8, user_id: 4, order_date: "12/06/2025", shipping_address: "Q2, TPHCM", total_amount: 50, off_price: 10, status: "Suspended" },
-  { order_id: 9, user_id: 1, order_date: "15/06/2025", shipping_address: "Q10, TPHCM", total_amount: 14, off_price: 5, status: "Suspended" },
+  { order_id: 7, user_id: 3, order_date: "01/07/2025", shipping_address: "Q3, TPHCM", total_amount: 210, off_price: 15, status: "Confirmed" },
+  { order_id: 8, user_id: 4, order_date: "12/06/2025", shipping_address: "Q2, TPHCM", total_amount: 50, off_price: 10, status: "Required" },
+  { order_id: 9, user_id: 1, order_date: "15/06/2025", shipping_address: "Q10, TPHCM", total_amount: 14, off_price: 5, status: "Confirmed" },
   { order_id: 10, user_id: 2, order_date: "22/06/2025", shipping_address: "Q6, TPHCM", total_amount: 80, off_price: 5, status: "Confirmed" },
-  { order_id: 11, user_id: 3, order_date: "03/07/2025", shipping_address: "Q9, TPHCM", total_amount: 108, off_price: 0, status: "Prepared" },
+  { order_id: 11, user_id: 3, order_date: "03/07/2025", shipping_address: "Q9, TPHCM", total_amount: 108, off_price: 0, status: "Confirmed" },
   { order_id: 12, user_id: 2, order_date: "30/07/2025", shipping_address: "Q4, TPHCM", total_amount: 85, off_price: 5, status: "Done" },
   // New orders for today, this week, and this month
   { order_id: 13, user_id: 1, order_date: "01/08/2025", shipping_address: "Q5, TPHCM", total_amount: 100, off_price: 0, status: "Done" },
-  { order_id: 14, user_id: 2, order_date: "15/08/2025", shipping_address: "Q1, TPHCM", total_amount: 150, off_price: 10, status: "Prepared" },
+  { order_id: 14, user_id: 2, order_date: "15/08/2025", shipping_address: "Q1, TPHCM", total_amount: 150, off_price: 10, status: "Canceled" },
   { order_id: 15, user_id: 3, order_date: "29/07/2025", shipping_address: "Q3, TPHCM", total_amount: 90, off_price: 5, status: "Confirmed" },
-  { order_id: 16, user_id: 4, order_date: "05/08/2025", shipping_address: "Q10, TPHCM", total_amount: 120, off_price: 0, status: "On the way" },
-  { order_id: 17, user_id: 2, order_date: "01/08/2025", shipping_address: "Q1, TPHCM", total_amount: 60, off_price: 0, status: "Prepared" },
+  { order_id: 16, user_id: 4, order_date: "05/08/2025", shipping_address: "Q10, TPHCM", total_amount: 120, off_price: 0, status: "Delivering" },
+  { order_id: 17, user_id: 2, order_date: "01/08/2025", shipping_address: "Q1, TPHCM", total_amount: 60, off_price: 0, status: "Delivering" },
 ];
 
 // Order Items
@@ -358,4 +377,4 @@ const users = [
   }
 ]
 
-export { products, carts, comments, bonus_gifts, users, inventory, orders, order_items, isDummy, dummyUser };
+export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser };

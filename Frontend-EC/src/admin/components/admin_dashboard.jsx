@@ -5,6 +5,7 @@ import {
   products as allProducts
 } from '../../data/dummy'
 import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from 'recharts'
+import { AnimatePresence, motion } from "framer-motion";
 
 // Local Select
 const Select = ({ options = [], value, onChange }) => (
@@ -117,36 +118,52 @@ const topByRevenue = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]
 
 
   return (
+  <AnimatePresence>
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <p className="text-3xl font-semibold">Report</p>
 
       {/* Top cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Total Orders */}
-        <div className="border rounded-lg p-4 shadow bg-white">
+        <motion.div 
+                    initial={{ opacity: 0, x: -20, y:-20 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    exit={{ opacity: 0, x: -20, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="border-1 border-gray-100 rounded-lg p-4 shadow-sm bg-white hover:shadow-lg transition-all">
           <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-semibold">Total Orders</h2>
+            <p className="text-lg font-medium text-gray-500 cursor-pointer">TOTAL ORDERS</p>
             <Select options={filterOptions} value={orderFilter} onChange={(e) => setOrderFilter(e.target.value)} />
           </div>
           <div className="text-4xl font-bold text-blue-600">{totalOrders}</div>
-        </div>
+        </motion.div>
 
         {/* Total Revenue */}
-        <div className="border rounded-lg p-4 shadow bg-white">
+        <motion.div 
+                    initial={{ opacity: 0, x: 20, y: -20 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    exit={{ opacity: 0, x: 20, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="border-1 border-gray-100 rounded-lg p-4 shadow-sm bg-white hover:shadow-lg transition-all">
           <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-semibold">Total Revenue</h2>
+            <p className="text-lg font-medium text-gray-500 cursor-pointer">TOTAL REVENUE</p>
             <Select options={filterOptions} value={revenueFilter} onChange={(e) => setRevenueFilter(e.target.value)} />
           </div>
           <div className="text-4xl font-bold text-green-600">${totalRevenue.toFixed(2)}</div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Bottom section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Order Status */}
-        <div className="border rounded-lg p-4 shadow bg-white">
+        <motion.div 
+                    initial={{ opacity: 0, x: -20, y: 20 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    exit={{ opacity: 0, x: -20, y: 20 }}
+                    transition={{ duration: 0.4 }}
+                    className="border-1 border-gray-100 rounded-lg p-4 shadow-sm bg-white hover:shadow-lg transition-all">
           <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-semibold">Order Status</h2>
+            <p className="text-lg font-medium text-gray-500 cursor-pointer">ORDER STATUS</p>
             <Select options={filterOptions} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} />
           </div>
           <div className="w-full h-80">
@@ -169,12 +186,17 @@ const topByRevenue = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </motion.div>
 
         {/* Top Products */}
-        <div className="border rounded-lg p-4 shadow bg-white">
+        <motion.div 
+                    initial={{ opacity: 0, x: 20, y: 20 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    exit={{ opacity: 0, x: 20, y: 20 }}
+                    transition={{ duration: 0.4 }}
+                    className="border-1 border-gray-100 rounded-lg p-4 shadow-sm bg-white hover:shadow-lg transition-all">
           <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-semibold">Best Selling</h2>
+            <p className="text-lg font-medium text-gray-500 cursor-pointer">BEST SELLING</p>
             <Select options={filterOptions} value={productFilter} onChange={(e) => setProductFilter(e.target.value)} />
           </div>
           <div className="space-y-3">
@@ -192,9 +214,10 @@ const topByRevenue = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]
                     )}
                 </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
+  </AnimatePresence>
   )
 }
 
