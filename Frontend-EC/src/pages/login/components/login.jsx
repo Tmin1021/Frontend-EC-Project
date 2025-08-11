@@ -11,7 +11,6 @@ export const Login = () => {
         email: '',
         password: ''
     });
-  };
 
     // Handle form submission
     const handleSubmit = (e) => {

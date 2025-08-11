@@ -38,7 +38,7 @@ export default function Admin_Universal_Item({which, info=null, header=0, lastRo
 
   return (
     <div className='flex flex-col gap-4 justify-between min-w-xl overflow-auto'>
-      <div className={`grid grid-cols-${colCount} gap-2 my-auto`}>
+      <div className={`grid grid-cols-5 gap-2 my-auto`}>
         {Object.keys(main_info).map((key)=> (
           <div key={key} className={`${header ? 'text-xs font-medium text-gray-500' : 'text-sm'} transition-all cursor-pointer overflow-hidden`} 
                         onClick={() => {if(header) handleClickedHeader(key)}}>
