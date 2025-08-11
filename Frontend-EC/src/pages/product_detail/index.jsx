@@ -21,7 +21,7 @@ function Product_Detail() {
  const stock = product.type==='flower'? selectedOption?.stock ?? 0 : product.stock
 
  return (
-    <div className='relative w-full px-4 md:px-10 lg:px-32'>
+    <div className='relative w-full px-4 md:px-10 lg:px-32 mt-4'>
         <div className='flex flex-col justify-between items-center md:items-start gap-4 md:gap-14 md:flex-row'>
             {/* Preview and Description */}
             <p className='font-semibold text-4xl mx-auto md:hidden'>{product.name}</p>

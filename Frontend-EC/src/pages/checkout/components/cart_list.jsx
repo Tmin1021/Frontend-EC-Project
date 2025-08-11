@@ -1,0 +1,78 @@
+import React from 'react'
+import { useCart } from '../../../context/CartContext'
+import { carts, products } from '../../../data/dummy'
+import { Minus, Plus, TicketPercent, Trash } from 'lucide-react'
+
+// product: ..., option:,  price: quantity: off_price
+
+const Cart_Item = ({product}) => {
+    const {updateCart} = useCart()
+
+    return (
+        <div className='h-[130px] w-full md:h-[120px] p-1 md:p-4 flex gap-2 md:gap-4 rounded-lg border-1 border-gray-100 hover:shadow-lg hover:shadow-gray-200 transition-all'>
+            <img src={product?.product?.image_url[0]} className='h-full aspect-square object-cover rounded-lg'/>
+
+            <div className='flex flex-col justify-between w-full'>
+                <div className='flex justify-between'>
+                    {/* Name */}
+                    <p className='font-semibold text-sm w-[150px] md:w-full'>{product?.product?.name}</p>
+                    {/* Base Price */}
+                    <p className='font-extrabold text-sm'>{product?.product?.price}</p>
+                </div>
+                
+                {/* Option */}
+                {product.option && <div className='flex gap-2'>
+                    <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{product?.option?.name}</div>
+                    <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{product?.option?.stems} stems</div>
+                </div>}
+
+                <div className='flex flex-col md:flex-row justify-between gap-1'>
+                    {/* Modify quantity */}
+                    <div className=' w-[50%] md:w-[25%] flex items-center gap-4 cursor-pointer'>
+                        <div className='p-1 rounded-full bg-gray-200/60 backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all'>
+                            <Minus className='w-4 h-4 text-gray-700' onClick={()=>updateCart(product, Math.max(1, product.quantity-1))}/>
+                        </div>
+                        <p className='text-lg pr-1 font-semibold'> {product.quantity} </p>
+                        <div className='p-1 rounded-full bg-green-400/60 backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all'>
+                            <Plus className='w-4 h-4 text-white' onClick={()=>updateCart(product, Math.min(product.product.stock, product.quantity+1))}/>
+                        </div>
+                    </div>
+
+                    {/* Total and Off Price and Remove button*/}
+                    <div className='flex gap-2 items-center justify-between md:justify-end'>
+                        {product?.off_price>0 && 
+                        <div className='flex items-center gap-1'>
+                            <TicketPercent className='text-blue-500 w-5 h-5 hidden md:inline'/>
+                            <p className='line-through text-sm font-bold text-gray-500'>{Math.round(100*((product.option?.price ?? product.product.price) * product.quantity))/100}</p>
+                        </div>}
+                        <p className='font-bold text-sm'><span className='text-gray-400 font-medium'>Total: </span>{Math.round(100*((product.option?.price ?? product.product.price) * product.quantity-product.off_price))/100}</p>
+                    
+                        <div className='hidden md:inline bg-pink-500 text-white text-xs p-1 rounded-sm font-medium shadow-gray-400 shadow-sm hover:shadow-md transition-all'>Remove</div>
+                        <div className='md:hidden p-1 rounded-full bg-pink-500/80 backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all'><Trash className='w-4 h-4 text-white'/></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function CartList() {
+  const cart = carts[0]
+  const cartLength = cart.products.length
+
+  return (
+    <div className='flex flex-col gap-2 bg-white px-2 md:px-4 py-4 shadow-sm border-1 border-gray-100 rounded-lg overflow-auto'>
+        <div className='flex justify-between'>
+            <p className='text-sm font-semibold'>Selected Cart Items</p>
+            <p className='text-sm text-gray-400 font-semibold'>{cartLength>1 ? cartLength + ' items' : cartLength + ' item'}</p>
+        </div>
+
+        {cart.products.map((product, i) => (
+            <Cart_Item key={i} product={product}/>
+        ))}
+    </div>
+  )
+}
+
+export default CartList

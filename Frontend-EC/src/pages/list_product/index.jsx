@@ -23,7 +23,7 @@ function List_Product({isSearchPage=false, result=[]}) {
         </div> }
 
       {(!isSearchPage || (isSearchPage&&result.length!==0)) &&
-        <div className='flex flex-col gap-4 px-4 md:px-10 lg:px-32'>
+        <div className='flex flex-col gap-4 px-4 md:px-10 lg:px-32 mt-4'>
             <List_Filter isFlower={initialOption==='flower'&&isSearchPage}/>
             <List_View/>
         </div> }

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { BotMessageSquare, MessageSquare, X } from 'lucide-react';
+import { AnimatePresence, motion } from "framer-motion";
 
 function Chatbot() {
   const [message, setMessage] = useState('');
@@ -71,8 +72,13 @@ function Chatbot() {
       </div>
 
       {/* Chatbot Panel */}
+      <AnimatePresence>
       {isOpen && (
-        <div className="fixed bottom-20 right-5 z-50 w-[90%] sm:w-[400px] h-[500px] shadow-gray-300 shadow-md border-1 border-gray-100 rounded-lg flex flex-col">
+        <motion.div initial={{ opacity: 0, y: 80 }}
+                    animate={{ opacity: 1,  y: 0 }}
+                    exit={{ opacity: 0, y: 80 }}
+                    transition={{ duration: 0.4, ease:'easeInOut' }}
+                    className="fixed bottom-20 right-5 z-50 w-[90%] sm:w-[400px] h-[500px] shadow-gray-300 shadow-md border-2 border-gray-100/60 rounded-2xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex justify-between items-center p-3 text-gray-700 bg-white/80 backdrop-blur-sm">
             <h2 className="text-xl font-semibold">Chatbot of Hoa</h2>
@@ -123,8 +129,9 @@ function Chatbot() {
               {loading ? 'Sending...' : 'Send'}
             </button>
           </form>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </>
   );
 }

@@ -4,8 +4,7 @@ import { Check, ListFilter, Search, Settings, Plus, ChevronDown, Package, Shoppi
 import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from "framer-motion";
 
-
-const order_status = {
+export const order_status = {
   "All": ['bg-black dark:bg-white', 'bg-black dark:bg-white', 'text-white dark:text-black', 'text-white dark:text-black', <Package/>],
   "Required": ['bg-blue-400', 'bg-blue-100', 'text-white', 'text-blue-500', <ShoppingCart/>],
   "Confirmed": ['bg-green-400', 'bg-green-100', 'text-white', 'text-green-500', <CalendarCheck/>],
@@ -144,6 +143,31 @@ export function Admin_Universal_Create() {
   )
 }
 
+export function Admin_Universal_Order_Status({statusChosen='All', setStatusChosen={}, filterStatus={}}) {
+
+  return (
+    <AnimatePresence mode="wait">
+    <motion.div className='flex gap-2 md:gap-4 transition-all'>
+      {Object.keys(order_status).map((key)=> (
+        <motion.div key={key} 
+                    className={`${order_status[key][2]} ${statusChosen===key? order_status[key][0]: 'bg-gray-200 text-gray-800'} flex gap-2 justify-between items-center shadow font-semibold p-2 rounded-lg transition-all`}
+                    onClick={()=>{if (statusChosen!==key) {setStatusChosen(key)} filterStatus(key)}}>
+          
+          {order_status[key][4]}
+          {statusChosen===key && <motion.div 
+                      key="label"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.6 }}> {key}</motion.div>}
+          
+        </motion.div>
+      ))}
+    </motion.div>
+  </AnimatePresence>
+  )
+}
+
 export function Admin_Universal_Page({name}) {
     const {currentUser, currentInventory, currentOrder, filterStatus} = useAdmin()
     const navigate = useNavigate()
@@ -177,25 +201,7 @@ export function Admin_Universal_Page({name}) {
 
         {/* For order only */}
         {name==='Order' && 
-        <AnimatePresence mode="wait">
-          <motion.div className='flex gap-1 md:gap-4 transition-all'>
-            {Object.keys(order_status).map((key)=> (
-              <motion.div key={key} 
-                          className={`${order_status[key][2]} ${statusChosen===key? order_status[key][0]: 'bg-gray-200 text-gray-800'} flex gap-2 justify-between items-center shadow font-semibold p-2 rounded-lg transition-all`}
-                          onClick={()=>{if (statusChosen!==key) {setStatusChosen(key)} filterStatus(key)}}>
-                
-                {order_status[key][4]}
-                {statusChosen===key && <motion.div 
-                            key="label"
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -10 }}
-                            transition={{ duration: 0.6 }}> {key}</motion.div>}
-                
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>}
+        <Admin_Universal_Order_Status statusChosen={statusChosen} setStatusChosen={setStatusChosen} filterStatus={filterStatus}/>}
 
         <div className='flex flex-col gap-4 bg-white px-8 py-4 shadow-lg border-1 border-gray-100 rounded-sm min-w-lg overflow-auto' onClick={(e)=>e.stopPropagation()}>
           {/* Header title */}

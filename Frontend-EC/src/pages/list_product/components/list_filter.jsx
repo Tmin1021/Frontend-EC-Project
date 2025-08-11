@@ -15,7 +15,7 @@ export const filter_types = {
 function Filter_Option({type, whichOption, onHandleClick}) {
   // Sort: allow 1 option only, must appear that option in <p>
   return (
-    <div className={`${type==="Sort"? 'flex flex-col gap-0 absolute right-0 w-[180px] h-[125px] py-2 px-4 overflow-auto rounded-lg bg-white shadow-sm' : 'grid grid-cols-2 gap-2 h-full'} 
+    <div className={`cursor-pointer ${type==="Sort"? 'flex flex-col gap-0 absolute right-0 w-[180px] h-[125px] py-2 px-4 overflow-auto rounded-lg bg-white shadow-sm' : 'grid grid-cols-2 gap-2 h-full'} 
                     md:flex md:flex-col md:gap-0 md:absolute md:right-0 md:translate-x-1/4 md:w-[180px] md:h-[125px] md:py-2 md:px-4 md:overflow-auto no-scrollbar md:rounded-lg md:bg-white md:shadow-sm`}>
       
       {filter_types[type].map((option, index) => (
@@ -59,8 +59,8 @@ export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) 
   return (
     <div className=' md:relative'>
       {/* Title */}
-      <div className='w-full flex items-center justify-between 
-                      md:border-1 md:py-1 md:px-2' onClick={onHandleClick}>
+      <div className='w-full flex items-center justify-between cursor-pointer 
+                      md:border-1 md:border-gray-300 rounded-sm md:py-1 md:px-2' onClick={onHandleClick}>
 
          
         <ArrowUpDown className={`${name==='Sort'? '': 'hidden'} md:hidden`}/>  

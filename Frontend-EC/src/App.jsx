@@ -21,7 +21,7 @@ import Admin_Inventory, { Admin_Inventory_Detail } from './admin/components/admi
 import { Children } from 'react'
 import { useAuth } from './context/AuthContext'
 import Admain_Dashboard from './admin/components/admin_dashboard'
-
+import Checkout from './pages/checkout'
 
 const UserLayout = () => {
 
@@ -36,7 +36,8 @@ const UserLayout = () => {
 
 const ProtectedRoute = ({children}) => {
   const {isAuthenticated} = useAuth()
-  return isAuthenticated ? children : <Navigate to='/login'/>
+  //return isAuthenticated ? children : <Navigate to='/login'/>
+  return children
 }
 
 function App() {
@@ -45,15 +46,17 @@ function App() {
       <div className='min-w-[320px]'>
         <Router>
           <Routes>
+            <Route path="/login" element={<Login/>}/>
+            <Route path="/signup" element={<Signup/>}/>
+            <Route path='/checkout' element={<Checkout/>}/>
+
             <Route element={<UserLayout/>}>
               <Route path="/" element={<Dashboard/>}/>
               <Route path="/:type" element={<List_Product/>}/>
               <Route path="/:type/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
               <Route path="/personal" element={<ProtectedRoute><Personal/></ProtectedRoute>}/>
               <Route path='/search' element={<ProductProvider><Search_Page/></ProductProvider>} />
-              <Route path="/support" element={<SupportPage/>}/>
-              <Route path="/login" element={<Login/>}/>
-              <Route path="/signup" element={<Signup/>}/>
+              <Route path="/support" element={<SupportPage/>}/>    
               <Route path="/blog/:slug" element={<BlogDetail />} />
            </Route>
 

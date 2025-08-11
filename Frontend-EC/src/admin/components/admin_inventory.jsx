@@ -8,13 +8,13 @@ import Admin_Universal_Item, { Admin_Universal_Page } from './admin_universal'
 import GlobalApi from '../../../service/GlobalApi'
 import { products } from '../../data/dummy'
 
-const Text_Item = ({name, content, setter}) => {
+export const Text_Item = ({name, content, setter, placeholder='', rows=1}) => {
   const types = ['flower', 'vase', 'ribbon']
   const [isTypeClicked, setIsTypeClicked] = useState(false)
 
   return (
     <div className='flex flex-col justify-between gap-1'>
-      <p className='font-semibold text-xs'>{name.toLowerCase()}</p>
+      <p className='font-semibold text-xs'>{name}</p>
 
       {name==='type' ?
         <div className='relative flex items-center pl-4 pr-2 border-1 border-gray-300 rounded-sm resize-none h-full'>
@@ -33,11 +33,11 @@ const Text_Item = ({name, content, setter}) => {
         
       : <textarea 
             type="text" 
-            placeholder={name}
+            placeholder={placeholder}
             value={content}
             onChange={(e)=>{setter(name, e.target.value)}}
-            className={`bg-white text-sm font-light border-1 border-gray-300 rounded-sm pl-4 py-2 resize-none focus:outline-none focus:border-purple-500 focus:border-3 transtion-all`}
-            rows={name==='description'? 3:1}
+            className={`bg-white text-sm font-light border-1 border-gray-200 rounded-sm pl-4 py-2 resize-none focus:outline-purple-500 transtion-all`}
+            rows={rows}
       /> }
     </div>
   )
@@ -57,21 +57,22 @@ const Bool_Item = ({name, content, setter}) => {
   )
 }
 
-const Number_Item = ({name, content, setter, decimal}) => {
+export const Number_Item = ({name, content, setter, decimal=true, setterButton=true}) => {
 
   return (
     <div className='flex flex-col justify-between gap-1'>
       <p className='text-xs font-semibold'>{name}</p>
 
-      <div className='flex justify-between items-center pl-4 pr-2 bg-white border-1 border-gray-300 rounded-sm h-full'>
-        <input
+      <div className='flex justify-between items-center pl-4 pr-2 bg-white border-1 border-gray-200 rounded-sm h-full'>
+        <textarea
             type="text" 
             placeholder={name}
             value={content}
             onChange={(e)=>{const val = e.target.value; if (/^\d*\.?\d*$/.test(val)) setter(name, parseFloat(val));}}
             className={`text-sm font-light resize-none focus:outline-none w-full`}
-      />
-        <div className='flex flex-col justify-between items-center'>
+            rows={1}/>
+
+        <div className={`flex flex-col justify-between items-center ${setterButton===1 ? '':'opacity-0 pointer-events-none'}`}>
           <ChevronUp className='w-4 h-4' onClick={()=> {decimal ? setter(name, Math.round((content+0.01)*100,2)/100) : setter(name, content+1)}}/>
           <ChevronDown className='w-4 h-4' onClick={()=> {decimal ? setter(name, Math.round((content-0.01)*100,2)/100) : setter(name, content-1)}}/>
         </div>
@@ -80,14 +81,14 @@ const Number_Item = ({name, content, setter, decimal}) => {
   )
 }
 
-function Confirm_Box() {
+export function Confirm_Box({getSave=1, getDelete=1}) {
 
   return (
     <div className='w-full lg:w-[25%] h-full flex flex-col gap-2 bg-white px-4 py-4 shadow-lg border-1 border-gray-100 rounded-sm'>
       <p className='text-xs font-semibold text-gray-500'>ENTRY</p>
  
-      <div className='w-full flex items-center justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>Save</div>
-      <div className='w-full flex items-center justify-center py-2 bg-red-50 text-xs text-red-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>Delete</div>
+      {getSave===1 && <div className='w-full flex items-center justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>Save</div>}
+      {getDelete===1 && <div className='w-full flex items-center justify-center py-2 bg-red-50 text-xs text-red-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>Delete</div>}
     </div>
   )
 }
@@ -185,17 +186,17 @@ export const Admin_Inventory_Detail = () => {
       <div className='w-full lg:w-[75%] flex flex-col gap-6 bg-white px-3 md:px-6 py-6 shadow-lg border-1 border-gray-100 rounded-sm'>
         <div className='grid grid-cols-2 gap-1 md:gap-4'>
           <Text_Item name={'type'} content={type} setter={handleEdit}/>
-          <Text_Item name={'name'} content={name}/>
+          <Text_Item name={'name'} content={name} placeholder='Taylor Swift'/>
         </div>
 
         <div className='grid grid-cols-3 gap-1 md:gap-4'>
-          <Number_Item name={'price'} content={price} setter={handleEdit}/>
-          <Number_Item name={'stock'} content={stock} setter={handleEdit}/>
+          <Number_Item name={'price'} content={price} setter={handleEdit} placeholder='1.00'/>
+          <Number_Item name={'stock'} content={stock} setter={handleEdit} placeholder='10'/>
           <Bool_Item name={'available'} content={available} setter={handleEdit}/>
         </div>
 
         <div className='grid grid-cols-2 gap-1 md:gap-4'>
-          <Text_Item name={'description'} content={description} setter={handleEdit}/>
+          <Text_Item name={'description'} content={description} setter={handleEdit} rows={3} placeholder='Assorted stems of seasonal roses.'/>
 
         </div>
 

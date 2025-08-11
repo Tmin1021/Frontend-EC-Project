@@ -71,7 +71,7 @@ function Header() {
   
     return (
         <div className='relative flex w-full'>
-            <div className='w-full py-4 md:bg-gray-50 mb-4'>
+            <div className='w-full py-4 md:bg-gray-50'>
                 {/* Desktop version*/}
                 <div className="mx-auto w-[80%] hidden md:flex gap-6 items-center justify-between h-full">
                     {header_items.map(header_item => (

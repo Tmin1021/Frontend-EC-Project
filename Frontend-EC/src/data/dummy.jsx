@@ -36,15 +36,7 @@ mp3ir8rh52ys3wwmf5qxenki
 rv0djgr8t342iyk5ilthxyka*/
 
 // Carts
-const carts = [
-  {
-    user_id: 1,
-    products: [
-      { product_id: "B1", quantity: 2 },
-      { product_id: "B3", quantity: 3 },
-    ],
-  },
-];
+
 
 // Comments
 const comments = [
@@ -340,12 +332,21 @@ const order_items = [
 // Users
 const users = [
   {
-    user_id: 1,
+    user_id: 0,
     name: "demo1hihihi",
     phone: "0901234567",
     mail: "demo1@gmail.com",
     password: "bimat",
     address: "Q5, TPHCM",
+    role: 'admin'
+  },
+    {
+    user_id: 1,
+    name: "demo1hehehe",
+    phone: "0901234567",
+    mail: "demo1@gmail.com",
+    password: "bimat",
+    address: "Q1, TPHCM",
     role: 'user'
   },
   {
@@ -377,4 +378,24 @@ const users = [
   }
 ]
 
-export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser };
+const carts = [
+  {
+    user_id: 1,
+    products: [
+      { product: products[0], option: products[0].flower_details.options[0], quantity: 1, off_price: 0 },
+      { product: products[1], option: products[0].flower_details.options[0], quantity: 2, off_price: 10 },
+    ],
+  },
+];
+
+const order_items_2 = [
+  {
+    order_id: 1,
+    products: [
+      { product: products[0], option: products[0].flower_details.options[0], quantity: 1, off_price: 0 },
+      { product: products[1], option: products[0].flower_details.options[0], quantity: 2, off_price: 10 },
+    ],
+  },
+];
+
+export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser, order_items_2 };

@@ -126,9 +126,9 @@ const topByRevenue = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Total Orders */}
         <motion.div 
-                    initial={{ opacity: 0, x: -20, y:-20 }}
+                    initial={{ opacity: 0, x: -40, y:-40 }}
                     animate={{ opacity: 1, x: 0, y: 0 }}
-                    exit={{ opacity: 0, x: -20, y: -20 }}
+                    exit={{ opacity: 0, x: -40, y: -40 }}
                     transition={{ duration: 0.4 }}
                     className="border-1 border-gray-100 rounded-lg p-4 shadow-sm bg-white hover:shadow-lg transition-all">
           <div className="flex justify-between items-center mb-2">
@@ -140,9 +140,9 @@ const topByRevenue = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]
 
         {/* Total Revenue */}
         <motion.div 
-                    initial={{ opacity: 0, x: 20, y: -20 }}
+                    initial={{ opacity: 0, x: 40, y: -40 }}
                     animate={{ opacity: 1, x: 0, y: 0 }}
-                    exit={{ opacity: 0, x: 20, y: -20 }}
+                    exit={{ opacity: 0, x: 40, y: -40 }}
                     transition={{ duration: 0.4 }}
                     className="border-1 border-gray-100 rounded-lg p-4 shadow-sm bg-white hover:shadow-lg transition-all">
           <div className="flex justify-between items-center mb-2">
@@ -157,9 +157,9 @@ const topByRevenue = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Order Status */}
         <motion.div 
-                    initial={{ opacity: 0, x: -20, y: 20 }}
+                    initial={{ opacity: 0, x: -40, y: 40 }}
                     animate={{ opacity: 1, x: 0, y: 0 }}
-                    exit={{ opacity: 0, x: -20, y: 20 }}
+                    exit={{ opacity: 0, x: -40, y: 40 }}
                     transition={{ duration: 0.4 }}
                     className="border-1 border-gray-100 rounded-lg p-4 shadow-sm bg-white hover:shadow-lg transition-all">
           <div className="flex justify-between items-center mb-2">
@@ -190,9 +190,9 @@ const topByRevenue = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]
 
         {/* Top Products */}
         <motion.div 
-                    initial={{ opacity: 0, x: 20, y: 20 }}
+                    initial={{ opacity: 0, x: 40, y: 40 }}
                     animate={{ opacity: 1, x: 0, y: 0 }}
-                    exit={{ opacity: 0, x: 20, y: 20 }}
+                    exit={{ opacity: 0, x: 40, y: 40 }}
                     transition={{ duration: 0.4 }}
                     className="border-1 border-gray-100 rounded-lg p-4 shadow-sm bg-white hover:shadow-lg transition-all">
           <div className="flex justify-between items-center mb-2">

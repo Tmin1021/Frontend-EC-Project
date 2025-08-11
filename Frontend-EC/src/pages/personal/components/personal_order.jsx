@@ -1,29 +1,53 @@
 import React, {useState} from 'react'
-import { products } from '../../../data/dummy'
+import { order_items_2, orders, products } from '../../../data/dummy'
+import { Admin_Universal_Order_Status, order_status } from '../../../admin/components/admin_universal'
+import { AnimatePresence, motion } from "framer-motion";
 
-const Order_Preview = ({product=products[0]}) => {
+const Product_Preview = ({product}) => {
+
+    return (
+        <div></div>
+    )
+}
+
+const Order_Preview = ({order}) => {
+    const userProducts = order_items_2.find(order_item => order_item.order_id===order.order_id).products
+    const candidateProduct = userProducts[0].product
 
     return (
         <div className='flex flex-col gap-2 p-2 md:p-4 bg-white dark:bg-black shadow-sm rounded-sm hover:shadow-lg hover:rounded-lg transition-all'>
-            {/* ID - Status */}
-            <div className='flex justify-between'>
-                <p className='text-base md:text-lg'>Order #<span className='text-pink-500 font-bold'>1234567</span></p>
-                <p className='text-base md:text-lg text-green-600 font-semibold'>Delivered</p>
-            </div>
-
             {/* Preview Item */}
             <div className='h-[100px] w-full md:h-[120px] flex gap-4'>
-                <img src={product.image_url[0]} className='h-full aspect-square object-cover'/>
+                <img src={candidateProduct.image_url[0]} className='h-full aspect-square object-cover rounded-sm'/>
 
                 <div className='flex flex-col justify-between w-full'>
-                    {/* Name */}
-                    <p className='text-base md:text-lg'>{product.name}</p>
-                    {/* Price */}
-                    <p className='text-sm font-extralight'>Total: <span className='text-base font-semibold'>200</span></p>
+                    <div className='w-full flex justify-between'>
+                        {/* Name */}
+                        <p className='text-base md:text-lg'>{candidateProduct.name}</p>
+                        {/* Status */}
+                        <div className='flex justify-end'>
+                            <p className={`text-base p-1 rounded-sm ${order_status[order.status][1]} ${order_status[order.status][3]} font-semibold`}>{order.status}</p>
+                        </div>
+                    </div>
+  
+                    {/* Option */}
+                    {candidateProduct.option && <div className='flex gap-2'>
+                        <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{candidateProduct?.option?.name}</div>
+                        <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{candidateProduct?.option?.stems} stems</div>
+                    </div>}
+
+                    {/* Total Quantity and Price */}
+                    <div className='flex gap-2 items-center'>
+                        <p className='text-sm font-extralight'>Quantity: <span className='text-base font-semibold'>2</span></p>
+                        <p className='text-2xl'>|</p>
+                        <p className='text-sm font-extralight'>Total: <span className='text-base font-semibold'>200</span></p>
+                    </div>
+
                 </div>
             </div>
 
             <div className="w-full" style={{ borderBottom: '0.5px solid #e0e0e0' }} />
+            
             {/* Detail Button */}
             <div className='mx-auto text-blue-500'>See more</div>
         </div>
@@ -32,27 +56,21 @@ const Order_Preview = ({product=products[0]}) => {
 }
 
 function Personal_Order() {
-    const order_status = {
-      "All": ['bg-white dark:bg-black', 'text-black dark:text-white'],
-      "Required": ['bg-blue-100', 'text-blue-400'],
-      "Confirmed": ['bg-green-100', 'text-green-400'],
-      "Canceled": ['bg-red-100', 'text-red-400'], 
-      "Pended": ['bg-gray-100', 'text-gray-400'], 
-      "Delivering": ['bg-yellow-100', 'text-yellow-400'], 
-      "Done": ['bg-purple-100', 'text-purple-400']}
-    const [statusChosen, setStatusChosen] = useState('All')
+  const [statusChosen, setStatusChosen] = useState('All')
+  const [userOrders, setUserOrder] = useState(orders.filter(order => order.user_id===1))
+
+  const filterStatus = (status) => {
+    setUserOrder(userOrders.filter(order => order.status === status))
+  }
+  
 
   return (
     <div className='flex flex-col gap-4'>
         <p className='text-2xl font-semibold'>Purchased Orders</p>
-        <div className='flex overflow-x-auto no-scrollbar gap-4'>
-            {Object.keys(order_status).map((key)=> (
-              <div key={key} className={`${order_status[key][0]} ${order_status[key][1]} ${statusChosen===key? 'border-2':'border-0'}  font-semibold p-2 rounded-lg`}
-                   onClick={()=>{if (statusChosen!==key) {setStatusChosen(key)}}}>{key}</div>
-            ))}
-          </div>
+        <Admin_Universal_Order_Status statusChosen={statusChosen} setStatusChosen={setStatusChosen} filterStatus={filterStatus}/>
 
-        <Order_Preview/>
+        <Order_Preview order={orders[0]}/>
+
     </div>
 
   )

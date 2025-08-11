@@ -9,7 +9,7 @@ import { Trash2, Check } from "lucide-react";
 const Check_Box = ({isSelected, onHandleSelectedItems}) => {
 
     return (
-        <div className={`w-[25px] aspect-square border-1 border-gray-300 dark:border-white flex items-center rounded-sm ${isSelected ? 'bg-pink-400' : ''}`} onClick={onHandleSelectedItems}>
+        <div className={`w-[25px] aspect-square border-1 border-gray-300 dark:border-white flex items-center rounded-sm ${isSelected ? 'bg-pink-400/80 backdrop-blur-xs' : ''}`} onClick={onHandleSelectedItems}>
           {isSelected && <Check className="w-full h-full text-white"/>}
         </div>
     )
@@ -48,7 +48,7 @@ function Cart() {
             exit={isSmallScreen ? { x: "100%", opacity: 0 } : { scale: 0, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut"}}
             style={{ originX: 0.5, originY: 0.5 }}
-            className="fixed inset-0 z-150 flex flex-col items-center justify-center bg-black/20 backdrop-blur-xs" onClick={closeCart}>
+            className="fixed inset-0 z-150 flex flex-col items-center justify-center bg-black/30 backdrop-blur-xs" onClick={closeCart}>
       
           <div className="absolute right-0 md:relative w-5/6 h-screen md:w-[500px] md:h-[500px] p-2 md:p-4 bg-white/80 backdrop-blur-lg rounded-t-lg overflow-y-auto no-scrollbar" onClick={(e) =>e .stopPropagation()}>
             {isCartEmpty ? 
@@ -59,7 +59,7 @@ function Cart() {
                 <div className="w-full flex items-center justify-between pb-4">
                   <div className='flex items-center justify-between gap-4'>
                     <Check_Box isSelected={selectedAll} onHandleSelectedItems={()=>{setSelectedItems(Array(cart.length).fill(!selectedAll)); setSelectedAll(!selectedAll); getOptimizedPromotions(cart, Array(cart.length).fill(!selectedAll))}} />
-                    <p>All</p>
+                    <p className='text-gray-500/80 font-semibold'>All</p>
                 </div>
 
                 <div onClick={removeCart}>
