@@ -22,6 +22,7 @@ import { Children } from 'react'
 import { useAuth } from './context/AuthContext'
 import Admain_Dashboard from './admin/components/admin_dashboard'
 import Checkout from './pages/checkout'
+import { Order_Product_Preview } from './pages/personal/components/personal_order'
 
 const UserLayout = () => {
 
@@ -55,6 +56,7 @@ function App() {
               <Route path="/:type" element={<List_Product/>}/>
               <Route path="/:type/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
               <Route path="/personal" element={<ProtectedRoute><Personal/></ProtectedRoute>}/>
+              <Route path="/personal/:orderID" element={<Order_Product_Preview/>}/>
               <Route path='/search' element={<ProductProvider><Search_Page/></ProductProvider>} />
               <Route path="/support" element={<SupportPage/>}/>    
               <Route path="/blog/:slug" element={<BlogDetail />} />

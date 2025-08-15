@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import Cart_Sum from "./components/cart_sum";
 import Cart_Empty from "./components/cart_empty";
 import { Trash2, Check } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 const Check_Box = ({isSelected, onHandleSelectedItems}) => {
 
@@ -43,9 +44,9 @@ function Cart() {
   return (
     <AnimatePresence>
       {isCartOpen && <motion.div  
-            initial={isSmallScreen ? { x: "100%", opacity: 0 } : { scale: 0, opacity: 0 }}
+            initial={isSmallScreen ? { x: "100%", opacity: 0 } : { scale: 0.7, opacity: 0 }}
             animate={isSmallScreen ? { x: 0, opacity: 1 } : { scale: 1, opacity: 1 }}
-            exit={isSmallScreen ? { x: "100%", opacity: 0 } : { scale: 0, opacity: 0 }}
+            exit={isSmallScreen ? { x: "100%", opacity: 0 } : { scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut"}}
             style={{ originX: 0.5, originY: 0.5 }}
             className="fixed inset-0 z-150 flex flex-col items-center justify-center bg-black/30 backdrop-blur-xs" onClick={closeCart}>

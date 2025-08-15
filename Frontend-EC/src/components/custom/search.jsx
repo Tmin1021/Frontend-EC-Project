@@ -47,10 +47,12 @@ function Search_Inner({closeSearch}) {
 
     // handle scrolling 
     useEffect(() => {
-      document.body.style.overflow = 'hidden';
+      //document.body.style.overflow = 'hidden';
+      window.addEventListener('scroll', closeSearch);
 
       return () => {
-          document.body.style.overflow = 'auto'; 
+          //document.body.style.overflow = 'auto'; 
+          window.removeEventListener('scroll', closeSearch);
       };
   }, []);
 
@@ -126,9 +128,9 @@ export function Search_Space({isSearch, closeSearch}) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute left-0 top-0 md:top-14 w-full h-screen bg-white dark:bg-black md:bg-black/10 md:backdrop-blur-sm z-50">
+                    className="absolute left-0 top-0 md:top-14 w-full h-screen bg-white dark:bg-black md:bg-black/10 md:backdrop-blur-sm z-50" onMouseOver={closeSearch}>
 
-                    <div className='md:flex relative w-full bg-gray-50 dark:bg-black h-0 md:h-[380px] flex-col gap-2 px-4 py-2'>
+                    <div className='md:flex relative w-full bg-gray-50 dark:bg-black h-0 md:h-[350px] flex-col gap-2 px-4 py-2' onMouseOver={(e)=>e.stopPropagation()}>
                         <div className='md:hidden relative w-full pb-8'>
                             <div className='absolute right-0' onClick={closeSearch}><X className='w-8 h-8' /></div>
                         </div>

@@ -10,6 +10,8 @@ import logo from "/src/assets/logo.PNG";
 
 
 function Header_Item({name, onHandleClick}) {
+    const {cart} = useCart()
+
     const iconMap = {
         Home: <div className='flex justify-center items-center group-hover:gap-1 transition-all w-[80px] duration-300'>
                 <Shrub className="w-5 h-5 text-green-700 group-hover:text-green-500 transition-all"/>
@@ -18,7 +20,12 @@ function Header_Item({name, onHandleClick}) {
              </div>,
         Search: <Search className="w-6 h-6"/>,
         Personal: <User className="w-6 h-6"/>,
-        Cart: <ShoppingCart className="w-6 h-6"/>
+        Cart: <div className='relative'>
+                    <ShoppingCart className="w-6 h-6"/> 
+                    {cart.length >0 && <div className='absolute -right-2 -top-2 flex justify-center items-center w-[20px] aspect-square bg-purple-500 text-xs text-white font-semibold rounded-full shadow-gray-500 shadow-md'>
+                        {cart.length}
+                    </div>}
+                </div>,
     }
 
     return (
@@ -60,13 +67,14 @@ function Header() {
         else if (navigateMap[name]) {navigate(navigateMap[name])}
     }
     
+    /*
     useEffect(() => {
       document.body.style.overflow = isDropdownOpen?'hidden':'auto';
 
       return () => {
           document.body.style.overflow = 'auto'; 
       };
-    }, [isDropdownOpen]);
+    }, [isDropdownOpen]);*/
 
   
     return (

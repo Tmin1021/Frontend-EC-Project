@@ -16,17 +16,20 @@ function List_Product({isSearchPage=false, result=[]}) {
   return (
     <ProductProvider isSearch={isSearchPage} searchResult={result.filter(item => initialOption === 'flower' ? item.type===initialOption : item.type!='flower') }>
 
-      {(isSearchPage&&result.length!==0) &&
+      <div className='max-w-screen-xl mx-auto'>
+        {(isSearchPage&&result.length!==0) &&
         <div className='flex flex-row gap-4 px-4 md:px-10 lg:px-32'>
             <div onClick={()=>setInitialOption('flower')}>Flowers</div>
             <div onClick={()=>setInitialOption('accessory')}>Accessories</div>
         </div> }
 
-      {(!isSearchPage || (isSearchPage&&result.length!==0)) &&
-        <div className='flex flex-col gap-4 px-4 md:px-10 lg:px-32 mt-4'>
-            <List_Filter isFlower={initialOption==='flower'&&isSearchPage}/>
-            <List_View/>
-        </div> }
+        {(!isSearchPage || (isSearchPage&&result.length!==0)) &&
+          <div className='flex flex-col gap-4 px-4 md:px-10 lg:px-32 mt-4'>
+              <List_Filter isFlower={initialOption==='flower'&&isSearchPage}/>
+              <List_View/>
+          </div> }
+      </div>
+
     </ProductProvider>
   )
 }

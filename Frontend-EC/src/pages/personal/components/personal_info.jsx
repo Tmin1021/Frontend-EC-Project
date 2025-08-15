@@ -5,22 +5,6 @@ import { ChevronDown, SquarePen } from 'lucide-react'
 import { Text_Item, Number_Item, Confirm_Box } from '../../../admin/components/admin_inventory'
 import { AnimatePresence, motion } from "framer-motion";
 
-const Personal_Info_Item = ({name, info, isEdit, onHandleInput}) => {
-
-    return (
-        <div className='flex justify-between'>
-            <p className='font-semibold text-lg w-[20%]'>{name}</p>
-            <input 
-              type="text" 
-              placeholder={name}
-              value={info}
-              onChange={(e)=>{onHandleInput(e.target.value)}}
-              readOnly={!isEdit}
-              className={`text-lg font-light border-1 px-2 w-[60%] resize-none ${isEdit? 'border-gray-300 rounded-xs' : 'focus:outline-none border-none'}`}/>
-        </div>
-    )
-}
-
 
 function Personal_Info() {
   const user = users[0] 

@@ -23,7 +23,9 @@ export default function Admin_Universal_Item({which, info=null, header=0, lastRo
                  shipping_address: ['Shipping adress', info?.shipping_address], total_amount: ['Total amount', info?.total_amount], status: ['Status', info?.status]}, 
     order_item: {product_id: ['Product ID', info?.product_id], option: ['Option', info?.option?.name], price: ['Base price', info?.option?.price ?? info?.price],
                  quantity: ['Quantity', info?.quantity], off_price: ['Off price', info?.off_price], total: ['Total',  ((info?.option?.price ?? info?.price) - info?.off_price) * info?.quantity]
-    }          
+    },
+    order_item_lastRow: {product_id: ['Product ID', ''], option: ['Option', ''], price: ['Base price', ''],
+                 quantity: ['Quantity', ''], off_price: ['Off price', ''], total: ['Total',  info?.total_amount-info?.off_price]}          
     }
 
   const main_info = main_infos[which]
@@ -183,37 +185,39 @@ export function Admin_Universal_Page({name}) {
     const dataListLength = dataList.length
 
     return (
-      <div className='flex flex-col overflow-y-auto px-2 md:px-4 lg:px-8 gap-4' onClick={()=>setIsSearch(false)}>
-        {/* Page name */}
-        <div className='flex items-center justify-between'>
-          <div>
-            <p className='font-semibold text-3xl'>{name}</p>
-            <p className='text-gray-500'>{dataListLength>1 ? dataListLength + ' entries found' : dataListLength===1 ? dataListLength + ' entries found' : 'No entry found'}</p>
-          </div>
-          <Admin_Universal_Create/>
-        </div>
-
-        {/* Search */}
-        <div className='h-[40px] flex items-center justify-between' onClick={(e)=>e.stopPropagation()}>
-          <Admin_Universal_Search name={name} isSearch={isSearch} setIsSearch={setIsSearch}/>
-          <Admin_Universal_Setting/>
-        </div>
-
-        {/* For order only */}
-        {name==='Order' && 
-        <Admin_Universal_Order_Status statusChosen={statusChosen} setStatusChosen={setStatusChosen} filterStatus={filterStatus}/>}
-
-        <div className='flex flex-col gap-4 bg-white px-8 py-4 shadow-lg border-1 border-gray-100 rounded-sm min-w-lg overflow-auto' onClick={(e)=>e.stopPropagation()}>
-          {/* Header title */}
-          <Admin_Universal_Item key={-1} which={type} header={1}/>
-
-          {/* Rows */}
-          {dataList.map((info, i) => (
-            <div key={info[primaryKey]}  onClick={()=>{if(type!=='user') navigate(`/admin/${type}/${info[primaryKey]}`)}}>
-                <Admin_Universal_Item which={type} info={info} header={0} lastRow={i===dataList.length-1} />
+      <AnimatePresence>
+        <div className='flex flex-col overflow-y-auto px-2 md:px-4 lg:px-8 gap-4' onClick={()=>setIsSearch(false)}>
+          {/* Page name */}
+          <div className='flex items-center justify-between'>
+            <div>
+              <p className='font-semibold text-3xl'>{name}</p>
+              <p className='text-gray-500'>{dataListLength>1 ? dataListLength + ' entries found' : dataListLength===1 ? dataListLength + ' entries found' : 'No entry found'}</p>
             </div>
-          ))}
+            <Admin_Universal_Create/>
+          </div>
+
+          {/* Search */}
+          <div className='h-[40px] flex items-center justify-between' onClick={(e)=>e.stopPropagation()}>
+            <Admin_Universal_Search name={name} isSearch={isSearch} setIsSearch={setIsSearch}/>
+            <Admin_Universal_Setting/>
+          </div>
+
+          {/* For order only */}
+          {name==='Order' && 
+          <Admin_Universal_Order_Status statusChosen={statusChosen} setStatusChosen={setStatusChosen} filterStatus={filterStatus}/>}
+
+          <div className='flex flex-col gap-4 bg-white px-8 py-4 shadow-lg border-1 border-gray-100 rounded-sm min-w-lg overflow-auto' onClick={(e)=>e.stopPropagation()}>
+            {/* Header title */}
+            <Admin_Universal_Item key={-1} which={type} header={1}/>
+
+            {/* Rows */}
+            {dataList.map((info, i) => (
+              <div key={info[primaryKey]}  onClick={()=>{if(type!=='user') navigate(`/admin/${type}/${info[primaryKey]}`)}}>
+                  <Admin_Universal_Item which={type} info={info} header={0} lastRow={i===dataList.length-1} />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </AnimatePresence>
     )
 }

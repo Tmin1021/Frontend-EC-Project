@@ -8,7 +8,7 @@ import Admin_Universal_Item, { Admin_Universal_Page } from './admin_universal'
 import GlobalApi from '../../../service/GlobalApi'
 import { products } from '../../data/dummy'
 
-export const Text_Item = ({name, content, setter, placeholder='', rows=1}) => {
+export const Text_Item = ({name='', content='', setter={}, placeholder='', rows=1, isEditable=true}) => {
   const types = ['flower', 'vase', 'ribbon']
   const [isTypeClicked, setIsTypeClicked] = useState(false)
 
@@ -35,8 +35,9 @@ export const Text_Item = ({name, content, setter, placeholder='', rows=1}) => {
             type="text" 
             placeholder={placeholder}
             value={content}
+            readOnly={!isEditable}
             onChange={(e)=>{setter(name, e.target.value)}}
-            className={`bg-white text-sm font-light border-1 border-gray-200 rounded-sm pl-4 py-2 resize-none focus:outline-purple-500 transtion-all`}
+            className={`bg-white text-sm font-light border-1 border-gray-200 rounded-sm pl-4 py-2 resize-none focus:outline-purple-500 transtion-all ${isEditable? '':'border-none'}`}
             rows={rows}
       /> }
     </div>
@@ -57,7 +58,7 @@ const Bool_Item = ({name, content, setter}) => {
   )
 }
 
-export const Number_Item = ({name, content, setter, decimal=true, setterButton=true}) => {
+export const Number_Item = ({name, content, setter, decimal=true, setterButton=true, isEditable=true}) => {
 
   return (
     <div className='flex flex-col justify-between gap-1'>
@@ -68,8 +69,9 @@ export const Number_Item = ({name, content, setter, decimal=true, setterButton=t
             type="text" 
             placeholder={name}
             value={content}
+            readOnly={!isEditable}
             onChange={(e)=>{const val = e.target.value; if (/^\d*\.?\d*$/.test(val)) setter(name, parseFloat(val));}}
-            className={`text-sm font-light resize-none focus:outline-none w-full`}
+            className={`text-sm font-light resize-none focus:outline-none w-full ${isEditable? '':'border-none'}`}
             rows={1}/>
 
         <div className={`flex flex-col justify-between items-center ${setterButton===1 ? '':'opacity-0 pointer-events-none'}`}>
@@ -157,7 +159,6 @@ export const Admin_Inventory_Detail = () => {
   const handleEdit = (name, content) => {
     mapping[name][1](content)
   }
-
 
   const handleFlower = (name, value, setter, option) => {
     if (name === 'Flower Type') {setter(option)}

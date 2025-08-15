@@ -6,7 +6,7 @@ function Extra_Item({extra}) {
   const {selectedExtra, setSelectedExtra} = useProductDetail()
 
   return (
-    <div className={`flex flex-row justify-start gap-2 items-center w-full min-w-[120px] h-[110px] 
+    <div className={`flex flex-row justify-start gap-2 items-center w-full min-w-[120px] h-[110px] rounded-sm
         ${selectedExtra?.product_id===extra.product_id? 'border-3 border-green-700':'border-1 border-gray-200'}
         ${extra.stock===0 ? 'pointer-events-none' : ''}`}
          onClick={()=>{extra.product_id !== selectedExtra?.product_id ? setSelectedExtra(extra) : setSelectedExtra(null)}}>

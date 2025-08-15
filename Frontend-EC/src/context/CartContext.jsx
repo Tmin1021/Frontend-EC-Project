@@ -7,36 +7,36 @@ const CartContext = createContext()
 export function CartProvider({children}) {
     const [cart, setCart] = useState([])
     const [isCartOpen, setIsCardOpen] = useState(false)
-    const [selectedItems, setSelectedItems] = useState(Array(cart.length).fill(false))  
+    const [selectedItems, setSelectedItems] = useState(Array(cart?.length ?? 0).fill(false))  
     const [selectedAll, setSelectedAll] = useState(false)
 
     // format: (product, option, quantity)
     // a
     const addCart = (product) => {
         setCart((prevCart) => {
-            let found = false;
+            let found = false
 
             const updatedCart = prevCart.map(item => {
-                const isSameProduct = item.product.product_id === product.product.product_id;
+                const isSameProduct = item.product.product_id === product.product.product_id
                 const isSameOption =
                     (item.option && product.option && item.option.name === product.option.name) ||
-                    (!item.option && !product.option);
+                    (!item.option && !product.option)
 
                 if (isSameProduct && isSameOption) {
-                    found = true;
-                    return { ...item, quantity: Math.min(item.quantity + product.quantity, product.product.stock)};
+                    found = true
+                    return { ...item, quantity: Math.min(item.quantity + product.quantity, product.product.stock)}
                 }
-                return item;
-            });
+                return item
+            })
 
-            if (!found) {
-                setSelectedItems(prev => [...prev, false]); 
-                return [...updatedCart, product];
-            }
+            if (!found) { 
+                setSelectedItems(prev => [...prev, false])
+                return [...updatedCart, product]
+            } 
 
-            return updatedCart;
-        });
-    };
+            return updatedCart
+        })
+    }
 
     // c
     const closeCart = () => setIsCardOpen(false)
@@ -105,7 +105,7 @@ export function CartProvider({children}) {
 
     const getTotal = useCallback(() => {
         const number_of_selected_items = selectedItems.filter(Boolean).length
-        const total = Math.round(selectedItems.map((isSelected, index) => isSelected? ((cart[index].option?.price ?? cart[index].product.price)*cart[index].quantity) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
+        const total = Math.round(selectedItems.map((isSelected, index) => isSelected? (cart[index]?.product.price * cart[index]?.quantity) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
 
         return [number_of_selected_items, total]
     }, [cart, selectedItems])

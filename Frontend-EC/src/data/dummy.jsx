@@ -7,6 +7,19 @@ import demo_5 from "/src/assets/demo_5.png";
 
 const isDummy = 1
 
+/*
+vr7nhymdm6sy1nef87xr7124
+l23fcdml6c0cuf4mwcfas7aa
+fsslor1xcmpvzmm6gr0a3xrq
+r6pg13k3125krw6oma3wea3l
+
+lbdqwwht5c453g0o8xbcresm
+vfizsmk3jlcq4tpwln9bumxx
+fd7uu75eoq2tx3829uhncx9b
+
+mp3ir8rh52ys3wwmf5qxenki
+rv0djgr8t342iyk5ilthxyka*/
+
 // Bonus Gifts
 const bonus_gifts = [
   { flower_id: "B1",
@@ -22,21 +35,8 @@ const bonus_gifts = [
     off_price: 8,
   }
 ]
-/*
-vr7nhymdm6sy1nef87xr7124
-l23fcdml6c0cuf4mwcfas7aa
-fsslor1xcmpvzmm6gr0a3xrq
-r6pg13k3125krw6oma3wea3l
-
-lbdqwwht5c453g0o8xbcresm
-vfizsmk3jlcq4tpwln9bumxx
-fd7uu75eoq2tx3829uhncx9b
-
-mp3ir8rh52ys3wwmf5qxenki
-rv0djgr8t342iyk5ilthxyka*/
 
 // Carts
-
 
 // Comments
 const comments = [
@@ -92,19 +92,20 @@ const products = [
     product_id: "B1",
     type: "flower",
     name: "Red Rose Bouquet",
-    price: 19.99,
+    price: 1.99,
     stock: 12,
     available: true,
-    description: "Assorted stems of seasonal roses.",
+    description: `Assorted stems of seasonal roses. Assorted stems of seasonal roses. Assorted stems of seasonal roses. Assorted stems of seasonal roses. 
+    Assorted stems of seasonal roses. Assorted stems of seasonal roses.`,
     image_url: [demo_1, demo, demo_2, demo_3],
     flower_details: {
       occasion: ["Wedding"],
       color: ["Pink Flowers"],
       flower_type: "Roses",
       options: [
-        {name: "original", price: 19.99, stems: 5, stock: 3},
-        {name: "deluxe", price: 29.99, stems: 10, stock: 0 },
-        {name: "grand", price: 39.99, stems: 15, stock: 0 }
+        {name: "original", stems: 5, stock: 3},
+        {name: "deluxe", stems: 10, stock: 0 },
+        {name: "grand", stems: 15, stock: 0 }
       ],
     },
   },
@@ -112,7 +113,7 @@ const products = [
     product_id: "B2",
     type: "flower",
     name: "Farmer's Choice Peonies",
-    price: 21.99,
+    price: 2.99,
     stock: 1,
     available: true,
     description: "Assorted stems of seasonal peonies.",
@@ -122,9 +123,9 @@ const products = [
       color: ["White Flowers"],
       flower_type: "Peonies",
       options: [
-        {name: "original", price: 21.99, stems: 5, stock: 0},
-        {name: "deluxe", price: 29.99, stems: 10, stock: 5 },
-        {name: "grand", price: 39.99, stems: 15, stock: 4 }
+        {name: "original", stems: 5, stock: 0},
+        {name: "deluxe", stems: 10, stock: 5 },
+        {name: "grand",  stems: 15, stock: 4 }
       ],
     },
   },
@@ -132,39 +133,19 @@ const products = [
     product_id: "B3",
     type: "flower",
     name: "Peony Bouquet",
-    price: 40,
+    price: 2.59,
     stock: 18,
     available: false,
     description: "Beautiful peony flowers.",
     image_url: [demo_2],
     flower_details: {
-      occasion: ["Wedding", "Graduation"],
+      occasion: ["Wedding", "Happy Birthday"],
       color: ["Pink Flowers"],
       flower_type: "Peonies",
       options: [
-        { name: "original", price: 19.99, stems: 5 },
-        { name: "deluxe", price: 29.99, stems: 10 },
-        { name: "grand", price: 39.99, stems: 15 },
-      ],
-    },
-  },
-    {
-    product_id: "B4",
-    type: "flower",
-    name: "Peony Bouquet",
-    price: 40,
-    stock: 18,
-    available: false,
-    description: "Beautiful peony flowers.",
-    image_url: [demo_2],
-    flower_details: {
-      occasion: ["Wedding", "Graduation"],
-      color: ["Pink Flowers"],
-      flower_type: "Peonies",
-      options: [
-        { name: "original", price: 19.99, stems: 5 },
-        { name: "deluxe", price: 29.99, stems: 10 },
-        { name: "grand", price: 39.99, stems: 15 },
+        { name: "original", stems: 5 },
+        { name: "deluxe", stems: 10 },
+        { name: "grand", stems: 15 },
       ],
     },
   },
@@ -172,7 +153,7 @@ const products = [
     product_id: "V1",
     type: "vase",
     name: "Montecito Vase",
-    price: 19,
+    price: 12.99,
     stock: 12,
     available: true,
     description: "A beautiful vase for your flowers.",
@@ -182,7 +163,7 @@ const products = [
     product_id: "V2",
     type: "vase",
     name: "Montecitoss Vase",
-    price: 40,
+    price: 29.99,
     stock: 0,
     available: true,
     description: "A beautiful vase for your flowers.",
@@ -193,24 +174,24 @@ const products = [
 
 // Orders
 const orders = [
-  { order_id: 1, user_id: 1, order_date: "02/07/2025", shipping_address: "Q5, TPHCM", total_amount: 200, off_price: 0, status: "Required" },
-  { order_id: 2, user_id: 3, order_date: "02/07/2025", shipping_address: "Q5, TPHCM", total_amount: 200, off_price: 0, status: "Done" },
-  { order_id: 3, user_id: 2, order_date: "08/07/2025", shipping_address: "Q1, TPHCM", total_amount: 120, off_price: 10, status: "Confirmed" },
-  { order_id: 4, user_id: 4, order_date: "15/07/2025", shipping_address: "Q10, TPHCM", total_amount: 180, off_price: 0, status: "Confirmed" },
-  { order_id: 5, user_id: 1, order_date: "21/06/2025", shipping_address: "Q5, TPHCM", total_amount: 99, off_price: 0, status: "Done" },
-  { order_id: 6, user_id: 2, order_date: "28/06/2025", shipping_address: "Q1, TPHCM", total_amount: 75, off_price: 5, status: "Canceled" },
-  { order_id: 7, user_id: 3, order_date: "01/07/2025", shipping_address: "Q3, TPHCM", total_amount: 210, off_price: 15, status: "Confirmed" },
-  { order_id: 8, user_id: 4, order_date: "12/06/2025", shipping_address: "Q2, TPHCM", total_amount: 50, off_price: 10, status: "Required" },
-  { order_id: 9, user_id: 1, order_date: "15/06/2025", shipping_address: "Q10, TPHCM", total_amount: 14, off_price: 5, status: "Confirmed" },
-  { order_id: 10, user_id: 2, order_date: "22/06/2025", shipping_address: "Q6, TPHCM", total_amount: 80, off_price: 5, status: "Confirmed" },
-  { order_id: 11, user_id: 3, order_date: "03/07/2025", shipping_address: "Q9, TPHCM", total_amount: 108, off_price: 0, status: "Confirmed" },
-  { order_id: 12, user_id: 2, order_date: "30/07/2025", shipping_address: "Q4, TPHCM", total_amount: 85, off_price: 5, status: "Done" },
+  { order_id: 1, user_id: 1, order_date: "02/07/2025", shipping_address: "Q5, TPHCM", total_amount: 200, off_price: 10, status: "Required", message: 'Leave this here' },
+  { order_id: 2, user_id: 3, order_date: "02/07/2025", shipping_address: "Q5, TPHCM", total_amount: 200, off_price: 0, status: "Done" , message: 'Leave this here' },
+  { order_id: 3, user_id: 2, order_date: "08/07/2025", shipping_address: "Q1, TPHCM", total_amount: 120, off_price: 10, status: "Confirmed", message: 'Leave this here'  },
+  { order_id: 4, user_id: 4, order_date: "15/07/2025", shipping_address: "Q10, TPHCM", total_amount: 180, off_price: 0, status: "Confirmed", message: 'Leave this here'  },
+  { order_id: 5, user_id: 1, order_date: "21/06/2025", shipping_address: "Q5, TPHCM", total_amount: 99, off_price: 0, status: "Done", message: 'Leave this here' },
+  { order_id: 6, user_id: 2, order_date: "28/06/2025", shipping_address: "Q1, TPHCM", total_amount: 75, off_price: 5, status: "Canceled", message: 'Leave this here' },
+  { order_id: 7, user_id: 3, order_date: "01/07/2025", shipping_address: "Q3, TPHCM", total_amount: 210, off_price: 15, status: "Confirmed", message: 'Leave this here' },
+  { order_id: 8, user_id: 4, order_date: "12/06/2025", shipping_address: "Q2, TPHCM", total_amount: 50, off_price: 10, status: "Required", message: 'Leave this here' },
+  { order_id: 9, user_id: 1, order_date: "15/06/2025", shipping_address: "Q10, TPHCM", total_amount: 14, off_price: 5, status: "Confirmed", message: 'Leave this here' },
+  { order_id: 10, user_id: 2, order_date: "22/06/2025", shipping_address: "Q6, TPHCM", total_amount: 80, off_price: 5, status: "Confirmed", message: 'Leave this here'  },
+  { order_id: 11, user_id: 3, order_date: "03/07/2025", shipping_address: "Q9, TPHCM", total_amount: 108, off_price: 0, status: "Confirmed", message: 'Leave this here' },
+  { order_id: 12, user_id: 2, order_date: "30/07/2025", shipping_address: "Q4, TPHCM", total_amount: 85, off_price: 5, status: "Done", message: 'Leave this here' },
   // New orders for today, this week, and this month
-  { order_id: 13, user_id: 1, order_date: "01/08/2025", shipping_address: "Q5, TPHCM", total_amount: 100, off_price: 0, status: "Done" },
-  { order_id: 14, user_id: 2, order_date: "15/08/2025", shipping_address: "Q1, TPHCM", total_amount: 150, off_price: 10, status: "Canceled" },
-  { order_id: 15, user_id: 3, order_date: "29/07/2025", shipping_address: "Q3, TPHCM", total_amount: 90, off_price: 5, status: "Confirmed" },
-  { order_id: 16, user_id: 4, order_date: "05/08/2025", shipping_address: "Q10, TPHCM", total_amount: 120, off_price: 0, status: "Delivering" },
-  { order_id: 17, user_id: 2, order_date: "01/08/2025", shipping_address: "Q1, TPHCM", total_amount: 60, off_price: 0, status: "Delivering" },
+  { order_id: 13, user_id: 1, order_date: "01/08/2025", shipping_address: "Q5, TPHCM", total_amount: 100, off_price: 0, status: "Done", message: 'Leave this here' },
+  { order_id: 14, user_id: 2, order_date: "15/08/2025", shipping_address: "Q1, TPHCM", total_amount: 150, off_price: 10, status: "Canceled", message: 'Leave this here' },
+  { order_id: 15, user_id: 3, order_date: "29/07/2025", shipping_address: "Q3, TPHCM", total_amount: 90, off_price: 5, status: "Confirmed", message: 'Leave this here' },
+  { order_id: 16, user_id: 4, order_date: "05/08/2025", shipping_address: "Q10, TPHCM", total_amount: 120, off_price: 0, status: "Delivering", message: 'Leave this here' },
+  { order_id: 17, user_id: 2, order_date: "01/08/2025", shipping_address: "Q1, TPHCM", total_amount: 60, off_price: 0, status: "Delivering", message: 'Leave this here' },
 ];
 
 // Order Items
@@ -218,113 +199,14 @@ const order_items = [
   {
     order_id: 1,
     products: [
-      { product_id: "B1", option: { name: "original", price: 19.99, stems: 5 }, price: 0, quantity: 1, off_price: 0 },
-      { product_id: "B2", option: { name: "original", price: 19.99, stems: 5 }, price: 0, quantity: 2, off_price: 0 },
+      { product: products[0], option: products[0].flower_details.options[0], price: 120, quantity: 1, off_price: 0 },
+      { product: products[1], option: products[0].flower_details.options[0], price: 120, quantity: 2, off_price: 10 },
     ],
   },
   {
-    order_id: 2,
+    order_id: 1,
     products: [
-      { product_id: "B2", option: { name: "original", price: 19.99, stems: 5 }, price: 0, quantity: 2, off_price: 0 },
-    ],
-  },
-  {
-    order_id: 3,
-    products: [
-      { product_id: "B1", option: { name: "deluxe", price: 29.99, stems: 10 }, price: 0, quantity: 2, off_price: 5 },
-      { product_id: "V1", option: null, price: 19, quantity: 1, off_price: 0 },
-    ],
-  },
-  {
-    order_id: 4,
-    products: [
-      { product_id: "B2", option: { name: "grand", price: 39.99, stems: 15 }, price: 0, quantity: 1, off_price: 0 },
-      { product_id: "V2", option: null, price: 25, quantity: 1, off_price: 0 },
-    ],
-  },
-  {
-    order_id: 5,
-    products: [
-      { product_id: "B1", option: { name: "original", price: 19.99, stems: 5 }, price: 0, quantity: 3, off_price: 0 },
-    ],
-  },
-  {
-    order_id: 6,
-    products: [
-      { product_id: "V1", option: null, price: 19, quantity: 2, off_price: 5 },
-    ],
-  },
-  {
-    order_id: 7,
-    products: [
-      { product_id: "B2", option: { name: "grand", price: 39.99, stems: 15 }, price: 0, quantity: 2, off_price: 10 },
-      { product_id: "B1", option: { name: "deluxe", price: 29.99, stems: 10 }, price: 0, quantity: 1, off_price: 5 },
-    ],
-  },
-  {
-    order_id: 8,
-    products: [
-      { product_id: "B2", option: { name: "original", price: 19.99, stems: 5 }, price: 0, quantity: 3, off_price: 10 },
-    ],
-  },
-  {
-    order_id: 9,
-    products: [
-      { product_id: "V1", option: null, price: 19, quantity: 1, off_price: 5 },
-    ],
-  },
-  {
-    order_id: 10,
-    products: [
-      { product_id: "B1", option: { name: "deluxe", price: 29.99, stems: 10 }, price: 0, quantity: 2, off_price: 5 },
-    ],
-  },
-  {
-    order_id: 11,
-    products: [
-      { product_id: "B2", option: { name: "grand", price: 39.99, stems: 15 }, price: 0, quantity: 1, off_price: 0 },
-      { product_id: "V2", option: null, price: 25, quantity: 1, off_price: 0 },
-    ],
-  },
-  {
-    order_id: 12,
-    products: [
-      { product_id: "B1", option: { name: "original", price: 19.99, stems: 5 }, price: 0, quantity: 2, off_price: 5 },
-      { product_id: "V1", option: null, price: 19, quantity: 1, off_price: 0 },
-    ],
-  },
-  // New order items for today, this week, and this month
-  {
-    order_id: 13,
-    products: [
-      { product_id: "B3", option: { name: "deluxe", price: 29.99, stems: 10 }, price: 0, quantity: 1, off_price: 0 },
-      { product_id: "V1", option: null, price: 19, quantity: 1, off_price: 0 },
-    ],
-  },
-  {
-    order_id: 14,
-    products: [
-      { product_id: "B4", option: { name: "grand", price: 35.99, stems: 9 }, price: 0, quantity: 2, off_price: 10 },
-      { product_id: "V2", option: null, price: 25, quantity: 1, off_price: 0 },
-    ],
-  },
-  {
-    order_id: 15,
-    products: [
-      { product_id: "B1", option: { name: "original", price: 19.99, stems: 5 }, price: 0, quantity: 2, off_price: 5 },
-    ],
-  },
-  {
-    order_id: 16,
-    products: [
-      { product_id: "B2", option: { name: "deluxe", price: 29.99, stems: 10 }, price: 0, quantity: 1, off_price: 0 },
-      { product_id: "V1", option: null, price: 19, quantity: 1, off_price: 0 },
-    ],
-  },
-  {
-    order_id: 17,
-    products: [
-      { product_id: "B4", option: { name: "original", price: 15.99, stems: 3 }, price: 0, quantity: 1, off_price: 0 },
+      { product: products[0], option: products[0].flower_details.options[0], price: 0, quantity: 4, off_price: 5 },
     ],
   },
 ];
@@ -388,14 +270,5 @@ const carts = [
   },
 ];
 
-const order_items_2 = [
-  {
-    order_id: 1,
-    products: [
-      { product: products[0], option: products[0].flower_details.options[0], quantity: 1, off_price: 0 },
-      { product: products[1], option: products[0].flower_details.options[0], quantity: 2, off_price: 10 },
-    ],
-  },
-];
 
-export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser, order_items_2 };
+export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser};

@@ -27,7 +27,7 @@ const Cart_Item = ({product}) => {
                 </div>}
 
                 <div className='flex flex-col md:flex-row justify-between gap-1'>
-                    {/* Modify quantity */}
+                    {/* Modify quantity 
                     <div className=' w-[50%] md:w-[25%] flex items-center gap-4 cursor-pointer'>
                         <div className='p-1 rounded-full bg-gray-200/60 backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all'>
                             <Minus className='w-4 h-4 text-gray-700' onClick={()=>updateCart(product, Math.max(1, product.quantity-1))}/>
@@ -36,7 +36,7 @@ const Cart_Item = ({product}) => {
                         <div className='p-1 rounded-full bg-green-400/60 backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all'>
                             <Plus className='w-4 h-4 text-white' onClick={()=>updateCart(product, Math.min(product.product.stock, product.quantity+1))}/>
                         </div>
-                    </div>
+                    </div>*/}
 
                     {/* Total and Off Price and Remove button*/}
                     <div className='flex gap-2 items-center justify-between md:justify-end'>
@@ -47,8 +47,8 @@ const Cart_Item = ({product}) => {
                         </div>}
                         <p className='font-bold text-sm'><span className='text-gray-400 font-medium'>Total: </span>{Math.round(100*((product.option?.price ?? product.product.price) * product.quantity-product.off_price))/100}</p>
                     
-                        <div className='hidden md:inline bg-pink-500 text-white text-xs p-1 rounded-sm font-medium shadow-gray-400 shadow-sm hover:shadow-md transition-all'>Remove</div>
-                        <div className='md:hidden p-1 rounded-full bg-pink-500/80 backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all'><Trash className='w-4 h-4 text-white'/></div>
+                        <div className='hidden bg-pink-500 text-white text-xs p-1 rounded-sm font-medium shadow-gray-400 shadow-sm hover:shadow-md transition-all'>Remove</div>
+                        <div className='hidden p-1 rounded-full bg-pink-500/80 backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all'><Trash className='w-4 h-4 text-white'/></div>
                     </div>
 
                 </div>
@@ -58,8 +58,8 @@ const Cart_Item = ({product}) => {
 }
 
 function CartList() {
-  const cart = carts[0]
-  const cartLength = cart.products.length
+  const {cart, selectedItems} =  useCart()
+  const cartLength = cart?.length
 
   return (
     <div className='flex flex-col gap-2 bg-white px-2 md:px-4 py-4 shadow-sm border-1 border-gray-100 rounded-lg overflow-auto'>
@@ -68,8 +68,8 @@ function CartList() {
             <p className='text-sm text-gray-400 font-semibold'>{cartLength>1 ? cartLength + ' items' : cartLength + ' item'}</p>
         </div>
 
-        {cart.products.map((product, i) => (
-            <Cart_Item key={i} product={product}/>
+        {cart?.map((product, i) => (
+            <div className={`${selectedItems[i]? '':'hidden'}`}><Cart_Item key={i} product={product}/></div>
         ))}
     </div>
   )

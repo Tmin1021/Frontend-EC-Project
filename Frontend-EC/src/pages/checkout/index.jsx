@@ -5,8 +5,16 @@ import Order_Summary from './components/order_summary'
 import Delivery_Info from './components/delivery_info'
 import Cart_Decor from './components/cart_decor'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
+import { useCart } from '../../context/CartContext'
 
 function Checkout() {
+  const {isAuthenticated, user} = useAuth()
+  const navigate = useNavigate()
+
+  //if (!isAuthenticated) navigate('/login')
+  //if (isAuthenticated && (cart.length === 0 || user.role!='user')) navigate('/')
 
   return (
     <AnimatePresence>

@@ -50,7 +50,6 @@ export function ProductDetailProvider({children}) {
             setProduct(new_product)
 
             if (new_product.type === 'flower') {
-                console.log(new_product)
                 const new_option = new_product?.flower_details.options.find(option => option.stock>0)
                 setSelectedOption(new_option);
             }
