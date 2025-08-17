@@ -10,6 +10,7 @@ export function CartProvider({children}) {
     const [selectedItems, setSelectedItems] = useState(Array(cart?.length ?? 0).fill(false))  
     const [selectedAll, setSelectedAll] = useState(false)
 
+
     // format: (product, option, quantity)
     // a
     const addCart = (product) => {

@@ -92,8 +92,8 @@ function Chatbot() {
                 key={index}
                 className={`mb-2 p-2 rounded-md text-sm max-w-[75%] ${
                   msg.role === 'user'
-                    ? 'bg-blue-200 shadow-gray-100 shadow-lg text-shadow-gray-800 ml-auto text-right'
-                    : 'bg-pink-200 shadow-gray-100 shadow-lg text-gray-800 mr-auto text-left'
+                    ? 'bg-blue-300 shadow-gray-100 shadow-sm text-shadow-gray-800 ml-auto text-right'
+                    : 'bg-pink-300 shadow-gray-100 shadow-sm text-gray-800 mr-auto text-left'
                 }`}
                 dangerouslySetInnerHTML={{
                   __html: msg.content

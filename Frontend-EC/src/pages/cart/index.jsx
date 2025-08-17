@@ -34,6 +34,7 @@ function Cart() {
       };
   }, [isCartOpen]);
 
+
   // initial: "x:100%" --> set the div to the rightmost (out of the portview)
   // animate: "x:0" --> set the div to the leftmmost (targeted position)
   // exit: set the position when the div is unmounted

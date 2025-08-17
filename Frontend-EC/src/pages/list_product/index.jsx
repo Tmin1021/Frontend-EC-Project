@@ -16,11 +16,11 @@ function List_Product({isSearchPage=false, result=[]}) {
   return (
     <ProductProvider isSearch={isSearchPage} searchResult={result.filter(item => initialOption === 'flower' ? item.type===initialOption : item.type!='flower') }>
 
-      <div className='max-w-screen-xl mx-auto'>
+      <div className='max-w-screen-xl mx-auto w-full'>
         {(isSearchPage&&result.length!==0) &&
         <div className='flex flex-row gap-4 px-4 md:px-10 lg:px-32'>
-            <div onClick={()=>setInitialOption('flower')}>Flowers</div>
-            <div onClick={()=>setInitialOption('accessory')}>Accessories</div>
+            <div onClick={()=>setInitialOption('flower')} className={`${'flower'===initialOption? ' bg-purple-500 shadow-gray-100 shadow-md text-white':''} cursor-pointer rounded-3xl p-2`}>Flowers</div>
+            <div onClick={()=>setInitialOption('accessory')} className={`${'accessory'===initialOption? 'bg-purple-500 shadow-gray-100 shadow-md text-white':''} cursor-pointer rounded-3xl p-2`}>Accessories</div>
         </div> }
 
         {(!isSearchPage || (isSearchPage&&result.length!==0)) &&

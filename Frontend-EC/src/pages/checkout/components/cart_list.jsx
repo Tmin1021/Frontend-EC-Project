@@ -69,7 +69,7 @@ function CartList() {
         </div>
 
         {cart?.map((product, i) => (
-            <div className={`${selectedItems[i]? '':'hidden'}`}><Cart_Item key={i} product={product}/></div>
+            <div key={i} className={`${selectedItems[i]? '':'hidden'}`}><Cart_Item key={i} product={product}/></div>
         ))}
     </div>
   )

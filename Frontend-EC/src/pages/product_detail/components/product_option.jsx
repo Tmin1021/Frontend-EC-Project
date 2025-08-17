@@ -5,7 +5,7 @@ function Option_Item({base_price, option}) {
    const {selectedOption, setSelectedOption} = useProductDetail()
 
     return (
-    <div className={`max-w-[200px] w-full h-[120px] flex flex-col justify-around items-center py-5 rounded-sm
+    <div className={`cursor-pointer max-w-[200px] w-full h-[120px] flex flex-col justify-around items-center py-5 rounded-sm
                     ${selectedOption.name===option.name? 'border-3 border-green-700' : 'border-1 border-gray-200'}
                     ${option.stock===0? 'pointer-events-none' : ''}`}
          onClick={()=>setSelectedOption(option)}>

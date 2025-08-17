@@ -1,6 +1,7 @@
 import React from 'react'
 import { carts } from '../../../data/dummy'
 import { Gift } from 'lucide-react'
+import {createPayment} from '../../../../service/Payment'
 
 const Order_Summary_Item = ({title, price}) => {
     
@@ -11,6 +12,7 @@ const Order_Summary_Item = ({title, price}) => {
         </div>
     )
 }
+
 
 function Order_Summary() {
   const cart = carts[0]
@@ -34,7 +36,10 @@ function Order_Summary() {
 
         <Order_Summary_Item title='Total' price={subtotal+shipping-off_price}/>
 
-        <div className='flex justify-center bg-pink-700/70 rounded-lg text-white font-semibold text-sm w-full p-2 hover:shadow-lg hover:shadow-gray-300 hover:bg-pink-700/90 transition-all'>Order</div>
+        <div className='flex justify-center bg-pink-700/70 rounded-lg text-white font-semibold text-sm w-full p-2 hover:shadow-lg hover:shadow-gray-300 hover:bg-pink-700/90 transition-all'
+             onClick={()=>{createPayment(subtotal+shipping-off_price)}}>
+            Order
+        </div>
     </div>
   )
 }

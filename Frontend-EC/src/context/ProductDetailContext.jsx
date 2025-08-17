@@ -15,7 +15,7 @@ export function ProductDetailProvider({children}) {
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedExtra, setSelectedExtra] = useState(null);
     const [quantity, setQuantity] = useState(1);
-
+    
     useEffect(() => {
         const fetchProductDetail = async () => {
         try {

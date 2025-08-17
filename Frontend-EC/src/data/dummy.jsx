@@ -103,9 +103,9 @@ const products = [
       color: ["Pink Flowers"],
       flower_type: "Roses",
       options: [
-        {name: "original", stems: 5, stock: 3},
-        {name: "deluxe", stems: 10, stock: 0 },
-        {name: "grand", stems: 15, stock: 0 }
+        {name: "original", stock: 5, stems: 5},
+        {name: "deluxe", stock: 5, stems: 10},
+        {name: "grand", stock: 5, stems: 15}
       ],
     },
   },
@@ -114,7 +114,7 @@ const products = [
     type: "flower",
     name: "Farmer's Choice Peonies",
     price: 2.99,
-    stock: 1,
+    stock: 12,
     available: true,
     description: "Assorted stems of seasonal peonies.",
     image_url: [demo_1, demo, demo_2],
@@ -123,9 +123,9 @@ const products = [
       color: ["White Flowers"],
       flower_type: "Peonies",
       options: [
-        {name: "original", stems: 5, stock: 0},
-        {name: "deluxe", stems: 10, stock: 5 },
-        {name: "grand",  stems: 15, stock: 4 }
+        {name: "original", stock: 5, stems: 5},
+        {name: "deluxe", stock: 5, stems: 10},
+        {name: "grand",  stock: 2, stems: 15}
       ],
     },
   },
@@ -143,9 +143,9 @@ const products = [
       color: ["Pink Flowers"],
       flower_type: "Peonies",
       options: [
-        { name: "original", stems: 5 },
-        { name: "deluxe", stems: 10 },
-        { name: "grand", stems: 15 },
+        { name: "original", stock: 1, stems: 5 },
+        { name: "deluxe", stock: 0, stems: 10 },
+        { name: "grand", stock: 5, stems: 15 },
       ],
     },
   },
@@ -199,14 +199,14 @@ const order_items = [
   {
     order_id: 1,
     products: [
-      { product: products[0], option: products[0].flower_details.options[0], price: 120, quantity: 1, off_price: 0 },
-      { product: products[1], option: products[0].flower_details.options[0], price: 120, quantity: 2, off_price: 10 },
+      { product: products[0], option: products[0].flower_details.options[0], quantity: 1, off_price: 0 },
+      { product: products[1], option: products[0].flower_details.options[0], quantity: 2, off_price: 10 },
     ],
   },
   {
     order_id: 1,
     products: [
-      { product: products[0], option: products[0].flower_details.options[0], price: 0, quantity: 4, off_price: 5 },
+      { product: products[0], option: products[0].flower_details.options[0], quantity: 4, off_price: 5 },
     ],
   },
 ];

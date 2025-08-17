@@ -23,6 +23,7 @@ import { useAuth } from './context/AuthContext'
 import Admain_Dashboard from './admin/components/admin_dashboard'
 import Checkout from './pages/checkout'
 import { Order_Product_Preview } from './pages/personal/components/personal_order'
+import DemoAPI from './pages/demoAPI'
 
 const UserLayout = () => {
 
@@ -47,6 +48,8 @@ function App() {
       <div className='min-w-[320px]'>
         <Router>
           <Routes>
+            <Route path="/demoapi" element={<DemoAPI/>}/>
+
             <Route path="/login" element={<Login/>}/>
             <Route path="/signup" element={<Signup/>}/>
             <Route path='/checkout' element={<Checkout/>}/>

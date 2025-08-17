@@ -64,10 +64,11 @@ function Product_Detail() {
                 <p className='font-semibold text-4xl mx-auto hidden md:flex'>{product.name}</p>
                 {product.type==='flower' && <Product_Option/>}
                 {product.type==='flower' && <Product_Extra/>}
-                {stock!=0 && <Product_Quantity/>}
+                {stock!=0 && <Product_Quantity curStock={stock}/>}
 
-                {stock!=0 && <p className={`${product.stock <11 ? 'bg-red-600/80':'bg-green-600/80'} font-semibold w-fit p-1 text-white rounded-sm`}>In stock: {stock}</p>}
+                {stock!=0 && <p className={`${(product.type==='flower'? selectedOption.stock<11 :product.stock <11) ? 'bg-red-600/80':'bg-green-600/80'} font-semibold w-fit p-1 text-white rounded-sm`}>In stock: {stock}</p>}
                 
+                {/* Add to cart */}
                 <div className={`relative ${!stock ? 'bg-gray-500/80 hover:bg-gray-500 pointer-events-none': 'bg-green-800/80 hover:bg-green-800'} min-w-[300px] h-[50px] flex items-center rounded-sm hover:shadow-lg shadow-gray-300 transition-all`} 
                      onClick={() => {setIsAllowed(true); addCart({ product: product, option: selectedOption, quantity: quantity, off_price: 0});
                      if (selectedExtra) {addCart({ product: selectedExtra, option: null, quantity: 1, off_price: 0});}}}>

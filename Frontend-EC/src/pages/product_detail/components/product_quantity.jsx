@@ -30,7 +30,7 @@ function Product_Quantity() {
             <Plus className='w-5 h-5' onClick={()=>setQuantity(Math.min(product.type==='flower'? selectedOption.stock : product.stock, quantity+1))}/>
         </div>
         
-        <p className='font-semibold text-2xl'>{Math.round((selectedOption?.price ?? product.price)*quantity*100)/100}</p>
+        <p className='font-semibold text-2xl'>{Math.round((product.type==='flower'? selectedOption?.stems * product.price : product.price)*quantity*100)/100}</p>
     </div>
   )
 }
