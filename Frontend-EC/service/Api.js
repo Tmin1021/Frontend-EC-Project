@@ -1,8 +1,19 @@
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE = 'http://localhost:8080'; 
+const API_BASE = "http://localhost:8080/products";
 
-export const getProducts = async () => {
-  const response = await axios.get(`${API_BASE}/products`);
-  return response.data; 
-};
+const axiosClient = axios.create({
+  baseURL: API_BASE,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// get all vases
+export const getVases = () => axiosClient.get("/vase");
+
+// get all products
+export const getProducts = () => axiosClient.get("/");
+
+// get single product
+export const getProductById = (id) => axiosClient.get(`/${id}`);

@@ -6,10 +6,10 @@ async function createPayment(amount) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        amount: 10000,              
+        amount: 100000,              
         bankCode: "VNBANK",
         orderDescription: "Test payment",
-        orderType: 100000,
+        orderType: '100000',
         language: "vn"
       }),
     });
