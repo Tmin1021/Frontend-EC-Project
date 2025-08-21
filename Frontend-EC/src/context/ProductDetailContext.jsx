@@ -15,35 +15,56 @@ export function ProductDetailProvider({children}) {
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedExtra, setSelectedExtra] = useState(null);
     const [quantity, setQuantity] = useState(1);
+    const [comments, setComments] = useState([])
     
     useEffect(() => {
         const fetchProductDetail = async () => {
-        try {
-            const res = await GlobalApi.ProductApi.getById(id);
-            const item = res.data.data;
+            try {
+                const res = await GlobalApi.ProductApi.getById(id);
+                const item = res.data.data;
 
-            if (item) {
-                const data = {
-                product_id: item?.documentId,
-                type: item?.type,
-                name: item?.name,
-                price: item?.price,
-                stock: item?.stock,
-                available: item?.available,
-                description: item?.description,
-                image_url: item.image_url.map(image => BASE_URL+image.url),
-                flower_details: item?.flower_details
-            }
+                if (item) {
+                    const data = {
+                    product_id: item?.documentId,
+                    type: item?.type,
+                    name: item?.name,
+                    price: item?.price,
+                    stock: item?.stock,
+                    available: item?.available,
+                    description: item?.description,
+                    image_url: item.image_url.map(image => BASE_URL+image.url),
+                    flower_details: item?.flower_details
+                }
 
-            setProduct(data);
-            setSelectedOption(data.flower_details?.options[0]);
-            } else {
-            console.warn("No product found for", id);
+                setProduct(data);
+                setSelectedOption(data.flower_details?.options[0]);
+                } else {
+                console.warn("No product found for", id);
+                }
+            } catch (error) {
+                console.error("Failed to fetch product:", error);
             }
-        } catch (error) {
-            console.error("Failed to fetch product:", error);
-        }
         };
+
+        const fetchComment = async () => {
+            try {
+                const res = await GlobalApi.CommentApi.getAll()
+                const item = res.data.data
+
+                if (item) {
+                    const data = item.filter(i => i.product_id === id)
+
+                    const resUser = await GlobalApi.UserApi.getById(data[0]?.user_id)        
+                    data.map(i => i.user_id = resUser.data.data?.name)
+
+                    setComments(data)
+                } else {
+                console.warn("No comment found for", id)
+                }
+            } catch (error) {
+                console.error("Failed to fetch comment:", error)
+            }
+        }
 
         function fetchDummy() {
             const new_product = products.find(product => product.product_id===id)
@@ -55,12 +76,17 @@ export function ProductDetailProvider({children}) {
             }
         }
 
-        isDummy? fetchDummy() : fetchProductDetail();
+        if (isDummy) fetchDummy() 
+        else {
+            fetchProductDetail()
+            fetchComment()
+        }
+
     }, [id]);
 
 
     return (
-        <ProductDetailContext.Provider value={{product, selectedOption, setSelectedOption, selectedExtra, setSelectedExtra, quantity, setQuantity}}>
+        <ProductDetailContext.Provider value={{comments, product, selectedOption, setSelectedOption, selectedExtra, setSelectedExtra, quantity, setQuantity}}>
             {children}
         </ProductDetailContext.Provider>
     )

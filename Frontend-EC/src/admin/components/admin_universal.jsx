@@ -137,8 +137,11 @@ export function Admin_Universal_Setting() {
 }
 
 export function Admin_Universal_Create() {
+  const navigate = useNavigate()
+
   return (
-    <div className='w-[160px] h-[32px] flex items-center justify-between font-bold text-white bg-purple-400 px-4 border-1 border-gray-300 rounded-sm'>
+    <div className='cursor-pointer w-[160px] h-[32px] flex items-center justify-between font-bold text-white bg-purple-400 px-4 border-1 border-gray-300 rounded-sm hover:bg-purple-600 hover:shadow-gray-200 hover:shadow-md transition-all'
+         onClick={()=>navigate(`create`)}>
       <Plus className='w-4 h-4'/>
       <p className='text-xs'>Create new entry</p>
     </div>
@@ -187,13 +190,13 @@ export function Admin_Universal_Page({name}) {
     return (
       <AnimatePresence>
         <div className='flex flex-col overflow-y-auto px-2 md:px-4 lg:px-8 gap-4' onClick={()=>setIsSearch(false)}>
-          {/* Page name */}
+          {/* Page name and Create button*/}
           <div className='flex items-center justify-between'>
             <div>
               <p className='font-semibold text-3xl'>{name}</p>
               <p className='text-gray-500'>{dataListLength>1 ? dataListLength + ' entries found' : dataListLength===1 ? dataListLength + ' entries found' : 'No entry found'}</p>
             </div>
-            <Admin_Universal_Create/>
+            <Admin_Universal_Create />
           </div>
 
           {/* Search */}

@@ -1,11 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import GlobalApi from "../../service/GlobalApi";
 import {isDummy, users } from "../data/dummy";
+import { toast } from "sonner";
+import bcrypt from "bcryptjs";
+
 
 const AuthContext = createContext()
 
 export function AuthProvider({children}) {
     const [user, setUser] = useState(null)
+
 
     useEffect(() => {
         const savedUser = JSON.parse(localStorage.getItem('user'))
@@ -32,10 +36,18 @@ export function AuthProvider({children}) {
                 return;
             }
 
+            /*
+            const isMatch = await bcrypt.compare(password, users[0]?.password);
+
+            if (!isMatch) {
+                alert("Wrong password");
+                return;
+            }*/
+
             const user = {
-                user_id: users[0]?.id,
+                user_id: users[0]?.documentId,
                 name: users[0]?.name,
-                mail: users[0]?.phone,
+                mail: users[0]?.mail,
                 phone: users[0]?.phone,
                 address: users[0]?.address,
                 role: users[0]?.role

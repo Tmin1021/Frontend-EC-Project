@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { order_items, isDummy, products } from '../data/dummy'
+import { order_items, isDummy, products, demo_1 } from '../data/dummy'
 import GlobalApi from '../../service/GlobalApi';
 import { useParams } from 'react-router-dom';
+
 
 const ProductContext = createContext()
 const BASE_URL = 'http://localhost:1337';
@@ -33,7 +34,7 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
         stock: item?.stock,
         available: item?.available,
         description: item?.description,
-        image_url: item.image_url.map(image => BASE_URL+image.url),
+        image_url: item?.image_url.map(image => BASE_URL+image.url) ?? demo_1,
         flower_details: item?.flower_details
     }))
 

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { comments, users } from '../../../data/dummy'
+import { isDummy, users } from '../../../data/dummy'
 import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useProductDetail } from '../../../context/ProductDetailContext'
+
 
 // find return the first matching or undefined, while filter return an array
 function Comment_Item({comment}) {
@@ -23,7 +25,8 @@ function Comment_Item({comment}) {
                 <Star key={i} className="text-yellow-500" />
               ))}
             </div>
-            <p>{users.find(user => user.user_id === comment.user_id)?.name}</p>
+
+            <p>{isDummy? users.find(user => user.user_id === comment.user_id)?.name : comment.user_id}</p>
         </div>
         
         <p className='text-sm font-light'> {comment.content}</p>
@@ -70,10 +73,9 @@ function Product_Rating({comments}) {
 }
 
 
-function Product_Comment({product_id}) {
-  const [index, setIndex] = useState(0)
+function Product_Comment() {
   const [isViewMore, setIsViewMore] = useState(false)
-  const this_product_comments = comments //comments.filter((comment) => comment.product_id == product_id)
+  const {comments} = useProductDetail()
   const [visibleCount, setVisibleCount] = useState(4);
 
   useEffect(() => {
@@ -93,12 +95,12 @@ function Product_Comment({product_id}) {
   return (
     <div className='flex flex-col gap-4'>
         <p className='font-bold text-2xl'>Ratings & Reviews</p>
-        <Product_Rating comments={this_product_comments}/>
+        <Product_Rating comments={comments}/>
         
         <div className={` ${isViewMore? 'fixed inset-0 flex justify-center items-center bg-black/20 backdrop-blur-sm':''} transition-all`} onClick={()=>setIsViewMore(false)}>
           <div className={`${isViewMore ? 'w-[90%] md:w-[60%] bg-white/80 p-4 rounded-lg max-h-[80vh] overflow-y-auto':''} grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4 duration-500 ease-in-out`}
                onClick={(e)=> e.stopPropagation()}>
-              {this_product_comments.slice(0,visibleCount).map((comment) => (<Comment_Item key={comment.user_id} comment={comment}/>))}
+              {comments.slice(0,visibleCount).map((comment) => (<Comment_Item key={comment.user_id} comment={comment}/>))}
           </div>
         </div>
 

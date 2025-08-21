@@ -5,7 +5,28 @@ import demo_3 from "/src/assets/demo_3.png";
 import demo_4 from "/src/assets/demo_4.png";
 import demo_5 from "/src/assets/demo_5.png";
 
-const isDummy = 1
+const isDummy = 0
+
+const productPlaceHolder =   {
+    product_id: "Create",
+    type: "flower",
+    name: "Red Rose Bouquet",
+    price: 1.99,
+    stock: 10,
+    available: true,
+    description: "Assorted stems of seasonal roses.",
+    image_url: [demo_1, demo, demo_2, demo_3],
+    flower_details: {
+      occasion: ["Wedding"],
+      color: ["Pink Flowers"],
+      flower_type: "Roses",
+      options: [
+        {name: "original", stock: 5, stems: 5},
+        {name: "deluxe", stock: 5, stems: 10},
+        {name: "grand", stock: 5, stems: 15}
+      ],
+    },
+  }
 
 /*
 vr7nhymdm6sy1nef87xr7124
@@ -271,4 +292,4 @@ const carts = [
 ];
 
 
-export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser};
+export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser, productPlaceHolder, demo_1};

@@ -7,6 +7,7 @@ import { useNavigate, Outlet } from 'react-router-dom'
 import { Menu, PanelRightOpen, User, Store, Box, LayoutDashboard } from 'lucide-react' 
 import { AnimatePresence, motion } from 'framer-motion'
 import Dashboard from '../pages/dashboard'
+import { Toaster } from 'sonner'
 
 function Admin() {
   const managements = 
@@ -86,6 +87,7 @@ function Admin() {
       {/* Right Panel */}
       <div className="flex-1 p-2 md:p-4 mt-16 md:mt-0 overflow-auto bg-gray-100 ">
         <Outlet />
+        <Toaster />
       </div>
     </div>
   )

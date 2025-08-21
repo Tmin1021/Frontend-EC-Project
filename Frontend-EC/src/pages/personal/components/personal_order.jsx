@@ -134,8 +134,9 @@ function Personal_Order() {
   const [statusChosen, setStatusChosen] = useState('All')
   const userOrders =  orders.filter(order => order.user_id===1)
   const [currentUserOrders, setCurrentUserOrder] = useState(userOrders)
-  
+
   useEffect(() => {
+
     setCurrentUserOrder(orders.filter(order => order.user_id===1))
   }, [])
 
@@ -159,3 +160,25 @@ function Personal_Order() {
 }
 
 export default Personal_Order
+
+/*
+    const [initialOrder, setInitialOrder] = useState([])
+    const [currentOrder, setCurrentOrder] = useState([])
+
+    useEffect(() => {
+        const savedUser = JSON.parse(localStorage.getItem('user'))
+        if (savedUser) {
+            const fetchOrder = async () => {
+                try {
+                    const res = await GlobalApi.OrderApi.getByUserId(savedUser.user_id);
+                    const item = res.data.data;
+
+                } catch (err) {
+                console.error("Failed to fetch order", err);
+            }
+
+            setUser(savedUser)
+        }
+    }}, [])
+
+    */

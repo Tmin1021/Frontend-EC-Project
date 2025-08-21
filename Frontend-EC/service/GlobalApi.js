@@ -13,22 +13,13 @@ const axiosClient=axios.create({
 
 export const BASE_URL = 'http://localhost:1337';
 
-
-/*
-// Follow CRUD
-// product
-// create
-const CreateNewProduct=(data)=>axiosClient.post('/products', data)
-// retrieve
-const GetProduct=()=>axiosClient.get('/products?populate=*')
-//update
-const UpdateProductDetail=(id, data)=>axiosClient.put('/products/'+id,data)
-//delete
-const DeleteProductById=(id)=>axiosClient.delete('/products/'+id)
-
- // +"?populate=*" --> to select everything
- // else, any composite attribute will not appear
-const GetProductById=(id)=>axiosClient.get(`/products/${id}?populate=*`)  */
+// comment
+const CommentApi = {
+  getAll: () => axiosClient.get('/comments?populate=*'),
+  getByProductId: (id) => axiosClient.get(`/comments?filters[product_id][$eq]=${id}&populate=*`),
+  create: (data) => axiosClient.post('/comments', data),
+  delete: (id) => axiosClient.delete(`/comments/${id}`)
+}
 
 // user
 const UserApi = {
@@ -40,7 +31,7 @@ const UserApi = {
   delete: (id) => axiosClient.delete(`/my-users/${id}`)
 }
 
-// user
+// product
 const ProductApi = {
   getAll: () => axiosClient.get('/products?populate=*'),
   getById: (id) => axiosClient.get(`/products/${id}?populate=*`),
@@ -53,6 +44,7 @@ const ProductApi = {
 const OrderApi = {
   getAll: () => axiosClient.get('/orders?populate=*'),
   getById: (id) => axiosClient.get(`/orders/${id}?populate=*`),
+  getByUserId: (id) => axiosClient.get(`/orders?filters[user_id][$eq]=${id}?populate=*`),
   create: (data) => axiosClient.post('/orders', data),
   update: (id, data) => axiosClient.put(`/orders/${id}`, data),
   delete: (id) => axiosClient.delete(`/orders/${id}`)
@@ -67,9 +59,19 @@ const OrderItemApi = {
   delete: (id) => axiosClient.delete(`/order-items/${id}`)
 }
 
+// support funcs
+const formatDate = (str) => {
+  const [date, time] = str.split("T")
+  const cleanTime = time.replace(".000Z", "")
+
+  return (date+ ' ' +cleanTime)
+}
+
 export default{
+    CommentApi,
     UserApi,
     ProductApi,
     OrderApi,
-    OrderItemApi
+    OrderItemApi,
+    formatDate
 }

@@ -6,7 +6,8 @@ import { filter_types } from '../../pages/list_product/components/list_filter'
 import { AnimatePresence, motion } from "framer-motion";
 import Admin_Universal_Item, { Admin_Universal_Page } from './admin_universal'
 import GlobalApi from '../../../service/GlobalApi'
-import { products } from '../../data/dummy'
+import { demo_1, productPlaceHolder, products } from '../../data/dummy'
+import { toast } from 'sonner'
 
 export const Text_Item = ({name='', content='', setter={}, placeholder='', rows=1, isEditable=true}) => {
   const types = ['flower', 'vase', 'ribbon']
@@ -74,7 +75,7 @@ export const Number_Item = ({name, content, setter, decimal=true, setterButton=t
             className={`text-sm font-light resize-none focus:outline-none w-full ${isEditable? '':'border-none'}`}
             rows={1}/>
 
-        <div className={`flex flex-col justify-between items-center ${setterButton===1 ? '':'opacity-0 pointer-events-none'}`}>
+        <div className={`flex flex-col justify-between items-center ${setterButton===true ? '':'opacity-0 pointer-events-none'}`}>
           <ChevronUp className='w-4 h-4' onClick={()=> {decimal ? setter(name, Math.round((content+0.01)*100,2)/100) : setter(name, content+1)}}/>
           <ChevronDown className='w-4 h-4' onClick={()=> {decimal ? setter(name, Math.round((content-0.01)*100,2)/100) : setter(name, content-1)}}/>
         </div>
@@ -83,26 +84,25 @@ export const Number_Item = ({name, content, setter, decimal=true, setterButton=t
   )
 }
 
-export function Confirm_Box({getSave=1, getDelete=1}) {
+export function Confirm_Box({getSave=true, getDelete=false, saveSetter={}, deleteSetter={}}) {
 
   return (
     <div className='w-full lg:w-[25%] h-full flex flex-col gap-2 bg-white px-4 py-4 shadow-lg border-1 border-gray-100 rounded-sm'>
       <p className='text-xs font-semibold text-gray-500'>ENTRY</p>
  
-      {getSave===1 && <div className='w-full flex items-center justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>Save</div>}
-      {getDelete===1 && <div className='w-full flex items-center justify-center py-2 bg-red-50 text-xs text-red-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>Delete</div>}
+      {getSave && <div className='cursor-pointer w-full flex items-center justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all' onClick={saveSetter}>Save</div>}
+      {getDelete && <div className='cursor-pointer w-full flex items-center justify-center py-2 bg-red-50 text-xs text-red-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all' onClick={deleteSetter}>Delete</div>}
     </div>
   )
 }
 
-export const Admin_Inventory_Detail = () => {
-  const { id } = useParams()
-  const { currentInventory, updateInventory } = useAdmin()
-  let product = currentInventory.find(p => p.product_id.toString() === id)
-  const [isEditable, setIsEditable] = useState(false)
+export const Admin_Inventory_Detail = ({isCreate=false}) => {
+  const {id} = useParams()
+  const { currentInventory, handleGetFresh } = useAdmin()
+  const navigate = useNavigate()
+  let product = isCreate? productPlaceHolder : currentInventory.find(p => p.product_id.toString() === id)
 
   const [name, setName] = useState('')
-  const [productId, setProductId] = useState('')
   const [type, setType] = useState('')
   const [price, setPrice] = useState(0.0)
   const [description, setDescription] = useState('')
@@ -113,11 +113,77 @@ export const Admin_Inventory_Detail = () => {
   const [color, setColor] = useState([])
   const [options, setOptions] = useState([])
 
+
+  const handleUpdate = () => {
+    const data = {
+      data:{
+        name,
+        type,
+        price,
+        description,
+        stock,
+        available,
+        flower_details: {
+          flower_type,   
+          occasion,   
+          color,        
+          options       
+        }
+      }
+    };
+
+    GlobalApi.ProductApi.update(id, data).then(resp=>{
+      toast.success("Updated successfully")
+      handleGetFresh()
+    }, ()=>{
+      toast.error('Error. Please try again.')
+    }
+    )
+  };
+
+  const handleCreate = () => {
+    const data = {
+      data:{
+        name,
+        type,
+        price,
+        description,
+        image_url: [1],
+        stock,
+        available,
+        flower_details: {
+          flower_type,   
+          occasion,   
+          color,        
+          options       
+        }
+      }
+    };
+
+    GlobalApi.ProductApi.create(data).then(resp=>{
+      toast.success("Created successfully")
+      handleGetFresh()
+      navigate('/admin/inventory', { replace: true })
+    }, ()=>{
+      toast.error('Error. Please try again.')
+    }
+    )
+  };
+
+  const handleDelete = () => {
+    GlobalApi.ProductApi.delete(id).then(resp=>{
+      toast.success("Deleted successfully")
+      navigate('/admin/inventory', { replace: true })
+      handleGetFresh()
+    }, ()=>{
+      toast.error('Error. Please try again.')
+    }
+    )
+  };
+
   useEffect(() => {
-    if (!product) product = products[0]
     if (product) {
       setName(product.name)
-      setProductId(product.product_id)
       setType(product.type)
       setPrice(product.price)
       setDescription(product.description)
@@ -125,7 +191,7 @@ export const Admin_Inventory_Detail = () => {
       setAvailable(product.available)
     }
 
-    if (product.type === 'flower' && product.flower_details) {
+    if (product?.type === 'flower' && product.flower_details) {
       setFlowerType(product.flower_details.flower_type || '')
       setOccasion(product.flower_details.occasion || [])
       setColor(product.flower_details.color || [])
@@ -138,7 +204,7 @@ export const Admin_Inventory_Detail = () => {
     }
   }, [product])
 
-  if (!product) return <div>ERROR</div>
+  if (!product && !isCreate) return <div>ERROR</div>
 
   const mapping = {
     'name': [name, setName],
@@ -184,7 +250,7 @@ export const Admin_Inventory_Detail = () => {
   return (
     <div className='flex gap-4 py-4 px-2 md:px-8 flex-col lg:flex-row'>
       {/* Main info */}
-      <div className='w-full lg:w-[75%] flex flex-col gap-6 bg-white px-3 md:px-6 py-6 shadow-lg border-1 border-gray-100 rounded-sm'>
+      <div className='w-full lg:w-[75%] flex flex-col gap-6 bg-white px-2 md:px-6 py-6 shadow-lg border-1 border-gray-100 rounded-sm'>
         <div className='grid grid-cols-2 gap-1 md:gap-4'>
           <Text_Item name={'type'} content={type} setter={handleEdit}/>
           <Text_Item name={'name'} content={name} placeholder='Taylor Swift'/>
@@ -192,13 +258,12 @@ export const Admin_Inventory_Detail = () => {
 
         <div className='grid grid-cols-3 gap-1 md:gap-4'>
           <Number_Item name={'price'} content={price} setter={handleEdit} placeholder='1.00'/>
-          <Number_Item name={'stock'} content={stock} setter={handleEdit} placeholder='10'/>
+          <Number_Item name={'stock'} content={stock} setter={handleEdit} placeholder='10' decimal={false}/>
           <Bool_Item name={'available'} content={available} setter={handleEdit}/>
         </div>
 
         <div className='grid grid-cols-2 gap-1 md:gap-4'>
           <Text_Item name={'description'} content={description} setter={handleEdit} rows={3} placeholder='Assorted stems of seasonal roses.'/>
-
         </div>
 
       {/* Flower Option && Detail */}
@@ -213,11 +278,12 @@ export const Admin_Inventory_Detail = () => {
         <div className='flex flex-col gap-1'>
           <p className='text-xs font-semibold'>flower options</p>
 
-          <div className='flex flex-col gap-2 bg-gray-100 border-1 border-gray-300 rounded-sm px-4 py-2'>
+          <div className='flex flex-col gap-2 bg-gray-100 border-1 border-gray-300 rounded-sm px-1 md:px-4 py-2'>
               {options.map((option, i) => (
-                <div key={i} className='grid grid-cols-2 gap-1 md:gap-4'>
+                <div key={i} className='grid grid-cols-3 gap-1 md:gap-4'>
                   <Text_Item name='name' content={option.name} setter={(key, value) => handleFlowerOption(option.name, key, value)}/>
-                  <Number_Item name='stems' content={option.stems} decimal={false} setter={(key, value) => handleFlowerOption(option.name, key, value)}/>
+                  <Number_Item name='stock' content={option.stock} decimal={false} setter={(key, value) => handleFlowerOption(option.name, key, value)}/>
+                  <Number_Item name='stems' content={option.stems} decimal={false} setter={(key, value) => handleFlowerOption(option.name, key, value)}/> 
                 </div>
               ))}
           </div>
@@ -246,7 +312,7 @@ export const Admin_Inventory_Detail = () => {
 
       </div>
 
-      <Confirm_Box/>
+      <Confirm_Box saveSetter={isCreate? handleCreate : handleUpdate} deleteSetter={handleDelete} getDelete={!isCreate}/>
 
     </div>
   )

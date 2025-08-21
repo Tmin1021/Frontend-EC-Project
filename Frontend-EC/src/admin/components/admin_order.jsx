@@ -2,89 +2,86 @@ import { useState, useEffect } from 'react'
 import { useAdmin } from '../../context/AdminContext'
 import { isDummy, order_items, orders, users } from '../../data/dummy'
 import { useNavigate, useParams } from 'react-router-dom'
-import Admin_Universal_Item, {Admin_Universal_Page} from './admin_universal'
+import Admin_Universal_Item, {Admin_Universal_Page, order_status} from './admin_universal'
 import GlobalApi from '../../../service/GlobalApi'
 import { Text_Item } from './admin_inventory'
+import { toast } from 'sonner'
 
 
 export const Admin_Order_Detail = () => {
-  const status = ["Required", "Confirmed", "Canceled", "Pended", "Delivering", "Done"]
+  const status = ["Required", "Confirmed", "Canceled", "Delivering", "Done"]
 
   const {id} = useParams()
+  const {handleGetFresh} = useAdmin()
   const [orderItem, setOrderItem] = useState(null)
   const [orderInfo, setOrderInfo] = useState(null)
   const [userInfo, setUserInfo] = useState(null)
 
+  const handleUpdate = (new_status) => {
+    const data = {
+      data:{
+        order_status: new_status
+      }
+    };
+
+    GlobalApi.OrderApi.update(id, data).then(resp=>{
+      toast.success("Updated successfully")
+      handleGetFresh()
+    }, ()=>{
+      toast.error('Error. Please try again.')
+    }
+    )
+  };
+
   useEffect(() => {
-      const fetchOrderItem = async () => {
-        try {
-            const res = await GlobalApi.OrderItemApi.getById(id);
-            const item = res.data.data;
-            console.log(item)
-            if (item) {
-              const data = {
-                order_id: item[0]?.order_id,
-                products: item[0]?.products
-              }
-            
-            console.log(data)
-            setOrderItem(data);
-            } else {
-            console.warn("No product found for", id);
-            }
-        } catch (error) {
-            console.error("Failed to fetch product:", error);
+    const fetchData = async () => {
+      try {
+        // 1. Order Item
+        const resItem = await GlobalApi.OrderItemApi.getById(id);
+        const item = resItem.data.data;
+        if (item) {
+          setOrderItem({
+            order_id: item[0]?.order_id,
+            products: item[0]?.products
+          });
         }
-      };
 
-      const fetchOrderInfo = async () => {
-        try {
-            const res = await GlobalApi.OrderApi.getById(id);
-            const item = res.data.data;
+        // 2. Order Info
+        const resOrder = await GlobalApi.OrderApi.getById(id);
+        const order = resOrder.data.data;
 
-            if (item) {
-                const data = {
-                    order_id: item?.documentId,
-                    user_id: item?.user_id,
-                    order_date: item?.order_date,
-                    total_amount: item?.total_amount,
-                    off_price: item?.off_price,
-                    shipping_address: item?.shipping_address,
-                    status: item?.order_status
-                }
+        if (order) {
+          const orderData = {
+            order_id: order?.documentId,
+            user_id: order?.user_id,
+            order_date: GlobalApi.formatDate(order?.order_date),
+            total_amount: order?.total_amount,
+            off_price: order?.off_price,
+            shipping_address: order?.shipping_address,
+            status: order?.order_status
+          };
+          setOrderInfo(orderData);
 
-            setOrderInfo(data);
-            } else {
-            console.warn("No product found for", id);
-            }
-        } catch (error) {
-            console.error("Failed to fetch product:", error);
+        // 3. User Info
+        if (order.user_id) {
+          const resUser = await GlobalApi.UserApi.getById(order.user_id);
+          const user = resUser.data.data;
+          if (user) {
+            setUserInfo({
+              user_id: user?.documentId,
+              name: user?.name,
+              mail: user?.mail,
+              phone: user?.phone,
+              address: user?.address,
+              role: user?.role
+            });
+          }
         }
-      };
-
-      const fetchUserInfo = async () => {
-        try {
-            const res = await GlobalApi.OrderItemApi.getById(id);
-            const item = res.data.data;
-
-            if (item) {
-              const data = {
-              user_id: item?.documentId,
-              name: item?.name,
-              mail: item?.mail,
-              phone: item?.phone,
-              address: item?.address,
-              role: item?.role
-            }
-
-            setUserInfo(data);
-            } else {
-            console.warn("No product found for", id);
-            }
-        } catch (error) {
-            console.error("Failed to fetch product:", error);
         }
-      };
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
       if (isDummy) {
         const new_orderItem = order_items.find(order_item => order_item.order_id.toString() === id)
@@ -96,9 +93,7 @@ export const Admin_Order_Detail = () => {
         setUserInfo(new_userInfo)
       }
       else {
-        fetchOrderItem()
-        fetchOrderInfo()
-        fetchUserInfo()
+        fetchData()
       }
   }, [id])
 
@@ -122,7 +117,7 @@ export const Admin_Order_Detail = () => {
         <div className='w-full lg:w-[75%] flex flex-col gap-6 px-3 md:px-6 py-6 bg-white shadow-lg border-1 border-gray-100 rounded-sm'>
           <div className='grid grid-cols-2 gap-1 md:gap-4'>
             {Object.keys(info).map((key) => (
-                <Text_Item key={key} name={info[key][0]} content={info[key][1]} isEditable={true} rows={['Shipping address', 'Message'].includes(info[key][0])? 3:1}/>
+                <Text_Item key={key} name={info[key][0]} content={info[key][1]} isEditable={false} rows={['Shipping address', 'Message'].includes(info[key][0])? 3:1}/>
             ))}
           </div>
         </div>
@@ -130,7 +125,13 @@ export const Admin_Order_Detail = () => {
         {/* Update Status */}
         <div className='hidden lg:flex w-full lg:w-[25%] h-full flex-col gap-2 bg-white px-4 py-4 shadow-lg border-1 border-gray-100 rounded-sm'>
           <p className='text-xs font-semibold text-gray-500'>Update Status</p>
-          <div className='w-full flex items-center justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.status}</div>
+          <select value={orderInfo?.status}
+                  onChange={(e) => {setOrderInfo({...orderInfo, status: e.target.value}); handleUpdate(e.target.value)}}
+                  className="w-full py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all focus:outline-none">
+                  {status.map((status) => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
+          </select>
         </div>
 
       </div>

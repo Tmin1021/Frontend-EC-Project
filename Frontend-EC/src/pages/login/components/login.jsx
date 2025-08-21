@@ -1,12 +1,19 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import login_wallpaper from '/src/assets/login-wallpaper.png'
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from "framer-motion";
 
 export const Login = () => {
-    const {login} = useAuth()
+    const {login, user, isAuthenticated} = useAuth()
     const navigate = useNavigate()
+
+    useEffect(()=> {
+    if(isAuthenticated && user.role==='user') navigate('/personal')
+    if(isAuthenticated && user.role==='admin') navigate('/admin')
+
+    }, [])
+
 
     const [form, setForm] = useState({
         email: '',

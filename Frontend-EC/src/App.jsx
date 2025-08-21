@@ -24,6 +24,7 @@ import Admain_Dashboard from './admin/components/admin_dashboard'
 import Checkout from './pages/checkout'
 import { Order_Product_Preview } from './pages/personal/components/personal_order'
 import DemoAPI from './pages/demoAPI'
+import { Toaster } from 'sonner'
 
 const UserLayout = () => {
 
@@ -32,14 +33,16 @@ const UserLayout = () => {
       <Header />
       <Outlet />
       <Cart />
+      <Toaster />
     </>
   )
 }
 
+
 const ProtectedRoute = ({children}) => {
   const {isAuthenticated} = useAuth()
-  //return isAuthenticated ? children : <Navigate to='/login'/>
-  return children
+  return isAuthenticated ? children : <Navigate to='/login'/>
+  //return children
 }
 
 function App() {
@@ -70,6 +73,7 @@ function App() {
               <Route path="user" element={<Admin_User />} />
               <Route path="inventory" element={<Admin_Inventory/>} />
               <Route path="inventory/:id" element={<Admin_Inventory_Detail/>} />
+              <Route path="inventory/create" element={<Admin_Inventory_Detail isCreate={true}/>} />
               <Route path="order" element={<Admin_Order />} />
               <Route path="order/:id" element={<Admin_Order_Detail />} />
               <Route path="dashboard" element={<Admain_Dashboard />} />
