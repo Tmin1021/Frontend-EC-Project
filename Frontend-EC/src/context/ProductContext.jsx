@@ -136,7 +136,7 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
   }
 
   return (
-    <ProductContext.Provider value={{currentProduct, setCurrentProduct, filterProduct, searchProduct, searchPrediction, sortProduct}}>
+    <ProductContext.Provider value={{currentProduct, initialProduct, setCurrentProduct, filterProduct, searchProduct, searchPrediction, sortProduct}}>
       {children}
     </ProductContext.Provider>
   )

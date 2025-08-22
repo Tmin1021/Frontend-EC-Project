@@ -292,4 +292,4 @@ const carts = [
 ];
 
 
-export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser, productPlaceHolder, demo_1};
+export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser, productPlaceHolder, demo_1, demo_3};

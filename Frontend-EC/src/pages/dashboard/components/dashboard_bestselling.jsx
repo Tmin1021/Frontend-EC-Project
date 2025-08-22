@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import {products} from '../../../data/dummy'
+import {products, isDummy} from '../../../data/dummy'
 import { useNavigate, useParams } from 'react-router-dom'
+import GlobalApi from '../../../../service/GlobalApi';
+
+const BASE_URL = 'http://localhost:1337';
 
 export function Bestselling_Item({product}) {
     const findStartingPrice = () => product.type==='flower' ? (Math.round(Math.min(...product.flower_details.options.map(option => option.stems))*product.price*100, 2)/100) : product.price
@@ -23,6 +26,39 @@ const Dashboard_Bestselling = () => {
     const handleClick = (productID) => {
         navigate(`flower/${productID}`)
       }
+
+    const [bestsellingProducts, setBestsellingProducts] = useState(products.filter(item=>item.type==='flower'))
+
+    useEffect(() => {
+        if (isDummy) return
+
+        async function fetchProducts() {
+            try {
+                const res = await GlobalApi.ProductApi.getAll()
+                const data = res.data.data.map(item => ({
+                    product_id: item?.documentId,
+                    type: item?.type,
+                    name: item?.name,
+                    price: item?.price,
+                    stock: item?.stock,
+                    available: item?.available,
+                    description: item?.description,
+                    image_url: item?.image_url.map(image => BASE_URL+image.url) ?? demo_1,
+                    flower_details: item?.flower_details
+            }))
+
+            let new_data = data.filter(item=>item.type==='flower')
+            setBestsellingProducts(new_data)
+
+            } catch (err) {
+                console.error("Failed to fetch products", err);
+            }
+        
+        }
+
+        fetchProducts()
+    }, [])
+   
   
       return (
           <div className="flex flex-col gap-4 w-full px-4 md:px-8 lg:px-16 py-4 md:pt-10">
@@ -31,7 +67,7 @@ const Dashboard_Bestselling = () => {
 
             {/* Items */}
             <div className="w-full grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 scroll-smooth">
-            {products.filter(product=>product.type==='flower').slice(0, 4).map((product) => (
+            {bestsellingProducts.filter(product=>product.type==='flower').slice(0, 4).map((product) => (
                 <div key={product.product_id} className="cursor-pointer flex-none" onClick={() => handleClick(product.product_id)}>
                     <Bestselling_Item product={product} />
                 </div>

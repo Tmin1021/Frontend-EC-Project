@@ -13,6 +13,24 @@ const axiosClient=axios.create({
 
 export const BASE_URL = 'http://localhost:1337';
 
+// bonus
+const BonusApi = {
+  getAll: () => axiosClient.get('/bonuses?populate=*'),
+  getByFlowerId: (id) => axiosClient.get(`/bonuses?filters[user_id][$eq]=${id}&populate=*`),
+  create: (data) => axiosClient.post('/bonused', data),
+  update: (id, data) => axiosClient.put(`/bonuses/${id}`, data),
+  delete: (id) => axiosClient.delete(`/bonuses/${id}`)
+}
+
+// cart
+const CartApi = {
+  getAll: () => axiosClient.get('/carts?populate=*'),
+  getByUserId: (id) => axiosClient.get(`/carts?filters[user_id][$eq]=${id}&populate=*`),
+  create: (data) => axiosClient.post('/carts', data),
+  update: (id, data) => axiosClient.put(`/carts/${id}`, data),
+  delete: (id) => axiosClient.delete(`/carts/${id}`)
+}
+
 // comment
 const CommentApi = {
   getAll: () => axiosClient.get('/comments?populate=*'),
@@ -44,7 +62,7 @@ const ProductApi = {
 const OrderApi = {
   getAll: () => axiosClient.get('/orders?populate=*'),
   getById: (id) => axiosClient.get(`/orders/${id}?populate=*`),
-  getByUserId: (id) => axiosClient.get(`/orders?filters[user_id][$eq]=${id}?populate=*`),
+  getByUserId: (id) => axiosClient.get(`/orders?filters[user_id][$eq]=${id}&populate=*`),
   create: (data) => axiosClient.post('/orders', data),
   update: (id, data) => axiosClient.put(`/orders/${id}`, data),
   delete: (id) => axiosClient.delete(`/orders/${id}`)
@@ -68,6 +86,8 @@ const formatDate = (str) => {
 }
 
 export default{
+    BonusApi,
+    CartApi,
     CommentApi,
     UserApi,
     ProductApi,

@@ -55,7 +55,7 @@ export function AuthProvider({children}) {
 
             setUser(user);
             localStorage.setItem('user', JSON.stringify(user));
-            navigate(user.role === 'user' ? '/' : '/admin', { replace: true });
+            navigate(user.role === 'user' ? '/personal' : '/admin', { replace: true });
 
         } catch (err) {
             console.error("Login error", err);

@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react'
-import { order_items, orders, users } from '../../../data/dummy'
+import { demo_1, isDummy, order_items, orders, users } from '../../../data/dummy'
 import { Admin_Universal_Order_Status, order_status } from '../../../admin/components/admin_universal'
 import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate, useParams } from 'react-router-dom';
+import { data, useNavigate, useParams } from 'react-router-dom';
 import { Text_Item } from '../../../admin/components/admin_inventory';
- 
+import GlobalApi from '../../../../service/GlobalApi';
+import { useAuth } from '../../../context/AuthContext'
+
+export const BASE_URL = 'http://localhost:1337';
 
 export const Order_Product_Preview = () => {
     const {orderID} = useParams()
@@ -83,17 +86,61 @@ export const Order_Product_Preview = () => {
 }
 
 const Order_Preview = ({order}) => {
-    const userProducts = order_items.find(order_item => order_item.order_id===order.order_id)?.products
+    const [userProducts, setUserProducts] = useState()
+    const [candidateProduct, setCandidateProduct] = useState(order_items[0].products[0].product)
+
+    useEffect(() => {
+        const fetchOrderItem = async () => {
+        try {
+            const res = await GlobalApi.OrderItemApi.getById(order.order_id);
+            const dataOrderItem = res.data.data.map(item => ({
+            order_id: item?.documentId,
+            products: item?.products,
+            }));
+
+            setUserProducts(dataOrderItem);
+
+            // fetch candidate product if available
+            if (dataOrderItem?.length > 0 && dataOrderItem[0].products?.length > 0) {
+            const productId = dataOrderItem[0].products[0]?.product_id;
+            if (productId) {
+                const resProd = await GlobalApi.ProductApi.getById(productId);
+                const item = resProd.data.data;
+                const product = {
+                    product_id: item?.documentId,
+                    type: item?.type,
+                    name: item?.name,
+                    price: item?.price,
+                    stock: item?.stock,
+                    available: item?.available,
+                    description: item?.description,
+                    image_url: item.image_url?.map(image => BASE_URL + image.url),
+                    flower_details: item?.flower_details,
+                };
+                setCandidateProduct(product);
+                //console.log(product)
+            }
+            }
+
+        } catch (err) {
+            console.error("Failed to fetch order items or product", err);
+        }
+        };
+
+        if (isDummy) {
+            setUserProducts(order_items.find(order_item => order_item.order_id === order.order_id)?.products)
+            setCandidateProduct(order_items[0].products[0].product);
+        } else fetchOrderItem()
+    }, [])
+
     const navigate = useNavigate()
     if (!userProducts) return <div></div>
-
-    const candidateProduct = userProducts[0]?.product
 
     return (
         <div className='flex flex-col gap-2 p-2 md:p-4 bg-white dark:bg-black shadow-sm rounded-sm hover:shadow-lg hover:rounded-lg transition-all'>
             {/* Preview Item */}
             <div className='h-[100px] w-full md:h-[120px] flex gap-4'>
-                <img src={candidateProduct.image_url[0]} className='h-full aspect-square object-cover rounded-sm'/>
+                <img src={candidateProduct?.image_url[0]} className='h-full aspect-square object-cover rounded-sm'/>
 
                 <div className='flex flex-col justify-between w-full'>
                     <div className='w-full flex justify-between'>
@@ -132,25 +179,53 @@ const Order_Preview = ({order}) => {
 
 function Personal_Order() {
   const [statusChosen, setStatusChosen] = useState('All')
-  const userOrders =  orders.filter(order => order.user_id===1)
-  const [currentUserOrders, setCurrentUserOrder] = useState(userOrders)
+  const [initialOrder, setInitialOrder] = useState([])
+  const [currentOrder, setCurrentOrder] = useState([])
+  const {user}= useAuth()
 
-  useEffect(() => {
+    useEffect(() => {
+        const fetchOrder = async () => {
+            try {
+                const res = await GlobalApi.OrderApi.getByUserId(user.user_id);
+                const data = res.data.data.map(item => ({
+                    order_id: item?.documentId,
+                    user_id: item?.user_id,
+                    order_date: GlobalApi.formatDate(item?.order_date),
+                    total_amount: item?.total_amount,
+                    off_price: item?.off_price,
+                    shipping_address: item?.shipping_address,
+                    status: item?.order_status
+                }))
 
-    setCurrentUserOrder(orders.filter(order => order.user_id===1))
-  }, [])
+                setInitialOrder(data)
+                setCurrentOrder(data)
+
+            } catch (err) {
+            console.error("Failed to fetch order", err);
+            }
+        }
+
+        if (isDummy) {
+            setInitialOrder(orders.filter(order => order.user_id===1))
+            setCurrentOrder(orders.filter(order => order.user_id===1))
+        }
+        else fetchOrder()
+        
+
+    }, [])
 
   const filterStatus = (status) => {
-    if (status === 'All') setCurrentUserOrder(userOrders)
-    else setCurrentUserOrder(userOrders.filter(order => order.status === status))
+    if (status === 'All') setCurrentOrder(initialOrder)
+    else setCurrentOrder(initialOrder.filter(order => order.status === status))
   }
+
   
   return (
     <div className='flex flex-col gap-4'>
         <p className='text-2xl font-semibold'>Purchased Orders</p>
         <Admin_Universal_Order_Status statusChosen={statusChosen} setStatusChosen={setStatusChosen} filterStatus={filterStatus}/>
 
-        {currentUserOrders.map((order) => (
+        {currentOrder.map((order) => (
             <Order_Preview key={order.order_id} order={order}/>
         ))}
 
@@ -160,25 +235,3 @@ function Personal_Order() {
 }
 
 export default Personal_Order
-
-/*
-    const [initialOrder, setInitialOrder] = useState([])
-    const [currentOrder, setCurrentOrder] = useState([])
-
-    useEffect(() => {
-        const savedUser = JSON.parse(localStorage.getItem('user'))
-        if (savedUser) {
-            const fetchOrder = async () => {
-                try {
-                    const res = await GlobalApi.OrderApi.getByUserId(savedUser.user_id);
-                    const item = res.data.data;
-
-                } catch (err) {
-                console.error("Failed to fetch order", err);
-            }
-
-            setUser(savedUser)
-        }
-    }}, [])
-
-    */

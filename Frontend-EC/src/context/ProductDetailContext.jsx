@@ -12,6 +12,7 @@ export function ProductDetailProvider({children}) {
     const {id} = useParams()
 
     const [product, setProduct] = useState(null);
+    const [extra, setExtra] = useState([])
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedExtra, setSelectedExtra] = useState(null);
     const [quantity, setQuantity] = useState(1);
@@ -66,6 +67,21 @@ export function ProductDetailProvider({children}) {
             }
         }
 
+        const fetchExtra = async () => {
+            try {
+                const res = await GlobalApi.BonusApi.getAll()
+                const item = res.data.data
+
+                if (item) {
+                    setExtra(item)
+                } else {
+                console.warn("No bonus found for", id)
+                }
+            } catch (error) {
+                console.error("Failed to fetch bonus:", error)
+            }
+        }
+
         function fetchDummy() {
             const new_product = products.find(product => product.product_id===id)
             setProduct(new_product)
@@ -80,13 +96,14 @@ export function ProductDetailProvider({children}) {
         else {
             fetchProductDetail()
             fetchComment()
+            fetchExtra()
         }
 
     }, [id]);
 
 
     return (
-        <ProductDetailContext.Provider value={{comments, product, selectedOption, setSelectedOption, selectedExtra, setSelectedExtra, quantity, setQuantity}}>
+        <ProductDetailContext.Provider value={{comments, extra, product, selectedOption, setSelectedOption, selectedExtra, setSelectedExtra, quantity, setQuantity}}>
             {children}
         </ProductDetailContext.Provider>
     )

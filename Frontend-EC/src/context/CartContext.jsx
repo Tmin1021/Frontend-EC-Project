@@ -1,19 +1,64 @@
 import { createContext, useCallback, useContext, useEffect, useState} from "react";
-import {bonus_gifts } from "../data/dummy";
+import {bonus_gifts, isDummy, products } from "../data/dummy";
+import GlobalApi from "../../service/GlobalApi";
+import {useAuth} from "../context/AuthContext"
+import { toast } from "sonner";
 
 const CartContext = createContext()
 
 //children is the component the CartProvider wraps
 export function CartProvider({children}) {
     const [cart, setCart] = useState([])
+    const [cartId, setCartId] = useState('')
     const [isCartOpen, setIsCardOpen] = useState(false)
     const [selectedItems, setSelectedItems] = useState(Array(cart?.length ?? 0).fill(false))  
     const [selectedAll, setSelectedAll] = useState(false)
+    const {user, isAuthenticated} = useAuth()
 
+    useEffect(() => {
+        async function fetchCart() {
+            if (!isAuthenticated) return
+
+            try {
+                const res = await GlobalApi.CartApi.getByUserId(user?.user_id)
+                let data
+                console.log(user?.user_id)
+                if (res && res.data.data.length>0) {
+                    const item = res.data.data
+
+                    data = {
+                        user_id: user?.user_id,
+                        products: item[0]?.products
+                    }
+
+                    setCart(data.products ?? [])
+                    setCartId(res.data.data[0].documentId)
+                    setSelectedItems(Array(data?.length ?? 0).fill(false))
+                }
+                else {
+                    data = {
+                        data: {
+                            user_id: user.user_id,
+                        }
+                    }
+                    await GlobalApi.CartApi.create(data)
+                }
+
+            } catch (err) {
+                console.error("Failed to fetch products", err);
+            }
+        }
+
+        if (!isDummy) {
+            fetchCart()
+        }
+
+    }, [user, isAuthenticated]) 
 
     // format: (product, option, quantity)
     // a
-    const addCart = (product) => {
+    async function addCart(product) {
+        let newCart
         setCart((prevCart) => {
             let found = false
 
@@ -32,10 +77,27 @@ export function CartProvider({children}) {
 
             if (!found) { 
                 setSelectedItems(prev => [...prev, false])
-                return [...updatedCart, product]
+                newCart =  [...updatedCart, product]
+                return newCart
             } 
 
+            newCart = updatedCart
             return updatedCart
+        })
+
+        // update db
+        if (!isAuthenticated) return
+
+        const data = {
+            data: {
+                products: newCart
+            }
+        }
+
+        GlobalApi.CartApi.update(cartId, data).then(resp=>{
+            toast.success("Updated successfully")
+            }, ()=>{
+            toast.error('Error. Please try again.')
         })
     }
 
@@ -136,6 +198,17 @@ export function CartProvider({children}) {
         for (let i=0; i<cart.length; i++) {
             if (!selectedItems[i]) newCart.push(cart[i])
         }
+
+        const data = {
+            data: {
+                products: newCart
+            }
+        }
+
+        GlobalApi.CartApi.update(cartId, data).then(resp=> {          
+            }, ()=>{
+            toast.error('Error. Please reload page and try again.')
+        })
         
         setCart(newCart)
         setSelectedItems(Array(cart.length).fill(false))
@@ -148,6 +221,17 @@ export function CartProvider({children}) {
                 ? { ...item, quantity: quantity }
                 : item
         )
+
+        const data = {
+            data: {
+                products: updatedCart
+            }
+        }
+
+        GlobalApi.CartApi.update(cartId, data).then(resp=> {          
+            }, ()=>{
+            toast.error('Error. Please reload page and try again.')
+        })
 
         getOptimizedPromotions(updatedCart, selectedItems)
     }
