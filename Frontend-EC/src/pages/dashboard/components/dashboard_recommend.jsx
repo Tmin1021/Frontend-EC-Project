@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'; // keep if you’ll link to prod
 function Product_Items({ product, titleOverride }) {
   if (!product) return null;
 
-  const navigate = useNavigate();  // ⬅️ initialize
+  const navigate = useNavigate();
   const findStartingPrice = () => {
     if (product.type === 'flower' && product?.flower_details?.options?.length) {
       return Math.min(...product.flower_details.options.map(o => Number(o.price) || 0));
@@ -46,7 +46,7 @@ function Product_Items({ product, titleOverride }) {
 }
 
 // ---- Config ----
-const API_URL = 'http://127.0.0.1:8000/api/v1/recommend';
+const API_URL = 'https://rec-server-app.onrender.com/api/v1/recommend';
 const DUMMY_USER_ID = 2; // Replace real user ID when integrate
 
 const SECTION_LABELS = ['History', 'Cross-sell', 'Occasion', 'Best'];
