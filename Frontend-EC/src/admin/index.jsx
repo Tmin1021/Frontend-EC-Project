@@ -4,10 +4,11 @@ import { AdminProvider } from '../context/AdminContext'
 import Admin_User from './components/admin_user'
 import Admin_Order from './components/admin_order'
 import { useNavigate, Outlet } from 'react-router-dom'
-import { Menu, PanelRightOpen, User, Store, Box, LayoutDashboard } from 'lucide-react' 
+import { Menu, PanelRightOpen, User, Store, Box, LayoutDashboard, LogOut } from 'lucide-react' 
 import { AnimatePresence, motion } from 'framer-motion'
 import Dashboard from '../pages/dashboard'
 import { Toaster } from 'sonner'
+import { useAuth } from '../context/AuthContext'
 
 function Admin() {
   const managements = 
@@ -18,6 +19,7 @@ function Admin() {
    "Dashboard" : ['dashboard', <LayoutDashboard/>],
   }
 
+  const {logout} = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const [isChosen, setIsChosen] = useState([true, false, false])
@@ -73,14 +75,21 @@ function Admin() {
 
       {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-1/4 lg:w-1/5 pt-4 h-full">
-        <div className="flex flex-col w-full px-2">
+        <div className="relative flex flex-col w-full px-2">
           <p className="font-bold pl-4 pb-4 text-3xl">Admin</p>
+
           {Object.keys(managements).map((key, i) => (
             <div key={key} onClick={() => {handleNavigate(managements[key][0]); handleChosen(i)}} className={`${isChosen[i]? 'bg-purple-100 text-purple-600 font-semibold shadow-lg py-4':'py-3'} rounded-lg flex items-center gap-2 px-4 cursor-pointer transition-all text-lg`}>
               {managements[key][1]}
               {key}
             </div>
           ))}
+
+           <div className='absolute bottom-10 w-full flex items-center gap-2 px-4 text-red-500 cursor-pointer hover:text-red-700  transition-all' onClick={()=>logout(navigate)}>
+            <LogOut/>
+            <p className='hidden md:inline'>Sign Out</p>
+          </div>
+
         </div>
       </div>
 

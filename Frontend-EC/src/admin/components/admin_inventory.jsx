@@ -8,6 +8,8 @@ import Admin_Universal_Item, { Admin_Universal_Page } from './admin_universal'
 import GlobalApi from '../../../service/GlobalApi'
 import { demo_1, productPlaceHolder, products } from '../../data/dummy'
 import { toast } from 'sonner'
+import Product_Delivery_Date from '../../pages/product_detail/components/product_delivery_date'
+
 
 export const Text_Item = ({name='', content='', setter={}, placeholder='', rows=1, isEditable=true}) => {
   const types = ['flower', 'vase', 'ribbon']
@@ -37,7 +39,7 @@ export const Text_Item = ({name='', content='', setter={}, placeholder='', rows=
             placeholder={placeholder}
             value={content}
             readOnly={!isEditable}
-            onChange={(e)=>{setter(name, e.target.value)}}
+            onChange={(e)=>{if (typeof setter === "function") {setter(name, e.target.value)}}}
             className={`bg-white text-sm font-light border-1 border-gray-200 rounded-sm pl-4 py-2 resize-none focus:outline-purple-500 transtion-all ${isEditable? '':'border-none'}`}
             rows={rows}
       /> }
@@ -112,7 +114,9 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
   const [occasion, setOccasion] = useState([])
   const [color, setColor] = useState([])
   const [options, setOptions] = useState([])
-
+  const [fill_stock_date, setFillStockDate] = useState(new Date())
+  const [isOpenCalendar, setIsOpenCalendar] = useState(false)
+  const today = new Date()
 
   const handleUpdate = () => {
     const data = {
@@ -123,6 +127,7 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
         description,
         stock,
         available,
+        fill_stock_date,
         flower_details: {
           flower_type,   
           occasion,   
@@ -151,6 +156,7 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
         image_url: [1],
         stock,
         available,
+        fill_stock_date,
         flower_details: {
           flower_type,   
           occasion,   
@@ -189,6 +195,7 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
       setDescription(product.description)
       setStock(product.stock)
       setAvailable(product.available)
+      setFillStockDate(product.fill_stock_date ?? `${String(today.getFullYear())}-${String(today.getMonth()+1).padStart(2, '0')}-${String(today.getDate()).padStart(2,'0')}`)
     }
 
     if (product?.type === 'flower' && product.flower_details) {
@@ -248,18 +255,22 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
   }
 
   return (
-    <div className='flex gap-4 py-4 px-2 md:px-8 flex-col lg:flex-row'>
+    <div className='flex gap-4 py-4 px-2 md:px-8 flex-col lg:flex-row' onClick={()=>setIsOpenCalendar(false)}>
       {/* Main info */}
       <div className='w-full lg:w-[75%] flex flex-col gap-6 bg-white px-2 md:px-6 py-6 shadow-lg border-1 border-gray-100 rounded-sm'>
-        <div className='grid grid-cols-2 gap-1 md:gap-4'>
+        <div className='grid grid-cols-3 gap-1 md:gap-4'>
           <Text_Item name={'type'} content={type} setter={handleEdit}/>
           <Text_Item name={'name'} content={name} placeholder='Taylor Swift'/>
+          <Bool_Item name={'available'} content={available} setter={handleEdit}/>
         </div>
 
         <div className='grid grid-cols-3 gap-1 md:gap-4'>
           <Number_Item name={'price'} content={price} setter={handleEdit} placeholder='1.00'/>
           <Number_Item name={'stock'} content={stock} setter={handleEdit} placeholder='10' decimal={false}/>
-          <Bool_Item name={'available'} content={available} setter={handleEdit}/>
+          <div className='relative' onClick={(e)=>{e.stopPropagation(); setIsOpenCalendar(true)}}>
+              <Text_Item name={'fill stock date'} content={fill_stock_date} placeholder='2025-01-01'/>  
+              <Product_Delivery_Date date={new Date(fill_stock_date)} setDate={setFillStockDate} isOpenCalendar={isOpenCalendar}/>
+          </div>
         </div>
 
         <div className='grid grid-cols-2 gap-1 md:gap-4'>
@@ -280,9 +291,8 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
 
           <div className='flex flex-col gap-2 bg-gray-100 border-1 border-gray-300 rounded-sm px-1 md:px-4 py-2'>
               {options.map((option, i) => (
-                <div key={i} className='grid grid-cols-3 gap-1 md:gap-4'>
+                <div key={i} className='grid grid-cols-2 gap-1 md:gap-4'>
                   <Text_Item name='name' content={option.name} setter={(key, value) => handleFlowerOption(option.name, key, value)}/>
-                  <Number_Item name='stock' content={option.stock} decimal={false} setter={(key, value) => handleFlowerOption(option.name, key, value)}/>
                   <Number_Item name='stems' content={option.stems} decimal={false} setter={(key, value) => handleFlowerOption(option.name, key, value)}/> 
                 </div>
               ))}

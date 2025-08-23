@@ -21,7 +21,6 @@ function Extra_Item({extra_id}) {
       try {
         const res = await GlobalApi.ProductApi.getById(extra_id)
         const item = res.data.data
-        console.log(item)
         const data = {
             product_id: item?.documentId,
             type: item?.type,
@@ -32,7 +31,6 @@ function Extra_Item({extra_id}) {
             description: item?.description,
             image_url: item?.image_url.map(image => BASE_URL+image.url) ?? demo_3,
         }
-        console.log(data)
 
         if (data) {
           setExtra(data)

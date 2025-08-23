@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import {products, isDummy} from '../../../data/dummy'
+import {products, isDummy, demo_1} from '../../../data/dummy'
 import { useNavigate, useParams } from 'react-router-dom'
-import GlobalApi from '../../../../service/GlobalApi';
+import GlobalApi from '../../../../service/GlobalApi'
+import { useDynamicPricing } from '../../../context/DynamicPricingContext'
 
 const BASE_URL = 'http://localhost:1337';
 
 export function Bestselling_Item({product}) {
+    const {getDynamicPrice} = useDynamicPricing()
     const findStartingPrice = () => product.type==='flower' ? (Math.round(Math.min(...product.flower_details.options.map(option => option.stems))*product.price*100, 2)/100) : product.price
 
     return (
@@ -14,7 +16,7 @@ export function Bestselling_Item({product}) {
                 <img src={product?.image_url[0]} className='w-full h-full object-cover'/>
             </div>
             <p className='font-bold text-sm md:text-base pt-3'>{product.name}</p>
-            <p className='font-light text-sm py-1'>from <span className='font-bold text-lg'>${findStartingPrice()}</span></p>
+            <p className='font-light text-sm py-1'>from <span className='font-bold text-lg'>${getDynamicPrice(findStartingPrice())}</span></p>
         </div>
 
     )
@@ -22,12 +24,12 @@ export function Bestselling_Item({product}) {
 
 const Dashboard_Bestselling = () => {
     const navigate = useNavigate()
+    const {getDynamicPrice} = useDynamicPricing()
+    const [bestsellingProducts, setBestsellingProducts] = useState(products.filter(item=>item.type==='flower'))
 
     const handleClick = (productID) => {
         navigate(`flower/${productID}`)
       }
-
-    const [bestsellingProducts, setBestsellingProducts] = useState(products.filter(item=>item.type==='flower'))
 
     useEffect(() => {
         if (isDummy) return
@@ -35,17 +37,15 @@ const Dashboard_Bestselling = () => {
         async function fetchProducts() {
             try {
                 const res = await GlobalApi.ProductApi.getAll()
+                console.log(res.data.data)
                 const data = res.data.data.map(item => ({
+                    ...item,
                     product_id: item?.documentId,
-                    type: item?.type,
-                    name: item?.name,
-                    price: item?.price,
-                    stock: item?.stock,
-                    available: item?.available,
-                    description: item?.description,
-                    image_url: item?.image_url.map(image => BASE_URL+image.url) ?? demo_1,
-                    flower_details: item?.flower_details
+                    dynamic_price: getDynamicPrice(item?.price),
+                    image_url: item?.image_url.map(image => BASE_URL+image.url), 
+
             }))
+            console.log(data)
 
             let new_data = data.filter(item=>item.type==='flower')
             setBestsellingProducts(new_data)

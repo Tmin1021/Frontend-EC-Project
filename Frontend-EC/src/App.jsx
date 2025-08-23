@@ -45,6 +45,11 @@ const ProtectedRoute = ({children}) => {
   //return children
 }
 
+const RoutedeAdmin = ({children}) => {
+  const {user, isAuthenticated} = useAuth()
+  return (isAuthenticated && user.role==='admin') ? <Navigate to='/admin'/> : children
+}
+
 function App() {
 
   return (
@@ -57,7 +62,7 @@ function App() {
             <Route path="/signup" element={<Signup/>}/>
             <Route path='/checkout' element={<Checkout/>}/>
 
-            <Route element={<UserLayout/>}>
+            <Route element={<RoutedeAdmin><UserLayout/></RoutedeAdmin>}>
               <Route path="/" element={<Dashboard/>}/>
               <Route path="/:type" element={<List_Product/>}/>
               <Route path="/:type/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
@@ -68,7 +73,7 @@ function App() {
               <Route path="/blog/:slug" element={<BlogDetail />} />
            </Route>
 
-            <Route path="/admin" element={<Admin />}>
+            <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>}>
               <Route index element={<Admin_User />} />
               <Route path="user" element={<Admin_User />} />
               <Route path="inventory" element={<Admin_Inventory/>} />

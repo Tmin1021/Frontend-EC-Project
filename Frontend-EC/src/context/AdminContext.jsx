@@ -23,12 +23,10 @@ export function AdminProvider({children}) {
             try {
                 const res = await GlobalApi.UserApi.getAll()
                 const data = res.data.data.map(item => ({
+                    ...item,
                     user_id: item?.documentId,
-                    name: item?.name,
-                    mail: item?.mail,
-                    phone: item?.phone,
-                    address: item?.address,
-                    role: item?.role
+                    norm_id: item?.id,
+
                 }))
 
                 const new_data = data.filter(item => item.role==='user')
@@ -43,17 +41,12 @@ export function AdminProvider({children}) {
             try {
                 const res = await GlobalApi.ProductApi.getAll()
                 const data = res.data.data.map(item => ({
+                    ...item,
                     product_id: item?.documentId,
-                    type: item?.type,
-                    name: item?.name,
-                    price: item?.price,
-                    stock: item?.stock,
-                    available: item?.available,
-                    description: item?.description,
+                    norm_id: item?.id,
                     image_url: item.image_url.map(image => BASE_URL+image.url),
-                    flower_details: item?.flower_details
             }))
-
+            
             setInitialInventory(data)
             setCurrentInventory(data)
 
@@ -66,13 +59,11 @@ export function AdminProvider({children}) {
             try {
                 const res = await GlobalApi.OrderApi.getAll()
                 const data = res.data.data.map(item => ({
+                    ...item,
                     order_id: item?.documentId,
-                    user_id: item?.user_id,
+                    norm_id: item?.id,
                     order_date: GlobalApi.formatDate(item?.order_date),
-                    total_amount: item?.total_amount,
-                    off_price: item?.off_price,
-                    shipping_address: item?.shipping_address,
-                    status: item?.order_status
+                    status: item?.order_status,
                 }))
 
                 setInitialOrder(data)

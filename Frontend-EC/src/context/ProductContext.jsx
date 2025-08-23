@@ -2,13 +2,14 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import { order_items, isDummy, products, demo_1 } from '../data/dummy'
 import GlobalApi from '../../service/GlobalApi';
 import { useParams } from 'react-router-dom';
-
+import { useDynamicPricing } from './DynamicPricingContext';
 
 const ProductContext = createContext()
 const BASE_URL = 'http://localhost:1337';
 
 export function ProductProvider({children, isSearch=false, searchResult=[]}) {
   const {type} = useParams()
+  const {getDynamicPrice} = useDynamicPricing()
 
   const [currentProduct, setCurrentProduct] = useState([]);
   const [initialProduct, setInitialProduct] = useState([]);
@@ -27,16 +28,12 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
     try {
     const res = await GlobalApi.ProductApi.getAll()
     const data = res.data.data.map(item => ({
+        ...item,
         product_id: item?.documentId,
-        type: item?.type,
-        name: item?.name,
-        price: item?.price,
-        stock: item?.stock,
-        available: item?.available,
-        description: item?.description,
+        dynamic_price: getDynamicPrice(item?.price),
         image_url: item?.image_url.map(image => BASE_URL+image.url) ?? demo_1,
-        flower_details: item?.flower_details
     }))
+
 
     let new_data = data
     if (type==='flower') new_data=data.filter(item=>item.type==='flower')
@@ -78,7 +75,7 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
     new_product = (new_values["Colors"]?.size!==1? new_product.filter((product) => product.flower_details?.color.some(i=>new_values["Colors"].has(i))) : new_product)
     
     setCurrentValues(new_values)
-    setCurrentProduct(new_product)
+    setCurrentProduct(new_product.filter(product => product.type==='flower'))
   }
 
   // g

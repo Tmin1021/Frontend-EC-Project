@@ -5,6 +5,10 @@ import demo_3 from "/src/assets/demo_3.png";
 import demo_4 from "/src/assets/demo_4.png";
 import demo_5 from "/src/assets/demo_5.png";
 
+// when add item to cart, store as: [product: the product itself, option: if available, quantity]
+// in cart, it will mapped into => [product_id, option, total_price, quantity, off_price]
+// off_price calculated by getPromotion and fetch Bonus; 
+
 const isDummy = 0
 
 const productPlaceHolder =   {
@@ -57,7 +61,6 @@ const bonus_gifts = [
   }
 ]
 
-// Carts
 
 // Comments
 const comments = [
@@ -281,12 +284,13 @@ const users = [
   }
 ]
 
+// Carts
 const carts = [
   {
     user_id: 1,
     products: [
-      { product: products[0], option: products[0].flower_details.options[0], quantity: 1, off_price: 0 },
-      { product: products[1], option: products[0].flower_details.options[0], quantity: 2, off_price: 10 },
+      { produc_id: products[0].product_id, option: products[0].flower_details.options[0], total_price:100 ,quantity: 1, off_price: 0 },
+      { product_id: products[1].product_id, option: products[1].flower_details.options[0], total_price: 100, quantity: 2, off_price: 10 },
     ],
   },
 ];

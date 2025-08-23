@@ -10,7 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 const Check_Box = ({isSelected, onHandleSelectedItems}) => {
 
     return (
-        <div className={`w-[25px] aspect-square border-1 border-gray-300 dark:border-white flex items-center rounded-sm ${isSelected ? 'bg-pink-400/80 backdrop-blur-xs' : ''}`} onClick={onHandleSelectedItems}>
+        <div className={`w-[25px] aspect-square border-1 border-gray-400 dark:border-white flex items-center rounded-sm ${isSelected ? 'bg-pink-400/80 backdrop-blur-xs' : ''}`} onClick={onHandleSelectedItems}>
           {isSelected && <Check className="w-full h-full text-white"/>}
         </div>
     )

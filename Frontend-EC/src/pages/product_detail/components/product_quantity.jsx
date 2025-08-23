@@ -3,10 +3,11 @@ import { useProductDetail } from '../../../context/ProductDetailContext'
 import { useEffect } from 'react'
 
 function Product_Quantity() {
-  const {product, quantity, setQuantity, selectedOption} = useProductDetail()
+  const {product, quantity, setQuantity, selectedOption, getOptionStock} = useProductDetail()
+  const stock = product.type === 'flower' ? getOptionStock(selectedOption.stems) : product.stock
 
   useEffect(() => {
-    if (product.type==='flower' && quantity > selectedOption.stock) setQuantity(Math.min(quantity, selectedOption.stock))
+    setQuantity(Math.min(stock, quantity))
   }, [selectedOption])
 
   return (
@@ -20,8 +21,8 @@ function Product_Quantity() {
             </div>
 
               <div className='w-[50px] h-[50px] overflow-hidden'>
-                <div className="flex flex-col items-center justify-between gap-2 pt-2 duration-500 ease-in-out" style={{ transform: `translateY(-${quantity*100/((product.type==='flower'? selectedOption.stock : product.stock)+1)}%)` }}>
-                  {Array.from({length: (product.type==='flower'? selectedOption.stock : product.stock)+1}, (_, i) => (
+                <div className="flex flex-col items-center justify-between gap-2 pt-2 duration-500 ease-in-out" style={{ transform: `translateY(-${quantity*100/(stock+1)}%)` }}>
+                  {Array.from({length: stock+1}, (_, i) => (
                     <div key={i} className='min-h-full min-w-full'>
                       <p className='font-light text-2xl w-full h-full text-center'>{i}</p>
                     </div>
@@ -30,7 +31,7 @@ function Product_Quantity() {
               </div>
 
             <div className='p-1 rounded-full bg-green-400/60 backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all'>
-              <Plus className='w-5 h-5 text-white' onClick={()=>setQuantity(Math.min(product.type==='flower'? selectedOption.stock : product.stock, quantity+1))}/>
+              <Plus className='w-5 h-5 text-white' onClick={()=>setQuantity(Math.min(stock, quantity+1))}/>
             </div>
         </div>
         

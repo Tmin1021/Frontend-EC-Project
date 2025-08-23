@@ -9,12 +9,15 @@ const AuthContext = createContext()
 
 export function AuthProvider({children}) {
     const [user, setUser] = useState(null)
-
+    const handleGetFresh = () => {
+        window.location.reload();
+    }
 
     useEffect(() => {
         const savedUser = JSON.parse(localStorage.getItem('user'))
         if (savedUser) setUser(savedUser)
     }, [])
+
 
     const login = async (mail, password, navigate) => {
         if (isDummy) {
@@ -71,7 +74,7 @@ export function AuthProvider({children}) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user}}>
+        <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, handleGetFresh}}>
             {children}
         </AuthContext.Provider>
     )

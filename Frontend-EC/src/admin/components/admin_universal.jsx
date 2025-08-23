@@ -19,7 +19,7 @@ export default function Admin_Universal_Item({which, info=null, header=0, lastRo
                  stock: ['Stock', info?.stock], available: ['Status', info?.available]},
     user:       {user_id: ["User ID", info?.user_id], name: ["Name", info?.name], mail: ["Mail", info?.mail],
                  phone: ['Phone', info?.phone], address: ['Address', info?.address]},
-    order:      {order_id: ['Order ID', info?.order_id], user_id: ['User ID', info?.user_id], order_date: ['Order date', info?.order_date],
+    order:      {order_id: ['Order ID', info?.order_id], user_id: ['User ID', info?.user_id], order_date: ['Order date', (info?.order_date)],
                  shipping_address: ['Shipping adress', info?.shipping_address], total_amount: ['Total amount', info?.total_amount], status: ['Status', info?.status]}, 
     order_item: {product_id: ['Product ID', info?.product_id], option: ['Option', info?.option?.name], price: ['Base price', info?.option?.price ?? info?.price],
                  quantity: ['Quantity', info?.quantity], off_price: ['Off price', info?.off_price], total: ['Total',  ((info?.option?.price ?? info?.price) - info?.off_price) * info?.quantity]
@@ -27,6 +27,12 @@ export default function Admin_Universal_Item({which, info=null, header=0, lastRo
     order_item_lastRow: {product_id: ['Product ID', ''], option: ['Option', ''], price: ['Base price', ''],
                  quantity: ['Quantity', ''], off_price: ['Off price', ''], total: ['Total',  info?.total_amount-info?.off_price]}          
     }
+
+  const realToNormID = (attribute, defaultValue) => {
+    if (attribute.includes('date')) return defaultValue.split('T')[0]
+    if (!attribute.includes('id') || (attribute==='user_id' && which==='order')) return defaultValue
+    return info?.norm_id
+  }
 
   const main_info = main_infos[which]
   const colCount = Object.keys(main_info).length;
@@ -52,7 +58,8 @@ export default function Admin_Universal_Item({which, info=null, header=0, lastRo
         {Object.keys(main_info).map((key)=> (
           <div key={key} className={`${header ? 'text-xs font-medium text-gray-500' : 'text-sm'} transition-all cursor-pointer overflow-hidden`} 
                         onClick={() => {if(header) handleClickedHeader(key)}}>
-
+            
+            {/* format for available and status */}
             {(key==='available' && !header) ?  
             <div>{main_info[key][1]? 
                                     <div className='flex justify-center py-1 items-center bg-green-100 border-1 border-green-200 rounded-sm text-sm font-semibold text-green-700'>Published</div>
@@ -61,8 +68,9 @@ export default function Admin_Universal_Item({which, info=null, header=0, lastRo
             : (key==='status' && !header) ?
               <div className={`flex justify-center py-2 items-center ${order_status[main_info[key][1]][1]} ${order_status[main_info[key][1]][3]} rounded-sm text-sm font-semibold `}>{main_info[key][1]}</div>
 
-            : <div className='flex items-center gap-2 transition-all'>
-              <p>{header ? main_info[key][0].toString().toUpperCase() : main_info[key][1]}</p>
+            : 
+            <div className='flex items-center gap-2 transition-all'>
+              <p>{header ? main_info[key][0].toString().toUpperCase() : realToNormID(key, main_info[key][1])}</p>
               {header===1 && key===clickedHeader && (<ChevronDown className={`w-4 h-4 ${isAscending ? 'rotate-180' : ''} transition-transform`} />)}
             </div>}
 

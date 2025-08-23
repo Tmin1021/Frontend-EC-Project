@@ -9,9 +9,8 @@ export const Login = () => {
     const navigate = useNavigate()
 
     useEffect(()=> {
-    if(isAuthenticated && user.role==='user') navigate('/personal')
-    if(isAuthenticated && user.role==='admin') navigate('/admin')
-
+      if(isAuthenticated && user.role==='user') navigate('/personal')
+      if(isAuthenticated && user.role==='admin') navigate('/admin')
     }, [])
 
 
