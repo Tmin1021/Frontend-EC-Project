@@ -78,7 +78,7 @@ app.post('/create_payment_url', function (req, res, next) {
     
     var orderInfo = req.body.orderDescription;              // 3
     var orderType = req.body.orderType;                     // 4
-    var locale = req.body.language;
+    var locale = req.body.language;                         // 5
     if(locale === null || locale === ''){
         locale = 'vn';
     }
@@ -98,7 +98,7 @@ app.post('/create_payment_url', function (req, res, next) {
     vnp_Params['vnp_IpAddr'] = '127.0.0.1';
     vnp_Params['vnp_CreateDate'] = createDate;
     if(bankCode !== null && bankCode !== ''){
-        vnp_Params['vnp_BankCode'] = 'VNBANK';
+        vnp_Params['vnp_BankCode'] = bankCode;
     }
 
     vnp_Params = sortObject(vnp_Params);
