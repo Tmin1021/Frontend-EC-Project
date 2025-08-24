@@ -3,6 +3,9 @@ import Dashboard_Banner from "./components/dashboard_banner";
 import Dashboard_Bestselling from "./components/dashboard_bestselling";
 import Dashboard_Why from "./components/dashboard_why";
 import Dashboard_Blog from "./components/dashborad_blog";
+import Dashboard_Recommend from "./components/dashboard_recommend";
+import ShopInfo from "../support/components/shop_info";
+
 import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 
 function Dashboard_Section({children, y_position}) {
@@ -40,6 +43,8 @@ function Dashboard() {
             <Dashboard_Banner/>
             <Dashboard_Section y_position={200}> <Dashboard_Bestselling/> </Dashboard_Section>
             <Dashboard_Section y_position={700}> <Dashboard_Blog/> </Dashboard_Section>
+            <Dashboard_Section y_position={1200}> <Dashboard_Recommend/> </Dashboard_Section>
+            <ShopInfo />
         </div>
     )
 }

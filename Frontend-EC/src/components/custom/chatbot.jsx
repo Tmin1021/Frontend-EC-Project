@@ -41,7 +41,7 @@ function Chatbot() {
     setChatHistory((prev) => [...prev, userMessage]); // concate the chat history
 
     try {
-      const res = await axios.post('http://127.0.0.1:5000/api/chat', { message }, { timeout: 0 });
+      const res = await axios.post('https://chat-server-app-1.onrender.com/api/chat', { message }, { timeout: 0 });
       const aiResponse = { role: 'assistant', content: res.data.response };
       setChatHistory((prev) => [...prev, aiResponse]);
       setLastSubmitTime(now);

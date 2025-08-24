@@ -5,7 +5,8 @@ import ContactForm from './components/contact_form'
 const SupportPage = () => {
   return (
     <div>
-        <ShopInfo />
+      <ContactForm/>
+      <ShopInfo />
     </div>
   )
 }

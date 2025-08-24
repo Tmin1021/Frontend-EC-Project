@@ -36,14 +36,14 @@ const contact_form = () => {
   return (
     <>
       {submitted && (
-        <div className="fixed top-10 right-6 bg-green-500 text-white px-6 py-3 rounded shadow-lg font-semibold animate-bounce">
+        <div className="fixed top-10 right-6 z-50 bg-green-500 text-white px-6 py-3 rounded shadow-lg font-semibold animate-bounce">
           Contact submitted
         </div>
       )}
       <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 bg-opacity-60 backdrop-blur-md rounded-xl shadow-lg p-8">
         <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
         <form className="w-full max-w-md" onSubmit={handleSubmit}>
-          <div className="form-group mb-4">
+          <div className="mb-4">
             <label htmlFor="name" className="block text-sm font-medium mb-1">Name:</label>
             <input
               type="text"
@@ -55,7 +55,7 @@ const contact_form = () => {
               className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-200"
             />
           </div>
-          <div className="form-group mb-4">
+          <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium mb-1">Email:</label>
             <input
               type="email"
@@ -67,7 +67,7 @@ const contact_form = () => {
               className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-200"
             />
           </div>
-          <div className="form-group mb-6">
+          <div className="mb-6">
             <label htmlFor="message" className="block text-sm font-medium mb-1">Message:</label>
             <textarea
               id="message"

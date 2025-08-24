@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const slugify = (title) => {
-    return title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-};
-
 const BlogDetail = () => {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
+
+  const slugify = (title) => {
+    return title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+  };
 
   //console.log(slug)
 

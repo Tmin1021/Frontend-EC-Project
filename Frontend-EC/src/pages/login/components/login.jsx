@@ -25,6 +25,15 @@ export const Login = () => {
         login(form.email, form.password, navigate)
     };
 
+    // Handle input changes
+    const handleChange = (e) => {
+      setForm({
+        ...form,
+        [e.target.name]: e.target.value
+      });
+      setError(''); // Clear error on input change
+    };
+
   return (
     <div className="relative min-h-screen">
       {/* Background image covering the entire screen */}

@@ -4,6 +4,7 @@ import demo_2 from "/src/assets/demo_2.png";
 import demo_3 from "/src/assets/demo_3.png";
 import demo_4 from "/src/assets/demo_4.png";
 import demo_5 from "/src/assets/demo_5.png";
+import demo_6 from "/src/assets/demo_6.png";
 
 // when add item to cart, store as: [product: the product itself, option: if available, quantity]
 // in cart, it will mapped into => [product_id, option, total_price, quantity, off_price]
@@ -193,6 +194,48 @@ const products = [
     description: "A beautiful vase for your flowers.",
     image_url: [demo_4],
   },
+  {
+    "product_id": "B12",
+    "type": "flower",
+    "name": "Lotus Serenity",
+    "price": 32.0,
+    "stock": 12,
+    "available": true,
+    "description": "Sacred lotus blossoms with serene petals and a fresh, clean scent. A cultural icon symbolizing purity and renewal—ideal for Vietnam National Day, Hung Kings Day, and Friendship Day gestures.",
+    "image_url": [demo_6],
+    "flower_details": {
+      "occasion": [
+        "Vietnam National Day",
+        "Hung Kings Commemoration Day",
+        "International Friendship Day"
+      ],
+      "color": [
+        "Pink Flowers",
+        "White Flowers"
+      ],
+      "flower_type": "Lotus",
+      "options": [
+        {
+          "name": "original",
+          "price": 32.0,
+          "stems": 5,
+          "stock": 4
+        },
+        {
+          "name": "deluxe",
+          "price": 46.0,
+          "stems": 9,
+          "stock": 5
+        },
+        {
+          "name": "grand",
+          "price": 62.0,
+          "stems": 14,
+          "stock": 3
+        }
+      ]
+    }
+  }
 ];
 
 

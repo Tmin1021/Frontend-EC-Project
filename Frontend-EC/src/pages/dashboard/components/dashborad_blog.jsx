@@ -2,44 +2,6 @@ import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 
-// const defaultBlogs = [
-//   {
-//     id: 1,
-//     title: "123456789 123456789 123456789 123456789 123456789",
-//     date: "June 12, 2025",
-//     image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
-//     description: "Learn about the birth flowers for June and their meanings."
-//   },
-//   {
-//     id: 2,
-//     title: "Gardenia Plant Care Guide",
-//     date: "May 25, 2025",
-//     image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=400&q=80",
-//     description: "Tips and tricks for keeping your gardenias healthy and blooming."
-//   },
-//   {
-//     id: 3,
-//     title: "Gardenia Plant Care Guide",
-//     date: "May 25, 2025",
-//     image: "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=400&q=80",
-//     description: "Tips and tricks for keeping your gardenias healthy and blooming."
-//   }, 
-//   {
-//     id: 4,
-//     title: "How to Arrange Flowers Like a Pro",
-//     date: "April 10, 2025",
-//     image: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
-//     description: "Step-by-step guide to creating beautiful flower arrangements at home."
-//   },
-//   {
-//     id: 5,
-//     title: "The Meaning Behind Popular Flowers",
-//     date: "March 18, 2025",
-//     image: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=400&q=80",
-//     description: "Discover the symbolism and stories behind your favorite flowers."
-//   }
-// ];
-
 const BLOGS_PER_ROW = 4
 
 const Dashboard_Blog = () => {
@@ -81,7 +43,7 @@ const Dashboard_Blog = () => {
     };
 
     const handlePrev = () => {
-    setStartIdx((prev) => (prev - 1 + blogs.length) % blogs.length);
+    setStartIdx((prev) => (prev - 1 + blogs.length) % blogs.length); // make sure non negative
     };
   return (
     <div className="bg-gray-50 w-full flex flex-col gap-4 pt-4 px-4 md:px-8 lg:px-16 md:pt-10 pb-4">
