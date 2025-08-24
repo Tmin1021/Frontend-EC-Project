@@ -42,8 +42,13 @@ const Admin_Dashboard = () => {
         return target.toDateString() === now.toDateString();
         case 'This Week': {
         const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay());
-        return target >= startOfWeek;
+        const endOfWeek = new Date(now);
+        // Convention: week starts on Monday -> Monday (1) -> Sunday (7)
+
+        const day = now.getDay() || 7; // JS OR logic (0 is falsy, thus convert to 7)
+        startOfWeek.setDate(now.getDate() - (day - 1));
+        endOfWeek.setDate(now.getDate() + (7 - day));
+        return target >= startOfWeek && target <= endOfWeek;
         }
         case 'This Month':
         // Compare both month and year
@@ -56,7 +61,7 @@ const Admin_Dashboard = () => {
 
   const filteredOrders = useMemo(() => {
     return allOrders.filter(o => isDateInFilter(o.order_date, orderFilter))
-  }, [orderFilter])
+  }, [orderFilter]) // only re-compute when orderFilter changes
 
   const totalOrders = filteredOrders.length
 
@@ -107,12 +112,11 @@ const Admin_Dashboard = () => {
           const product = allProducts.find(p => p.product_id === id)
           return { name: product?.name || id, quantity: data.quantity, revenue: data.revenue }
           })
-          .sort((a, b) => b.quantity - a.quantity)
 
-      return sorted.slice(0, 3)
+      return sorted
     }, [productFilter])
 
-const topByQuantity = topProducts[0]
+const topByQuantity = [...topProducts].sort((a, b) => b.quantity - a.quantity)[0]
 const topByRevenue = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]
 
 
