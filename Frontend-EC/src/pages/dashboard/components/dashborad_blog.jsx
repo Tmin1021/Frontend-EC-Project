@@ -83,7 +83,7 @@ const Dashboard_Blog = () => {
     setStartIdx((prev) => (prev - 1 + blogs.length) % blogs.length);
     };
   return (
-    <div className="bg-gray-100 w-full flex flex-col gap-4 pt-4 px-4 md:px-8 lg:px-16">
+    <div className="bg-gray-100 w-full flex flex-col gap-4 pt-4 px-4 md:px-8 lg:px-16 pb-8">
       <p className="font-semibold text-2xl mx-auto">Blogging</p>
       <div className="flex w-full overflow-auto justify-between gap-8 items-center">
         {/* Left arrow */}

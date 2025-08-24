@@ -36,7 +36,7 @@ const contact_form = () => {
   return (
     <>
       {submitted && (
-        <div className="fixed top-10 right-6 bg-green-500 text-white px-6 py-3 rounded shadow-lg font-semibold animate-bounce">
+        <div className="fixed top-10 right-6 z-50 bg-green-500 text-white px-6 py-3 rounded shadow-lg font-semibold animate-bounce">
           Contact submitted
         </div>
       )}

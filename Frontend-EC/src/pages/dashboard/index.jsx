@@ -4,6 +4,7 @@ import Dashboard_Bestselling from "./components/dashboard_bestselling";
 import Dashboard_Why from "./components/dashboard_why";
 import Dashboard_Blog from "./components/dashborad_blog";
 import Dashboard_Recommend from "./components/dashboard_recommend";
+import ShopInfo from "../support/components/shop_info";
 
 function Dashboard() {
 
@@ -13,6 +14,7 @@ function Dashboard() {
             <Dashboard_Bestselling/>
             <Dashboard_Blog/>
             <Dashboard_Recommend />
+            <ShopInfo />
             {/*<Dashboard_Why/>*/}
         </div>
     )

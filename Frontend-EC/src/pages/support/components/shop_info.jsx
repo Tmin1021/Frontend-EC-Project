@@ -5,9 +5,6 @@ const shop_info = () => {
   return (
     <div className='py-10 px-90'>
       <h1 className='font-extrabold text-9xl pb-20'>Shop Information</h1>
-      <div className='mb-10'>
-        <ContactForm />
-      </div>
       <div className='flex gap-10'>
         <div className='w-1/2'>
           <h2 className='text-3xl font-bold'>Contact Us</h2>
@@ -22,6 +19,7 @@ const shop_info = () => {
       </div>
       <div className='mt-10'>
         <h2 className='text-3xl font-bold'>About Us</h2>
+        <p className='font-bold mt-2'>Team members: Trần Công Lâm Anh - Võ Lân - Nguyễn Ngọc Duy Tân - Dương Thanh Triều</p>
         <p className='mt-4'>We are dedicated to providing the freshest and most beautiful flowers for all occasions. Our team is passionate about floral design and customer service.</p>
         <p className='mt-2'>Thank you for choosing us for your floral needs!</p>
       </div>

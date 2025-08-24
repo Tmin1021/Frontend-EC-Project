@@ -107,7 +107,7 @@ const Dashboard_Recommend = () => {
   if (!loading && err) return null;
 
   return (
-  <div className="bg-gray-100 w-full flex flex-col items-center gap-4 pt-4 px-4 md:px-8 lg:px-16">
+  <div className="bg-gray-100 w-full flex flex-col items-center gap-4 pt-4 px-4 md:px-8 lg:px-16 pb-16">
     <p className="font-semibold text-2xl mx-auto">Recommendation</p>
 
     {loading ? (
