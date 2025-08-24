@@ -6,24 +6,31 @@ const AdminContext = createContext()
 const BASE_URL = 'http://localhost:1337';
 
 export function AdminProvider({children}) {
+    const [initialUser, setInitialUser] = useState([])
+    const [initialInventory, setInitialInventory] = useState([])
+    const [initialOrder, setInitialOrder] = useState([])
     const [currentUser, setCurrentUser] = useState([])
     const [currentInventory, setCurrentInventory] = useState([])
     const [currentOrder, setCurrentOrder] = useState([])
+    const [getFresh, setGetFresh] = useState(false) // flip getFresh to update
+
+    const handleGetFresh = () => {
+        setGetFresh(!getFresh)
+    }
 
     useEffect(()=> {
         async function fetchUsers() {
             try {
                 const res = await GlobalApi.UserApi.getAll()
                 const data = res.data.data.map(item => ({
+                    ...item,
                     user_id: item?.documentId,
-                    name: item?.name,
-                    mail: item?.mail,
-                    phone: item?.phone,
-                    address: item?.address,
-                    role: item?.role
+                    norm_id: item?.id,
+
                 }))
 
                 const new_data = data.filter(item => item.role==='user')
+                setInitialUser(new_data)
                 setCurrentUser(new_data)
             } catch (err) {
                 console.error("Failed to fetch users", err);
@@ -34,17 +41,13 @@ export function AdminProvider({children}) {
             try {
                 const res = await GlobalApi.ProductApi.getAll()
                 const data = res.data.data.map(item => ({
+                    ...item,
                     product_id: item?.documentId,
-                    type: item?.type,
-                    name: item?.name,
-                    price: item?.price,
-                    stock: item?.stock,
-                    available: item?.available,
-                    description: item?.description,
+                    norm_id: item?.id,
                     image_url: item.image_url.map(image => BASE_URL+image.url),
-                    flower_details: item?.flower_details
             }))
-
+            
+            setInitialInventory(data)
             setCurrentInventory(data)
 
             } catch (err) {
@@ -56,15 +59,14 @@ export function AdminProvider({children}) {
             try {
                 const res = await GlobalApi.OrderApi.getAll()
                 const data = res.data.data.map(item => ({
+                    ...item,
                     order_id: item?.documentId,
-                    user_id: item?.user_id,
-                    order_date: item?.order_date,
-                    total_amount: item?.total_amount,
-                    off_price: item?.off_price,
-                    shipping_address: item?.shipping_address,
-                    status: item?.order_status
+                    norm_id: item?.id,
+                    order_date: GlobalApi.formatDate(item?.order_date),
+                    status: item?.order_status,
                 }))
 
+                setInitialOrder(data)
                 setCurrentOrder(data)
             } catch (err) {
                 console.error("Failed to fetch users", err);
@@ -72,6 +74,9 @@ export function AdminProvider({children}) {
         }
 
         function fetchDummy() {
+            setInitialUser(users)
+            setInitialInventory(products)
+            setInitialOrder(orders)
             setCurrentUser(users)
             setCurrentInventory(products)
             setCurrentOrder(orders)
@@ -79,10 +84,10 @@ export function AdminProvider({children}) {
 
         if (isDummy) fetchDummy() 
         else {
-        fetchUsers()
-        fetchProducts()
-        fetchOrders()}
-    }, [])
+            fetchUsers()
+            fetchProducts()
+            fetchOrders()}
+    }, [getFresh])
 
     // for inventory
     const updateInventory = (old_product, new_product) => {
@@ -112,8 +117,8 @@ export function AdminProvider({children}) {
     }
 
     const filterStatus = status => {
-        if (status === 'All') setCurrentOrder(orders)
-        else setCurrentOrder(orders.filter(order => order.status === status))
+        if (status === 'All') setCurrentOrder(initialOrder)
+        else setCurrentOrder(initialOrder.filter(order => order.status === status))
     }
 
     // for universal
@@ -141,9 +146,9 @@ export function AdminProvider({children}) {
 
     const searchUniversal = (from, input) => {
         const mapping = {
-            inventory: [products, setCurrentInventory, ["name", "product_id", "type"]],
-            user: [users, setCurrentUser, ["name", "user_id", "mail", "phone", "address"]],
-            order: [orders, setCurrentOrder, ["order_id", "user_id", "order_date", "shipping_address", "total_amount"]]
+            inventory: [initialInventory, setCurrentInventory, ["name", "product_id", "type"]],
+            user: [initialUser, setCurrentUser, ["name", "user_id", "mail", "phone", "address"]],
+            order: [initialOrder, setCurrentOrder, ["order_id", "user_id", "order_date", "shipping_address", "total_amount"]]
         }
 
         const [dataList, setter, fields] = mapping[from]
@@ -157,7 +162,7 @@ export function AdminProvider({children}) {
     }
     
     return (
-        <AdminContext.Provider value={{currentInventory, currentUser, currentOrder, updateStatusOrder, filterStatus, sortUniversal, updateInventory, removeInventory, searchUniversal}}>
+        <AdminContext.Provider value={{currentInventory, currentUser, currentOrder, updateStatusOrder, filterStatus, handleGetFresh, sortUniversal, updateInventory, removeInventory, searchUniversal}}>
             {children}
         </AdminContext.Provider>
     )

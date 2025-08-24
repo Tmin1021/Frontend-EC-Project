@@ -1,38 +1,78 @@
-import React from 'react'
-import {products} from '../../../data/dummy'
+import React, { useEffect, useState } from 'react'
+import {products, isDummy, demo_1} from '../../../data/dummy'
 import { useNavigate, useParams } from 'react-router-dom'
+import GlobalApi from '../../../../service/GlobalApi'
+import { useDynamicPricing } from '../../../context/DynamicPricingContext'
+
+const BASE_URL = 'http://localhost:1337';
 
 export function Bestselling_Item({product}) {
-    const findStartingPrice = () => product.type==='flower' ? (Math.min(...product.flower_details.options.map(option => option.price))) : product.price
+    const {condition_mapping} = useDynamicPricing()
+    const findStartingPrice = () => product.type==='flower' ? (Math.round(Math.min(...product.flower_details.options.map(option => option.stems))*product.dynamic_price*100, 2)/100) : product.price
 
     return (
         <div className="min-w-[170px] bg-white dark:bg-black">
-            <div className='w-full aspect-square overflow-hidden'>
+            <div className='w-full aspect-square overflow-hidden rounded-sm'>
                 <img src={product?.image_url[0]} className='w-full h-full object-cover'/>
             </div>
+
             <p className='font-bold text-sm md:text-base pt-3'>{product.name}</p>
-            <p className='font-light text-sm py-1'>from <span className='font-bold text-lg'>${findStartingPrice()}</span></p>
+
+            <div className='flex justify-between items-center'>
+                <p className='font-light text-sm py-1'>from <span className='font-bold text-lg'>${findStartingPrice()}</span></p>
+                <p className={`${condition_mapping[product.condition]} whitespace-nowrap overflow-hidden text-ellipsis text-sm font-semibold h-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 transition-all`}>{product.condition}</p>
+            </div>
         </div>
 
     )
 }
 
 const Dashboard_Bestselling = () => {
-      const navigate = useNavigate()
+    const navigate = useNavigate()
+    const {getDynamicPrice, getCondition} = useDynamicPricing()
+    const [bestsellingProducts, setBestsellingProducts] = useState(products.filter(item=>item.type==='flower'))
 
-      const handleClick = (productID) => {
+    const handleClick = (productID) => {
         navigate(`flower/${productID}`)
       }
+
+    useEffect(() => {
+        if (isDummy) return
+
+        async function fetchProducts() {
+            try {
+                const res = await GlobalApi.ProductApi.getAll()
+                const data = res.data.data.map(item => ({
+                    ...item,
+                    product_id: item?.documentId,
+                    dynamic_price: item?.type==='flower' ? getDynamicPrice(item?.price, item?.fill_stock_date) : item?.price,
+                    condition: getCondition(item?.fill_stock_date),
+                    image_url: item?.image_url.map(image => BASE_URL+image.url), 
+
+            }))
+
+            let new_data = data.filter(item=>item.type==='flower')
+            setBestsellingProducts(new_data)
+
+            } catch (err) {
+                console.error("Failed to fetch products", err);
+            }
+        
+        }
+
+        fetchProducts()
+    }, [])
+   
   
       return (
-          <div className="flex flex-col gap-4 w-full px-4 md:px-10 lg:px-32 py-4 md:pt-10">
+          <div className="flex flex-col gap-4 w-full px-4 md:px-8 lg:px-16 py-4 md:pt-10">
             {/* Title */}
-            <p className='font-semibold text-2xl mx-auto'>Best-selling Hoa.</p>
+            <p className='font-semibold text-xl md:text-2xl lg:text-4xl'>Best-selling <span className='text-pink-500'>Hoa</span>.</p>
 
             {/* Items */}
-            <div className="flex overflow-x-auto no-scrollbar gap-2 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4 lg:gap-8 scroll-smooth">
-            {products.filter(product=>product.type==='flower').slice(0, 4).map((product) => (
-                <div key={product.product_id} className="cursor-pointer" onClick={() => handleClick(product.uuid)}>
+            <div className="w-full grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 md:gap-4 scroll-smooth">
+            {bestsellingProducts.filter(product=>product.type==='flower').slice(0, 4).map((product) => (
+                <div key={product.product_id} className="cursor-pointer flex-none" onClick={() => handleClick(product.product_id)}>
                     <Bestselling_Item product={product} />
                 </div>
             ))}

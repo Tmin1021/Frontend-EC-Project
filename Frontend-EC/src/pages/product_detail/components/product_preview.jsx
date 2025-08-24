@@ -16,10 +16,10 @@ function Preview_Slide({images, setIndex}) {
 
   return (
     <div className='w-full flex justify-center gap-4 items-center'>
-      
-      <div className={`${images.length<=3? 'hidden':''}`} onClick={prevImage}><ChevronLeft className="w-10 h-10"/></div>
 
-      <div className="w-[200px] overflow-hidden mx-auto">
+      <div className={`${images.length<=3? 'hidden':''} rounded-full bg-gray-100 shadow-gray-400 shadow-sm hover:shadow-md transition-all`} onClick={prevImage}><ChevronLeft className="w-10 h-10"/></div>
+
+      <div className="w-[198px] overflow-hidden mx-auto">
         <div className="flex gap-2 duration-500 ease-in-out" style={{ transform: `translateX(-${indexSlide/3 * 100}%)` }}>
         {images.map((image, i) => (
           <div key ={i} className="flex-none" onClick={(()=>setIndex(i))}>
@@ -29,7 +29,7 @@ function Preview_Slide({images, setIndex}) {
         </div>
       </div>
 
-      <div className={`${images.length<=3? 'hidden':''}`} onClick={nextImage}><ChevronRight className="w-10 h-10"/></div>
+      <div className={`${images.length<=3? 'hidden':''} rounded-full bg-gray-100 shadow-gray-400 shadow-sm hover:shadow-md transition-all`} onClick={nextImage}><ChevronRight className="w-10 h-10"/></div>
     </div>
 
   )
@@ -47,7 +47,7 @@ function Product_Preview({images}) {
         style={{ transform: `translateX(-${index * 100}%)` }}>
         {images.map((img, i) => (
           <div key={i} className='min-w-full aspect-square'>
-              <img src={img} className="w-full h-full object-cover"/>
+              <img src={img} className="w-full h-full object-cover rounded-lg"/>
           </div>
         ))}
       </div>

@@ -1,13 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { order_items, isDummy, products } from '../data/dummy'
+import { order_items, isDummy, products, demo_1 } from '../data/dummy'
 import GlobalApi from '../../service/GlobalApi';
 import { useParams } from 'react-router-dom';
+import { useDynamicPricing } from './DynamicPricingContext';
 
 const ProductContext = createContext()
 const BASE_URL = 'http://localhost:1337';
 
 export function ProductProvider({children, isSearch=false, searchResult=[]}) {
   const {type} = useParams()
+  const {getDynamicPrice, getCondition, getDiffDays} = useDynamicPricing()
 
   const [currentProduct, setCurrentProduct] = useState([]);
   const [initialProduct, setInitialProduct] = useState([]);
@@ -26,16 +28,13 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
     try {
     const res = await GlobalApi.ProductApi.getAll()
     const data = res.data.data.map(item => ({
+        ...item,
         product_id: item?.documentId,
-        type: item?.type,
-        name: item?.name,
-        price: item?.price,
-        stock: item?.stock,
-        available: item?.available,
-        description: item?.description,
-        image_url: item.image_url.map(image => BASE_URL+image.url),
-        flower_details: item?.flower_details
+        dynamic_price: item?.type==='flower' ? getDynamicPrice(item?.price, item?.fill_stock_date) : item?.price,
+        condition: getCondition(item?.fill_stock_date),
+        image_url: item?.image_url.map(image => BASE_URL+image.url) ?? demo_1,
     }))
+
 
     let new_data = data
     if (type==='flower') new_data=data.filter(item=>item.type==='flower')
@@ -77,7 +76,7 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
     new_product = (new_values["Colors"]?.size!==1? new_product.filter((product) => product.flower_details?.color.some(i=>new_values["Colors"].has(i))) : new_product)
     
     setCurrentValues(new_values)
-    setCurrentProduct(new_product)
+    setCurrentProduct(new_product.filter(product => product.type==='flower'))
   }
 
   // g
@@ -120,9 +119,10 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
 
   const sortProduct = value => {
     let new_product = currentProduct.slice()
-
     if (value === 'Price: Low to High') new_product = new_product.sort((a,b) => a.price-b.price)
     else if (value === 'Price: High to Low') new_product = new_product.sort((a,b) => b.price-a.price)
+    else if (value === 'Condition: New to Old') new_product = new_product.sort((a,b) => getDiffDays(a.fill_stock_date)-getDiffDays(b.fill_stock_date)) 
+    else if (value === 'Condition: Old to New') new_product = new_product.sort((a,b) => getDiffDays(b.fill_stock_date)-getDiffDays(a.fill_stock_date)) 
 
     else if (value === 'Best Sellers') {
       new_product = new_product
@@ -135,7 +135,7 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
   }
 
   return (
-    <ProductContext.Provider value={{currentProduct, setCurrentProduct, filterProduct, searchProduct, searchPrediction, sortProduct}}>
+    <ProductContext.Provider value={{currentProduct, initialProduct, setCurrentProduct, filterProduct, searchProduct, searchPrediction, sortProduct}}>
       {children}
     </ProductContext.Provider>
   )

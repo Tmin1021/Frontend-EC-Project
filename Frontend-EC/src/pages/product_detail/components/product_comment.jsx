@@ -1,16 +1,24 @@
-import React, { useState } from 'react'
-import { comments, users } from '../../../data/dummy'
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { isDummy, users } from '../../../data/dummy'
+import { ChevronLeft, ChevronRight, Send, Star } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useProductDetail } from '../../../context/ProductDetailContext'
+import { useAuth } from '../../../context/AuthContext';
+import GlobalApi from '../../../../service/GlobalApi'
+import { toast } from 'sonner'
+
 
 // find return the first matching or undefined, while filter return an array
 function Comment_Item({comment}) {
   return (
-    <div className='flex flex-col gap-4 w-full min-w-[340px] h-[350px] p-4 rounded-lg bg-white shadow-sm hover:shadow-2xl transition-all'>
+    <div className='flex flex-col gap-4 w-full p-4 rounded-lg bg-gray-100 shadow-sm hover:shadow-xl hover:bg-gray-200 transition-all'>
+        {/* title */}
         <div className="flex justify-between">
             <p className='font-bold'>{comment.title}</p>
             <p>{comment.date}</p>
         </div>
 
+        {/* content */}
         <div className="flex justify-between">
             <div className='flex'>
               {Array.from({length: comment.star}).map((_,i) => (
@@ -20,16 +28,11 @@ function Comment_Item({comment}) {
                 <Star key={i} className="text-yellow-500" />
               ))}
             </div>
-            <p>{users.find(user => user.user_id === comment.user_id)?.name}</p>
+
+            <p>{isDummy? users.find(user => user.user_id === comment.user_id)?.name : comment.user_id}</p>
         </div>
         
-        {comment.image[0] ? 
-        <div className='relative w-full aspect-square overflow-hidden'>
-          <img src={comment.image[0]} className='w-full h-full object-cover'/> 
-          <div className='absolute top-0 left-0 w-full h-full flex items-center opacity-0 hover:opacity-100 hover:bg-black/40 hover:backdrop-blur-xs transition-all'>
-            <p className="text-white mx-auto px-2"> {comment.content}</p>
-          </div>
-        </div> : <p> {comment.content}</p>}
+        <p className='text-sm font-light'> {comment.content}</p>
 
     </div>
   )
@@ -41,15 +44,15 @@ function Product_Rating({comments}) {
   : 0;
 
   return (
-    <div className='flex items-end justify-between py-2'>
+    <div className='flex items-end justify-between'>
       <div className='flex items-end gap-2'>
-        <p className='font-extrabold text-6xl'>{average_rating}</p>
-        <p className='font-bold'>out of 5</p>
+        <p className='font-extrabold text-6xl md:text-7xl text-gray-500'>{average_rating}</p>
+        <p className='font-bold text-sm text-gray-500'>out of 5</p>
       </div>
 
-      <p>{comments.length} Ratings</p>
+      <p className='text-sm text-gray-500 hidden md:inline'>{comments.length} Ratings</p>
 
-      <div className='flex flex-col gap-1'>
+      <div className='flex flex-col gap-1 items-end'>
         {Array.from({length: 5}).map((_, i) => (
           <div key={i} className='flex gap-2'>
 
@@ -66,31 +69,101 @@ function Product_Rating({comments}) {
             </div>
           </div>
         ))}
+        <p className='text-sm text-gray-500 md:hidden'>{comments.length} Ratings</p>
       </div>
     </div>
   )
 }
 
+function Product_Comment() {
+  const [isViewMore, setIsViewMore] = useState(false)
+  const {comments} = useProductDetail()
+  const [visibleCount, setVisibleCount] = useState(4);
+  const {isAuthenticated, user, handleGetFresh} = useAuth()
+  const [commentContent, setCommentContent] = useState('')
+  const [whichStar, setWhichStar] = useState(4)
+  const {product} = useProductDetail()
+  const mapping = ["Awful", "Bad", "Normal", "Good", "Excellent"]
 
-function Product_Comment({product_id}) {
-  const [index, setIndex] = useState(0)
-  const this_product_comments = comments //comments.filter((comment) => comment.product_id == product_id)
+  const handleCommit = () => {
+    const data = {
+      data: {
+        user_id: user.user_id,
+        product_id: product.product_id,
+        title: mapping[whichStar],
+        content: commentContent,
+        date: new Date().toISOString().split("T")[0],
+        star: whichStar+1,
+      }
+    }
+    GlobalApi.CommentApi.create(data).then(resp=> {
+      setCommentContent('')
+      setWhichStar(4)
+      toast.success('Thank for your sharing.')
+      setTimeout(()=>{
+        handleGetFresh()
+      }, 200)
+    }, () => {
+      toast.error('Error. Please try again.')
+    }) 
+  }
+
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth >= 768) { 
+        setVisibleCount(6)
+      } else {
+        setVisibleCount(4)
+      }
+    }
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [])
 
   return (
-    <div>
+    <div className='flex flex-col gap-4'>
         <p className='font-bold text-2xl'>Ratings & Reviews</p>
-        <Product_Rating comments={this_product_comments}/>
-        
-        <div className='flex items-center justify-between'>
-          <div onClick={()=>setIndex(Math.max(index-1,0))}><ChevronLeft className="w-10 h-10"/></div>
-          <div className='w-full overflow-hidden'>
-            <div className="flex gap-6 py-5 px-1 duration-500 ease-in-out" style={{ transform: `translateX(-${index*1.8/this_product_comments.length * 100}%)` }}>
-                {this_product_comments.map((comment) => (
-                    <Comment_Item key={comment.user_id} comment={comment}/>
-                ))}
-            </div>
+        {/* Rating */}
+        <Product_Rating comments={comments}/>
+
+        {/* Comment input & rating */}
+        {isAuthenticated && 
+        <div className='flex flex-col gap-2 w-full'>
+            <div className='flex w-[140px]'>
+            {Array.from({length: 5}).map((_, i) => (
+              <Star key={i} fill={`${i<=whichStar ? 'currentColor' : 'none'}`} onClick={()=>setWhichStar(i)} className={`text-yellow-500 w-6 h-6`} />
+            ))}
           </div>
-          <div onClick={()=>setIndex(Math.min(index+1,this_product_comments.length-2))}><ChevronRight className="w-10 h-10"/></div>
+
+          <div className='flex justify-between items-center gap-2'>
+            <textarea 
+              type="text" 
+              placeholder={"Comment on this product..."}
+              value={commentContent}
+              onChange={(e)=>{setCommentContent(e.target.value)}}
+              className={`w-full text-sm font-light resize-none border-1 border-gray-100 rounded-lg pl-4 py-2 shadow-sm hover:shadow-lg transtion-all focus:outline-purple-300 `}
+              rows={2}/>       
+
+            <div className='' onClick={handleCommit}>
+              <Send className='text-pink-300 hover:text-pink-500 w-6 h-6'/>
+            </div>        
+          </div>
+        </div>}
+        
+        {/* All comments */}
+        <div className={` ${isViewMore? 'fixed inset-0 flex justify-center items-center bg-black/20 backdrop-blur-sm':''} transition-all`} onClick={()=>setIsViewMore(false)}>
+          <div className={`${isViewMore ? 'w-[90%] md:w-[60%] bg-white/80 p-4 rounded-lg max-h-[80vh] overflow-y-auto':''} grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4 duration-500 ease-in-out`}
+               onClick={(e)=> e.stopPropagation()}>
+              {comments.slice(0,visibleCount).map((comment, i) => (<Comment_Item key={i} comment={comment}/>))}
+          </div>
+        </div>
+
+
+        <div className='w-fit mx-auto font-semibold text-blue-500 p-2 cursor-pointer rounded-sm hover:text-white hover:bg-blue-500/80 hover:shadow-lg hover:shadow-gray-300 transition-all'
+             onClick={()=>setIsViewMore(!isViewMore)}>
+          View more
         </div>
     </div>
 

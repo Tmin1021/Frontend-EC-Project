@@ -9,7 +9,7 @@ function Search_Item({product, isSelected, closeSearch}) {
     const [isHover, setIsHover] = useState(false)
 
     return (
-        <div className={`flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-gray-100 shadow-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product.product_id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
+        <div className={`flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-white shadow-lg rounded-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product.product_id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
             {product.type !== 'flower' ? <Box className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-green-500' : 'text-green-300'}`}/>
             : <Flower className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-pink-500' : 'text-pink-300'}`}/>}
             <p className={`py-1 font-light md:text-sm text-lg hover:font-semibold transition-all ${isSelected? 'font-semibold':""}`}>{product.name}</p>
@@ -47,10 +47,12 @@ function Search_Inner({closeSearch}) {
 
     // handle scrolling 
     useEffect(() => {
-      document.body.style.overflow = 'hidden';
+      //document.body.style.overflow = 'hidden';
+      window.addEventListener('scroll', closeSearch);
 
       return () => {
-          document.body.style.overflow = 'auto'; 
+          //document.body.style.overflow = 'auto'; 
+          window.removeEventListener('scroll', closeSearch);
       };
   }, []);
 
@@ -59,10 +61,10 @@ function Search_Inner({closeSearch}) {
 
         const handleKeyDown = (e) => {
             if (e.key === 'ArrowUp') {
-                setSelectedIndex(selectedIndex>0? selectedIndex-1:Math.min(searchResults.length-1, 3))
+                setSelectedIndex(selectedIndex>0? selectedIndex-1:Math.min(searchResults.length-1, 5))
             }
             else if (e.key === 'ArrowDown') {
-                setSelectedIndex(selectedIndex>Math.min(2, searchResults.length-1) ? 0:selectedIndex+1)
+                setSelectedIndex(selectedIndex>Math.min(4, searchResults.length-1) ? 0:selectedIndex+1)
             }
             else if (e.key === 'Enter' && selectedIndex!==-1) {
                 navigate(`/product/${searchResults[selectedIndex].product_id}`)
@@ -106,7 +108,7 @@ function Search_Inner({closeSearch}) {
             {/* Result */}
             <div>
                 <div className='flex flex-col gap-2'>
-                    {searchResults.map((product, i) => (
+                    {searchResults.slice(0, 6).map((product, i) => (
                         <Search_Item key={i} product={product} isSelected={i===selectedIndex} closeSearch={closeSearch}/>
                     ))}
                 </div>
@@ -126,9 +128,9 @@ export function Search_Space({isSearch, closeSearch}) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute left-0 top-0 md:top-14 w-full h-screen bg-white dark:bg-black md:bg-black/10 md:backdrop-blur-sm z-50">
+                    className="absolute left-0 top-0 md:top-14 w-full h-screen bg-white dark:bg-black md:bg-black/10 md:backdrop-blur-sm z-50" onMouseOver={closeSearch}>
 
-                    <div className='md:flex relative w-full bg-white dark:bg-black h-[250px] flex-col gap-2 px-4 py-2'>
+                    <div className='md:flex relative w-full bg-gray-50 dark:bg-black h-0 md:h-[350px] flex-col gap-2 px-4 py-2' onMouseOver={(e)=>e.stopPropagation()}>
                         <div className='md:hidden relative w-full pb-8'>
                             <div className='absolute right-0' onClick={closeSearch}><X className='w-8 h-8' /></div>
                         </div>
