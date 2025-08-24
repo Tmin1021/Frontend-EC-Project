@@ -107,8 +107,8 @@ const Dashboard_Recommend = () => {
   if (!loading && err) return null;
 
   return (
-  <div className="bg-gray-100 w-full flex flex-col items-center gap-4 pt-4 px-4 md:px-8 lg:px-16 pb-16">
-    <p className="font-semibold text-2xl mx-auto">Recommendation</p>
+  <div className="bg-gray-100 w-full flex flex-col gap-4 px-4 md:px-8 lg:px-16 md:pt-10 py-8">
+    <p className='font-semibold text-xl md:text-2xl lg:text-4xl text-purple-700'>Recommendation</p>
 
     {loading ? (
       <div className="w-full flex justify-center">
@@ -156,7 +156,7 @@ const Dashboard_Recommend = () => {
             {sectionsWithProducts.map(({ label, product, titleOverride, cardTitle }) => (
               <div key={label} className="bg-white flex-none rounded-xl shadow-lg p-6 w-[250px] md:w-[300px]">
                 <div className="min-h-[64px] flex items-center justify-center text-center">
-                  <h3 className="text-xl font-bold text-green-700 leading-tight">
+                  <h3 className="text-xl font-semibold text-purple-600 leading-tight">
                     {cardTitle}
                   </h3>
                 </div>

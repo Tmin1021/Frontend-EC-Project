@@ -60,12 +60,14 @@ export function CartProvider({children}) {
             })
 
             if (!found) { 
-                setSelectedItems(prev => [...prev, false])
-                newCart =  [...updatedCart, {product_id: product.product.product_id, option: product?.option, total_price: Math.round(100*(product.quantity*product.product.dynamic_price*(product?.option?.stems ?? 1)),2)/100, quantity: product.quantity, off_price: 0, isSelected: false}]
+                newCart =  [...updatedCart, {product_id: product.product.product_id, total_price: Math.round(100*(product.quantity*(product.product.type==='flower' ? product.product.dynamic_price : product.product.price)*(product?.option?.stems ?? 1)),2)/100, 
+                                            quantity: product.quantity, off_price: 0, isSelected: false, ...(product?.option && { option: product.option })}]
+
                 return newCart
             } 
 
             newCart = updatedCart
+            
             return updatedCart
         })
 
@@ -114,8 +116,9 @@ export function CartProvider({children}) {
                 setCart(data.products ? newCart : [])
                 setCartId(res.data.data[0].documentId)
 
-                const newSelectedItems = newCart.map(item => item.isSelected ?? false)
-                setSelectedItems(newSelectedItems)
+                setSelectedAll(newCart.map(item => item.isSelected).filter(Boolean).length === newCart.length)
+                //const newSelectedItems = newCart.map(item => item.isSelected ?? false)
+                //setSelectedItems(newSelectedItems)
             }
             // create cart for the first-time user
             else {
@@ -133,13 +136,13 @@ export function CartProvider({children}) {
     }
 
     // g
-    const getOptimizedPromotions = (cartOverride, selectedItemsOverride) => {
+    const getOptimizedPromotions = (cartOverride) => {
         const flowerCounts = {}
         const accessoryCounts = {}
 
         // 1. Count selected items
-        cartOverride.forEach((item, i) => {
-            if (!selectedItemsOverride[i]) return
+        cartOverride.forEach((item) => {
+            if (!item.isSelected) return
             const id = item.product_id
             const type = item?.option
             if (type) {
@@ -207,11 +210,11 @@ export function CartProvider({children}) {
 
     const getTotal = useCallback(() => {
         // useCallBack to force it to update based on watching change of cart and selectedItems
-        const number_of_selected_items = selectedItems.filter(Boolean).length
-        const total = Math.round(selectedItems.map((isSelected, index) => isSelected? (cart[index]?.total_price) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
+        const number_of_selected_items = cart.map(item=> item.isSelected).filter(Boolean).length
+        const total = Math.round(cart.map((item) => item.isSelected? (item.total_price) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
 
         return [number_of_selected_items, total]
-    }, [cart, selectedItems])
+    }, [cart])
 
     const getTotalOff = () => {
         return cart.reduce((acc, item) => acc+item.off_price,0)
@@ -219,14 +222,25 @@ export function CartProvider({children}) {
 
     // h
     const handleSelectedItems = index => {
+        /*
         const newSelectedItems = selectedItems.slice()
         newSelectedItems[index] = !newSelectedItems[index]
-        const number_of_selected_items = newSelectedItems.filter(Boolean).length
-        if (number_of_selected_items === newSelectedItems.length) setSelectedAll(true)
+        const number_of_selected_items = newSelectedItems.filter(Boolean).length*/
+
+        const newCart = cart.slice()
+        newCart[index].isSelected = !newCart[index].isSelected
+        if (newCart.map(item => item.isSelected).filter(Boolean).length === newCart.length) setSelectedAll(true)
         else setSelectedAll(false)
 
-        setSelectedItems(newSelectedItems)
-        getOptimizedPromotions(cart, newSelectedItems)
+        //setSelectedItems(newSelectedItems)
+        getOptimizedPromotions(cart)
+    }
+
+    const handleSelectedAll = () => {
+        const newCart = cart.map(item => ({...item, isSelected: !selectedAll}))
+        setSelectedAll(!selectedAll)
+
+        getOptimizedPromotions(newCart)
     }
 
     // o
@@ -238,7 +252,6 @@ export function CartProvider({children}) {
         let updatedCart = []
 
         for (const item of tmpCart) {
-    
             try {
             // fetch product info from API
             const res = await GlobalApi.ProductApi.getById(item.product_id)
@@ -282,7 +295,7 @@ export function CartProvider({children}) {
         if (isDummy) return
         const newCart = cart.map((item, i) => ({
             ...item,
-            isSelected: selectedItems[i] || false
+            isSelected: item.isSelected || false
         }))
 
         const data = {
@@ -302,12 +315,12 @@ export function CartProvider({children}) {
         // create new cart
         const newCart = []
         for (let i=0; i<cart.length; i++) {
-            if (!selectedItems[i]) newCart.push(cart[i])
+            if (!cart[i].isSelected) newCart.push(cart[i])
         }
 
         // update current cart and selected items
         setCart(newCart)
-        setSelectedItems(Array(cart.length).fill(false))
+        //setSelectedItems(Array(cart.length).fill(false))
 
         // update to db
         if (isDummy) return
@@ -343,7 +356,7 @@ export function CartProvider({children}) {
     }
 
     return (
-        <CartContext.Provider value={{addCart, cart, closeCart, fetchCart, getOptimizedPromotions, getTotal, getTotalOff, handleSelectedItems, isCartOpen, openCart, removeCart, setCart, selectedItems, selectedAll, setSelectedItems, setSelectedAll, updateCart}}>
+        <CartContext.Provider value={{addCart, cart, closeCart, fetchCart, getOptimizedPromotions, getTotal, getTotalOff, handleSelectedAll, handleSelectedItems, isCartOpen, openCart, removeCart, setCart, selectedItems, selectedAll, setSelectedItems, setSelectedAll, updateCart}}>
             {children}
         </CartContext.Provider>
     )

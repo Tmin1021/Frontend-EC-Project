@@ -79,8 +79,8 @@ function Product_Detail() {
 
                 {/* Add to cart */}
                 <div className={`relative ${!stock ? 'bg-gray-500/80 hover:bg-gray-500 pointer-events-none': 'bg-green-800/80 hover:bg-green-800'} min-w-[300px] h-[50px] flex items-center rounded-sm hover:shadow-lg shadow-gray-300 transition-all`} 
-                     onClick={() => {setIsAllowed(true); addCart({ product: product, option: selectedOption, quantity: quantity,});
-                     if (selectedExtra) {addCart({ product: selectedExtra, option: null, quantity: 1});}}}>
+                     onClick={() => {setIsAllowed(true); addCart({ product: product, option: selectedOption, quantity: quantity});
+                     if (selectedExtra) {addCart({ product: selectedExtra, quantity: 1})}}}>
                     <p className='font-semibold text-lg text-white mx-auto cursor-pointer'>{!stock ? 'OUT OF STOCK' : "ADD TO CART"}</p>
                     <Fly_To_Cart image={product.image_url[0]} isAllowed={isAllowed} setIsAllowed={setIsAllowed}/>
                 </div>

@@ -40,7 +40,7 @@ const Cart_Item = ({product}) => {
 
                 {/* Price */}
                 <div className='flex items-center gap-4 w-full'>
-                    <p className='text-red-500/80 font-semibold text-lg w-[50px] md:w-[80px]'>{Math.round(100*(product?.total_price - product?.off_price),2)/100}</p>
+                    <p className='text-red-500/80 font-semibold text-lg w-[50px] md:w-[80px]'>{Math.round(100*((product?.total_price ?? 0) - (product?.off_price ?? 0)),2)/100}</p>
                     {product?.off_price!==0 && <div className='flex items-center gap-1'>
                         <TicketPercent className='text-blue-500'/>
                         <p className='line-through text-sm font-medium text-gray-500 '>{product?.total_price}</p>

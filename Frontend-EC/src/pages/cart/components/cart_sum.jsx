@@ -10,7 +10,7 @@ function Cart_Sum() {
   const navigate = useNavigate()
 
   return (
-    <div className='w-full  p-4 flex flex-col rounded-b-lg z-60' onClick={(e) =>e .stopPropagation()}>
+    <div className='w-full p-4 flex flex-col rounded-b-lg z-60' onClick={(e) =>e .stopPropagation()}>
         <p className='text-gray-500/80 font-semibold' >{count>0 ? `Total (${count} ${count === 1 ? 'product' : 'products'})`: ""}</p>
         <div className='flex items-center justify-between'>
           <div className='flex flex-col'>

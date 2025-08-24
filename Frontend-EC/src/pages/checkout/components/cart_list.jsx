@@ -90,7 +90,7 @@ function CartList() {
         if (isDummy) return
         fetchCart()
         //console.log(cart)
-        if (selectedItems.filter(Boolean).length === 0) return
+        if (cart.filter(Boolean).length === 0) return
   },[])
 
   return (

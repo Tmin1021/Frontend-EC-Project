@@ -57,6 +57,7 @@ function Header() {
         "Home": "/",
         "All Flowers": "/flower", 
         "Accessories": "/accessory", 
+        "Support": '/support',
         "Personal": "/personal"
     }
 

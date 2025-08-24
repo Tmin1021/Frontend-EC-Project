@@ -21,7 +21,7 @@ const Check_Box = ({isSelected, onHandleSelectedItems}) => {
 // fixed component has overflow-hidden at default
 // the floating div is inside the blur div, so even tap the floating div will also propagate that click to the blur div, use e.stoppropagation()
 function Cart() {
-  const {cart, isCartOpen, removeCart, closeCart, selectedItems, selectedAll, setSelectedAll, setSelectedItems, handleSelectedItems, getOptimizedPromotions} = useCart()
+  const {cart, isCartOpen, removeCart, closeCart, handleSelectedAll, selectedAll, handleSelectedItems} = useCart()
   const isCartEmpty = cart.length === 0
   
   // Disable background scroll
@@ -65,7 +65,7 @@ function Cart() {
               {/* Delete tab */}
                 <div className="w-full flex items-center justify-between pb-4">
                   <div className='flex items-center justify-between gap-4'>
-                    <Check_Box isSelected={selectedAll} onHandleSelectedItems={()=>{setSelectedItems(Array(cart.length).fill(!selectedAll)); setSelectedAll(!selectedAll); getOptimizedPromotions(cart, Array(cart.length).fill(!selectedAll))}} />
+                    <Check_Box isSelected={selectedAll} onHandleSelectedItems={handleSelectedAll} />
                     <p className='text-gray-500/80 font-semibold'>All</p>
                 </div>
 
@@ -78,7 +78,7 @@ function Cart() {
               <div className='flex flex-col gap-2'>
               {cart.map((item, i) => (
                 <div key={i} className='flex items-center justify-between gap-1 md:gap-4'>
-                  <Check_Box isSelected={selectedItems[i]} onHandleSelectedItems={()=>handleSelectedItems(i)}/>
+                  <Check_Box isSelected={item.isSelected} onHandleSelectedItems={()=>handleSelectedItems(i)}/>
                   <Cart_Item key={i} product={item} />
                 </div>))}
               </div>      
