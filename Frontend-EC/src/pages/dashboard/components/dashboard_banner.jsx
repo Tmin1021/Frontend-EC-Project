@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect} from "react"
 import demo from "/src/assets/demo.png"
 
 const Dashboard_Banner = () => {
@@ -19,10 +19,10 @@ const Dashboard_Banner = () => {
     }, []) 
 
   return (
-    <div className='w-full max-w-screen-xl mx-auto'>
+    <div className='w-full mx-auto'>
         {/* Big title */}
-        <div className='flex flex-col items-start md:flex-row md:justify-between md:items-center pb-10 px-4 md:px-10 lg:px-32 py-4 md:pt-10'>
-            <h1 className='font-extrabold text-6xl md:text-9xl'>Hoa</h1>
+        <div className='flex flex-col items-start md:flex-row md:justify-between md:items-center pb-10 px-4 md:px-8 lg:px-16 py-4'>
+            <p className='font-bold text-4xl md:text-6xl lg:text-7xl'>Hoa</p>
             <h3 className='font-semibold text-xl md:text-2xl'>Gift of the nature.</h3>
         </div>
 

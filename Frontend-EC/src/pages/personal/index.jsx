@@ -7,40 +7,37 @@ import { useNavigate } from 'react-router-dom'
 
 function Personal() {
     const mapping = {
-    'Personal Information': [<FileUser/>, <Personal_Info/>],
-    'Purchased Orders': [<ShoppingBag/>, <Personal_Order/>]
+    'Information': [<FileUser/>, <Personal_Info/>],
+    'Orders': [<ShoppingBag/>, <Personal_Order/>]
   }
 
-  const [which, setWhich] = useState('Personal Information')
+  const [which, setWhich] = useState('Information')
   const {logout, isAuthenticated, user} = useAuth()
   const navigate = useNavigate()
 
-  if(!isAuthenticated || user.role!='user') navigate('/login')
+  //if(!isAuthenticated || user.role!='user') navigate('/login')
 
   return (
-    <div className='flex flex-col md:flex-row h-screen relative bg-gray-50 md:bg-none'>
+    <div className='flex flex-col md:flex-row h-screen relative bg-gray-100 p-2 md:p-4 lg:p-8 md:gap-4 lg:gap-8'>
 
       {/* Sidebar */}
-      <div className="flex w-full pt-4 px-2 flex-row
-                      md:flex-col md:w-1/4 lg:w-1/5 md:h-full \">
+      <div className="flex flex-row justify-center items-center px-2 rounded-4xl w-fit mx-auto 
+                      md:py-2 md:ml-4 md:flex-col md:w-1/4 lg:w-1/5 md:rounded-lg md:h-fit md:justify-start bg-white shadow-gray-100 shadow-lg border-1 border-gray-100 hover:shadow-gray-200 transition-all">
           {Object.keys(mapping).map((key) => (
             <div key={key} onClick={() => {setWhich(key)}} 
-                 className={`${which===key? 'bg-blue-500 text-white':''} w-full rounded-lg flex flex-col md:flex-row items-center gap-2 px-4 py-4 cursor-pointer transition-all text-xl`}>
-              {mapping[key][0]}
-              <p className='font-extralight text-base'>{key}</p>
-            </div>
+                 className={`${which===key? 'bg-purple-100 text-purple-600 font-semibold shadow-lg py-3':'py-2'} rounded-full md:rounded-sm text-base font-extralight md:w-full flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 px-4 backdrop-blur-xs cursor-pointer transition-all`}>
+              {mapping[key][0]}<span className='hidden md:inline'>{key}</span></div>
           ))}
 
-          <div className='flex' onClick={()=>logout(navigate)}>
+          <div className='flex items-center gap-2 md:w-full px-4 text-red-500 mt-4 h-full mb-4  cursor-pointer' onClick={()=>logout(navigate)}>
             <LogOut/>
-            <p>Sign Out</p>
-            </div>
+            <p className='hidden md:inline'>Sign Out</p>
+          </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 p-4 md:mt-0 overflow-auto bg-gray-50">
-          {mapping[which][1]}
-      </div>
+      <div className="flex-1 mt-4 md:mt-0 overflow-auto bg-gray-100">{mapping[which][1]}</div>
+
     </div>
   )
 }

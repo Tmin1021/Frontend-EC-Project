@@ -1,80 +1,78 @@
 import React, {useState} from 'react'
-import { users } from '../../../data/dummy'
+import { users, isDummy } from '../../../data/dummy'
 import { Filter } from '../../list_product/components/list_filter'
 import { ChevronDown, SquarePen } from 'lucide-react'
-
-
-const Personal_Info_Item = ({name, info, isEdit, onHandleInput}) => {
-
-    return (
-        <div className='flex justify-between'>
-            <p className='font-semibold text-lg w-[20%]'>{name}</p>
-            <input 
-              type="text" 
-              placeholder={name}
-              value={info}
-              onChange={(e)=>{onHandleInput(e.target.value)}}
-              readOnly={!isEdit}
-              className={`text-lg font-light border-1 px-2 w-[60%] resize-none ${isEdit? 'border-gray-300 rounded-xs' : 'focus:outline-none border-none'}`}/>
-        </div>
-    )
-}
-
+import { Text_Item, Number_Item, Confirm_Box } from '../../../admin/components/admin_inventory'
+import { AnimatePresence, motion } from "framer-motion";
+import GlobalApi from '../../../../service/GlobalApi'
+import { useAuth } from '../../../context/AuthContext'
+import { toast } from 'sonner'
 
 function Personal_Info() {
-  const user = users[0] 
-  const [isEdit, setIsEdit] = useState(false)
-  const [name, setName] = useState('')
-  const [mail, setMail] = useState('')
-  const [phone, setPhone] = useState('')
-  const [address, setAddress] = useState('')
+  const { user: authUser, handleGetFresh } = useAuth();
+  const user = isDummy ? users[0] : authUser;
+
+  const [name, setName] = useState(user.name)
+  const [mail, setMail] = useState(user.mail)
+  const [phone, setPhone] = useState(user.phone)
+  const [address, setAddress] = useState(user.address)
 
   const mapping = {
-    'Name': [name, setName],
-    'Mail': [mail, setMail],
-    'Phone': [phone, setPhone]
+    'name': [name, setName],
+    'mail': [mail, setMail],
+    'phone': [phone, setPhone],
+    'password': [phone, setPhone],
+    'address': [address, setAddress]
   }
 
+  const handleChange = (name, content) => {
+    mapping[name][1](content)
+  }
+
+  const handleUpdate = () => {
+    const data = {
+      data:{
+        name,
+        mail,
+        phone,
+        address
+        }
+      }
+
+    GlobalApi.UserApi.update(user.user_id, data).then(resp=>{
+      toast.success("Updated successfully")
+      handleGetFresh()
+    }, ()=>{
+      toast.error('Error. Please try again.')
+    }
+    )
+  };
 
   return (
-    <div className='flex flex-col gap-8'>
-      {/* Edit */}
-      <div className='cursor-pointer' onClick={()=>setIsEdit(!isEdit)}>
-        {isEdit 
-        ? <p className='text-red-500 font-semibold'>Done</p> 
-        : <div className='flex gap-2'>
-            <SquarePen className='text-blue-500'/>
-            <p className='text-blue-500 font-semibold'>Edit</p>
-        </div>}
-      </div>
+    <AnimatePresence>
+      <p className='font-semibold text-3xl mb-2'>Personal Information</p>
 
-      {/* Name, email,... */}
-      <div className='bg-white dark:bg-black shadow-sm hover:shadow-lg p-4 roundedsm hover:rounded-xl transition-all'>
-        <p className='text-2xl pb-4'>Personal Information</p>
-        <div className='flex flex-col gap-2'>
-          {Object.keys(mapping).map((key) => (
-            <Personal_Info_Item key={key} name={key} info={mapping[key][0]} isEdit={isEdit} onHandleInput={mapping[key][1]}/>
-          ))}
+      <motion.div key={'info'} 
+                  initial={{ opacity: 0, x: -40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -40, }}
+                  transition={{ duration: 0.4 }}
+                  className='flex gap-4 flex-col lg:flex-row'>
+        <div className='w-full lg:w-[75%] flex flex-col gap-4 bg-white px-3 md:px-6 py-6 shadow-lg border-1 border-gray-100 rounded-sm'>
+          <div className='grid grid-cols-2 md:grid-cols-2 gap-4'>
+            <Text_Item name={'name'} content={name} setter={handleChange}/>
+            <Text_Item name={'mail'} content={mail} setter={handleChange}/>
+            <Text_Item name={'password'} content={mail} setter={handleChange}/>
+            <Number_Item name={'phone'} content={phone} setterButton={false} setter={handleChange}/>
+          </div>
+
+          <Text_Item name={'address'} content={address} setter={handleChange} />
         </div>
-      </div>
 
-      {/* Address */}
-      <div className='flex flex-col gap-4 bg-white dark:bg-black shadow-sm hover:shadow-lg p-4 roundedsm hover:rounded-xl transition-all'>
-        <p className='text-2xl'>Saved Order Address</p>
+        <Confirm_Box getDelete={false} saveSetter={handleUpdate}/>
+      </motion.div>
 
-        {/* House number, street... */}
-        <div className='flex flex-col'>
-          <input type='text' 
-                 placeholder='Address, Street...' 
-                 value={address} 
-                 readOnly={!isEdit}
-                 onChange={(e)=>setAddress(e.target.value)}
-                 className={`text-lg font-light border-1 px-2 w-[60%] resize-none ${isEdit? 'border-gray-300 rounded-xs' : 'focus:outline-none border-none'}`}/>
-        </div>
-      </div>
-
-    </div>
-
+    </AnimatePresence>
   )
 }
 
