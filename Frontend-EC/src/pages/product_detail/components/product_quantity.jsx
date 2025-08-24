@@ -35,7 +35,7 @@ function Product_Quantity() {
             </div>
         </div>
         
-        <p className='font-semibold text-2xl'>{Math.round((product.type==='flower'? selectedOption?.stems * product.price : product.price)*quantity*100)/100}</p>
+        <p className='font-semibold text-2xl'>{Math.round((product.type==='flower'? selectedOption?.stems * product.dynamic_price : product.dynamic_price)*quantity*100)/100}</p>
     </div>
   )
 }

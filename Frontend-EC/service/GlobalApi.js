@@ -71,7 +71,7 @@ const OrderApi = {
 // order_item
 const OrderItemApi = {
   getAll: () => axiosClient.get('/order-items?populate=*'),
-  getById: (id) => axiosClient.get(`/order-items?filters[order_id][$eq]=${id}&populate=*`),
+  getByOrderId: (id) => axiosClient.get(`/order-items?filters[order_id][$eq]=${id}&populate=*`),
   create: (data) => axiosClient.post('/order-items', data),
   update: (id, data) => axiosClient.put(`/order-items/${id}`, data),
   delete: (id) => axiosClient.delete(`/order-items/${id}`)

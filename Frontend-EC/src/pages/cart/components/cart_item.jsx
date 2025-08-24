@@ -33,8 +33,8 @@ const Cart_Item = ({product}) => {
             <div className='flex flex-col justify-between w-full'>
                 {/* Name and Option*/}
                 <div className='flex gap-2'>
-                    <p className='text-base'>{productInfo?.name}</p>
-                    {product?.option && <div className='text-xs font-semibold text-gray-500/80 backdrop-blur-xs bg-gray-100 p-1 rounded-sm w-fit h-fit'>{product?.option?.name}</div>}
+                    <p className='text-sm w-[40%] md:w-[55%] md:text-base whitespace-nowrap overflow-hidden text-ellipsis'>{productInfo?.name}</p>
+                    {product?.option && <div className='hidden md:inline  text-xs font-semibold text-gray-500/80 backdrop-blur-xs bg-gray-100 p-1 rounded-sm w-fit h-fit'>{product?.option?.name}</div>}
                     {product?.option && <div className='text-xs font-semibold text-gray-500/80 backdrop-blur-xs bg-gray-100 p-1 rounded-sm w-fit h-fit'>{product?.option?.stems} stems</div>}
                 </div>
 
@@ -60,7 +60,7 @@ const Cart_Item = ({product}) => {
                     </div>
                     <p className='text-lg pr-1 font-semibold'> {product.quantity} </p>
                     <div className='p-1 rounded-full bg-green-400/60 backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all'>
-                        <Plus className='w-4 h-4 text-white' onClick={()=>updateCart(product, Math.min(productInfo.stock, product?.quantity+1))}/>
+                        <Plus className='w-4 h-4 text-white' onClick={()=>updateCart(product, Math.min(Math.floor(productInfo.stock/(product?.option?.stems ?? 1)), product?.quantity+1))}/>
                     </div>
                 </div>
             </div>

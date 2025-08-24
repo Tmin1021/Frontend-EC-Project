@@ -2,6 +2,8 @@ import React from 'react'
 import { carts } from '../../../data/dummy'
 import { Gift } from 'lucide-react'
 import {createPayment} from '../../../../service/Payment'
+import { useCart } from '../../../context/CartContext'
+import { useCheckout } from '../../../context/CheckoutContext'
 
 const Order_Summary_Item = ({title, price}) => {
     
@@ -15,9 +17,10 @@ const Order_Summary_Item = ({title, price}) => {
 
 
 function Order_Summary() {
-  const cart = carts[0]
-  const subtotal = Math.round(cart.products.reduce((acc, cur) => acc + (cur.option?.stems ?? 1)*cur.product.price*cur.quantity, 0)*100, 2)/100
-  const off_price = cart.products.reduce((acc, cur) => acc + cur.off_price, 0)
+  const {getTotal, getTotalOff} = useCart()
+  const {createOrder} = useCheckout()
+  const subtotal = getTotal()[1]
+  const off_price = getTotalOff()
   const shipping = subtotal > 50 ? 0 : 10
 
   return (
@@ -37,7 +40,7 @@ function Order_Summary() {
         <Order_Summary_Item title='Total' price={subtotal+shipping-off_price}/>
 
         <div className='flex justify-center bg-pink-700/70 rounded-lg text-white font-semibold text-sm w-full p-2 hover:shadow-lg hover:shadow-gray-300 hover:bg-pink-700/90 transition-all'
-             onClick={()=>{createPayment(subtotal+shipping-off_price)}}>
+             onClick={()=>{createOrder(subtotal+shipping-off_price, off_price)}}>
             Order
         </div>
     </div>

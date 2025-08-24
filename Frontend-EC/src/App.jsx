@@ -25,6 +25,10 @@ import Checkout from './pages/checkout'
 import { Order_Product_Preview } from './pages/personal/components/personal_order'
 import DemoAPI from './pages/demoAPI'
 import { Toaster } from 'sonner'
+import { CheckoutProvider } from './context/CheckoutContext'
+import Inform from './pages/inform'
+import Success from './pages/inform/components/success'
+import Failure from './pages/inform/components/failure'
 
 const UserLayout = () => {
 
@@ -50,6 +54,7 @@ const RoutedeAdmin = ({children}) => {
   return (isAuthenticated && user.role==='admin') ? <Navigate to='/admin'/> : children
 }
 
+
 function App() {
 
   return (
@@ -60,7 +65,9 @@ function App() {
 
             <Route path="/login" element={<Login/>}/>
             <Route path="/signup" element={<Signup/>}/>
-            <Route path='/checkout' element={<Checkout/>}/>
+            <Route path='/checkout' element={<ProtectedRoute><CheckoutProvider><Checkout/></CheckoutProvider></ProtectedRoute>}/>
+            <Route path='/success' element={<Success/>}/>
+            <Route path='/failure' element={<Failure/>}/>
 
             <Route element={<RoutedeAdmin><UserLayout/></RoutedeAdmin>}>
               <Route path="/" element={<Dashboard/>}/>

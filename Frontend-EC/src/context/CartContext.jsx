@@ -1,8 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useState} from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {bonus_gifts, isDummy, products } from "../data/dummy";
 import GlobalApi from "../../service/GlobalApi";
 import {useAuth} from "../context/AuthContext"
 import { toast } from "sonner";
+import { useDynamicPricing } from "./DynamicPricingContext";
 
 const CartContext = createContext()
 
@@ -15,6 +16,7 @@ export function CartProvider({children}) {
     const [selectedAll, setSelectedAll] = useState(false)
     const [bonus, setBonus] = useState(bonus_gifts)
     const {user, isAuthenticated} = useAuth()
+    const {getDynamicPrice} = useDynamicPricing()
 
     useEffect(() => {
         if (!isDummy && isAuthenticated && user?.role==='user') {
@@ -23,6 +25,17 @@ export function CartProvider({children}) {
         }
 
     }, [user, isAuthenticated, isCartOpen]) 
+
+    const prevIsCartOpen = useRef(isCartOpen);
+
+    useEffect(() => {
+    // When cart changes from open -> closed
+    if (prevIsCartOpen.current === true && isCartOpen === false) {
+        pushCart();
+    }
+
+        prevIsCartOpen.current = isCartOpen; // update ref
+    }, [isCartOpen]);
 
     // a
     async function addCart(product) {
@@ -41,14 +54,14 @@ export function CartProvider({children}) {
                 if (isSameProduct && isSameOption) {
                     found = true
                     const newQuantity = Math.min(item.quantity + product.quantity, product.product.stock)
-                    return { ...item, total_price: newQuantity*(item.option?.stems ?? 1)*product.product.price, quantity: newQuantity }
+                    return { ...item, total_price: newQuantity*(item.option?.stems ?? 1)*product.product.dynamic_price, quantity: newQuantity }
                 }
                 return item
             })
 
             if (!found) { 
                 setSelectedItems(prev => [...prev, false])
-                newCart =  [...updatedCart, {product_id: product.product.product_id, option: product?.option, total_price: Math.round(100*(product.quantity*product.product.price*(product?.option?.stems ?? 1)),2)/100, quantity: product.quantity, off_price: 0}]
+                newCart =  [...updatedCart, {product_id: product.product.product_id, option: product?.option, total_price: Math.round(100*(product.quantity*product.product.dynamic_price*(product?.option?.stems ?? 1)),2)/100, quantity: product.quantity, off_price: 0, isSelected: false}]
                 return newCart
             } 
 
@@ -100,7 +113,9 @@ export function CartProvider({children}) {
                 const newCart = await preprocessCart(data.products)
                 setCart(data.products ? newCart : [])
                 setCartId(res.data.data[0].documentId)
-                setSelectedItems(Array(newCart?.length ?? 0).fill(false))
+
+                const newSelectedItems = newCart.map(item => item.isSelected ?? false)
+                setSelectedItems(newSelectedItems)
             }
             // create cart for the first-time user
             else {
@@ -176,8 +191,6 @@ export function CartProvider({children}) {
             ? {...item, off_price: off_prices[item.product_id]}
             : {...item, off_price: 0}
         )
-
-        console.log(newCart)
    
         setCart(newCart)
         const data = {
@@ -231,17 +244,16 @@ export function CartProvider({children}) {
             const res = await GlobalApi.ProductApi.getById(item.product_id)
             const product = res.data.data
 
-
-            // product not found or out of stock => discard
-            if (!product || product.stock===0) {continue}
+            // product not found or out of stock or not available => discard
+            if (!product || product.stock===0 || !product.available) {continue}
 
             // product from db has new change => discard
             if ((item.option && product.type!='flower') || (!item.option && product.type=='flower')) {continue}
-
+            
             // update to the current availale stock
             let stock = Math.min(product.stock, item.quantity)
-            if (item.option && product.option) {
-                const matchedOption = product.option.find(option => option.name === item.option.name)
+            if (item.option && product.flower_details?.options) {
+                const matchedOption = product.flower_details.options.find(option => option.name === item.option.name)
                 // no match option anymore (name or stems)
                 if (!matchedOption || matchedOption.stems != item.option.stems) {continue}
                 // out of stock
@@ -249,11 +261,10 @@ export function CartProvider({children}) {
                 stock = item.quantity
             }
 
-
             // update price
             const updatedItem = {
                 ...item,
-                total_price: stock*(item.option?.stems ?? 1) * product.price,
+                total_price: stock*(item.option?.stems ?? 1) * (product.type==='flower' ? getDynamicPrice(product.price, product.fill_stock_date):product.price),
                 quantity: stock,            
                 off_price: 0, 
             };
@@ -265,6 +276,25 @@ export function CartProvider({children}) {
         }
 
         return updatedCart
+    }
+
+    const pushCart = async () => {
+        if (isDummy) return
+        const newCart = cart.map((item, i) => ({
+            ...item,
+            isSelected: selectedItems[i] || false
+        }))
+
+        const data = {
+            data: {
+                products: newCart
+            }
+        }
+
+        GlobalApi.CartApi.update(cartId, data).then(resp=> {          
+            }, ()=>{
+            toast.error('Error. Please reload page and try again.')
+        }) 
     }
 
     // r
@@ -313,7 +343,7 @@ export function CartProvider({children}) {
     }
 
     return (
-        <CartContext.Provider value={{addCart, cart, closeCart, getOptimizedPromotions, getTotal, getTotalOff, handleSelectedItems, isCartOpen, openCart, removeCart, setCart, selectedItems, selectedAll, setSelectedItems, setSelectedAll, updateCart}}>
+        <CartContext.Provider value={{addCart, cart, closeCart, fetchCart, getOptimizedPromotions, getTotal, getTotalOff, handleSelectedItems, isCartOpen, openCart, removeCart, setCart, selectedItems, selectedAll, setSelectedItems, setSelectedAll, updateCart}}>
             {children}
         </CartContext.Provider>
     )

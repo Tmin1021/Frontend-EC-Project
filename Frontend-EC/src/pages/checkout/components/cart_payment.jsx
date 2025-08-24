@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useCheckout } from '../../../context/CheckoutContext'
 
 const Payment_Item = ({title, color, description , whichPayment, setter}) => {
 
@@ -23,7 +24,8 @@ function Cart_Payment() {
         'MoMo': ['bg-pink-700/70', 'Mobile Wallet payment'],
     }
 
-    const [whichPayment, setwhichPayment] = useState('Cash on Delivery')
+    const {whichPayment, setwhichPayment} = useCheckout()
+
   return (
     <div className='bg-white px-2 md:px-4 py-4 shadow-sm border-1 border-gray-100 rounded-lg'>
         <p className='text-sm font-semibold mb-4'>Payment Method</p>

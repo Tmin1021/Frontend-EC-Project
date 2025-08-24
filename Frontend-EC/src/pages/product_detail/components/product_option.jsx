@@ -25,7 +25,7 @@ function Product_Option() {
   return (
     <div className="w-full flex justify-around gap-2">
         {(product.flower_details.options).map((option) => (
-            <Option_Item key={option.name} base_price={product.price} option={option}/>
+            <Option_Item key={option.name} base_price={product.dynamic_price} option={option}/>
         ))}
     </div>
   )

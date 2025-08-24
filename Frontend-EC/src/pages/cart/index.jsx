@@ -45,14 +45,19 @@ function Cart() {
   return (
     <AnimatePresence>
       {isCartOpen && <motion.div  
-            initial={isSmallScreen ? { x: "100%", opacity: 0 } : { scale: 0.7, opacity: 0 }}
-            animate={isSmallScreen ? { x: 0, opacity: 1 } : { scale: 1, opacity: 1 }}
-            exit={isSmallScreen ? { x: "100%", opacity: 0 } : { scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut"}}
-            style={{ originX: 0.5, originY: 0.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
             className="fixed inset-0 z-150 flex flex-col items-center justify-center bg-black/30 backdrop-blur-xs" onClick={closeCart}>
-      
-          <div className="absolute right-0 md:relative w-5/6 h-screen md:w-[500px] md:h-[500px] p-2 md:p-4 bg-white/80 backdrop-blur-lg rounded-t-lg overflow-y-auto no-scrollbar" onClick={(e) =>e .stopPropagation()}>
+        
+        <motion.div initial={isSmallScreen ? { x: "100%"} : { scale: 0.7, opacity: 0 }}
+                    animate={isSmallScreen ? { x: 0} : { scale: 1, opacity: 1 }}
+                    exit={isSmallScreen ? { x: "100%" } : { scale: 0.9, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: "easeInOut"}}
+                    style={isSmallScreen ? { originX: 0.5, originY: 0.5 } : undefined}
+                    className="absolute right-0 md:relative w-5/6 h-screen md:w-[500px] md:h-[500px] p-2 md:p-4 bg-white/80 backdrop-blur-lg rounded-t-lg overflow-y-auto no-scrollbar" onClick={(e) =>e .stopPropagation()}>
+          <div>
             {isCartEmpty ? 
             <Cart_Empty/>
             : 
@@ -79,11 +84,11 @@ function Cart() {
               </div>      
               
             </div>}
-
           </div>
 
           {/* Sum */}
           {!isCartEmpty && <Cart_Sum/>}
+        </motion.div>
 
       </motion.div>}
     </AnimatePresence>

@@ -12,6 +12,8 @@ import Product_Quantity from './components/product_quantity';
 import { ProductDetailProvider, useProductDetail } from '../../context/ProductDetailContext';
 import GlobalApi from '../../../service/GlobalApi';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useDynamicPricing } from '../../context/DynamicPricingContext';
+import Product_Banner from './components/product_banner';
 
 
 const Fly_To_Cart = ({image, isAllowed, setIsAllowed}) => {
@@ -38,6 +40,7 @@ const Fly_To_Cart = ({image, isAllowed, setIsAllowed}) => {
 
 function Product_Detail() {
  const {product, quantity, selectedOption, selectedExtra, getOptionStock} = useProductDetail()
+ const {condition_mapping} = useDynamicPricing()
  const {addCart} = useCart()
  const [isAllowed, setIsAllowed] = useState(false)
 
@@ -61,13 +64,19 @@ function Product_Detail() {
 
             {/* Option */}
             <div className='w-full flex flex-col gap-4'>
+                <Product_Banner/>
                 <p className='font-semibold text-4xl mx-auto hidden md:flex'>{product.name}</p>
                 {product.type==='flower' && <Product_Option/>}
                 {product.type==='flower' && <Product_Extra/>}
                 {stock!=0 && <Product_Quantity curStock={stock}/>}
 
-                {stock!=0 && <p className={`${stock<5 ? 'bg-red-600/80':'bg-green-600/80'} font-semibold w-fit p-1 text-white rounded-sm`}>In stock: {stock}</p>}
-                
+
+                {/* Stock and Condition */}
+                <div className='flex gap-2'>
+                    {stock!=0 && <p className={`${stock<5 ? 'bg-red-600/80':'bg-green-600/80'} font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 hover:bg-red-600-90 transition-all`}>In stock: {stock}</p>}
+                    {stock!=0 && product.type==='flower' && <p className={`${condition_mapping[product.condition]} font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 transition-all`}>{product.condition}</p>}
+                </div>
+
                 {/* Add to cart */}
                 <div className={`relative ${!stock ? 'bg-gray-500/80 hover:bg-gray-500 pointer-events-none': 'bg-green-800/80 hover:bg-green-800'} min-w-[300px] h-[50px] flex items-center rounded-sm hover:shadow-lg shadow-gray-300 transition-all`} 
                      onClick={() => {setIsAllowed(true); addCart({ product: product, option: selectedOption, quantity: quantity,});

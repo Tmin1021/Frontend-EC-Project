@@ -9,14 +9,14 @@ export const filter_types = {
   "Flower Type": ["Anemones", "Dried Flowers", "Hydrangeas", "Lilies", "Orchids", "Peonies", "Ranunculus", "Roses", "Succulents", "Sunflowers", "Tropical"],
   "Occassions": ["Birthday", "Sympathy", "Just Because", "Anniversary", "Housewarming", "Get Well", "Congrats", "I'm sorry", "New Baby", "Thank you", "Party Boxes"],
   "Colors": ["Pink Flowers", "Red Flowers", "White Flowers", "Yellow Flowers"],
-  "Sort": ["Best Sellers", "Price: Low to High", "Price: High to Low"]
+  "Sort": ["Best Sellers", "Price: Low to High", "Price: High to Low", "Condition: New to Old", "Condition: Old to New"]
 }
 
 function Filter_Option({type, whichOption, onHandleClick}) {
   // Sort: allow 1 option only, must appear that option in <p>
   return (
     <div className={`cursor-pointer ${type==="Sort"? 'flex flex-col gap-0 absolute right-0 w-[180px] h-[125px] py-2 px-4 overflow-auto rounded-lg bg-white shadow-sm' : 'grid grid-cols-2 gap-2 h-full'} 
-                    md:flex md:flex-col md:gap-0 md:absolute md:right-0 md:translate-x-1/4 md:w-[180px] md:h-[125px] md:py-2 md:px-4 md:overflow-auto no-scrollbar md:rounded-lg md:bg-white md:shadow-sm`}>
+                    md:flex md:flex-col md:gap-0 md:absolute md:right-0 md:translate-x-1/4 md:${type==="Sort"? 'w-[200px]': 'w-[180px]'} md:h-[125px] md:py-2 md:px-4 md:overflow-auto no-scrollbar md:rounded-lg md:bg-white md:shadow-sm`}>
       
       {filter_types[type].map((option, index) => (
         <div key={option} className={`${type==='Sort'? '': (whichOption[index]? 'border-3 border-green-700' : 'border-1 border-gray-200')} 
@@ -138,7 +138,7 @@ export default List_Filter
 
 function List_Filter_Mobile({children, isOpen, closeFilter}) {
 
-    // handle scrolling 
+  // handle scrolling 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
   

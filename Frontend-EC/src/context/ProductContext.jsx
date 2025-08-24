@@ -9,7 +9,7 @@ const BASE_URL = 'http://localhost:1337';
 
 export function ProductProvider({children, isSearch=false, searchResult=[]}) {
   const {type} = useParams()
-  const {getDynamicPrice} = useDynamicPricing()
+  const {getDynamicPrice, getCondition, getDiffDays} = useDynamicPricing()
 
   const [currentProduct, setCurrentProduct] = useState([]);
   const [initialProduct, setInitialProduct] = useState([]);
@@ -30,7 +30,8 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
     const data = res.data.data.map(item => ({
         ...item,
         product_id: item?.documentId,
-        dynamic_price: getDynamicPrice(item?.price),
+        dynamic_price: item?.type==='flower' ? getDynamicPrice(item?.price, item?.fill_stock_date) : item?.price,
+        condition: getCondition(item?.fill_stock_date),
         image_url: item?.image_url.map(image => BASE_URL+image.url) ?? demo_1,
     }))
 
@@ -118,9 +119,10 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
 
   const sortProduct = value => {
     let new_product = currentProduct.slice()
-
     if (value === 'Price: Low to High') new_product = new_product.sort((a,b) => a.price-b.price)
     else if (value === 'Price: High to Low') new_product = new_product.sort((a,b) => b.price-a.price)
+    else if (value === 'Condition: New to Old') new_product = new_product.sort((a,b) => getDiffDays(a.fill_stock_date)-getDiffDays(b.fill_stock_date)) 
+    else if (value === 'Condition: Old to New') new_product = new_product.sort((a,b) => getDiffDays(b.fill_stock_date)-getDiffDays(a.fill_stock_date)) 
 
     else if (value === 'Best Sellers') {
       new_product = new_product

@@ -1,52 +1,45 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Dashboard_Banner from "./components/dashboard_banner";
 import Dashboard_Bestselling from "./components/dashboard_bestselling";
 import Dashboard_Why from "./components/dashboard_why";
 import Dashboard_Blog from "./components/dashborad_blog";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 
 function Dashboard_Section({children, y_position}) {
-    const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
+  const { scrollY } = useScroll(); 
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const scrollY = window.scrollY || window.pageYOffset;
-            if (scrollY > y_position) {
-                setIsVisible(true);
-            } else {
-                setIsVisible(false);
-            }
-        };
+  // Opacity + Scale (slower)
+  const rawOpacity = useTransform(scrollY, [y_position - 200, y_position, y_position + 200], [0, 1, 1]) // useTransform (src, range_of_src, value_ofthat_range)
+  const rawScale   = useTransform(scrollY, [y_position - 200, y_position, y_position + 200], [0.5, 1, 1])
 
-        handleScroll()
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [y_position]);
+  // Blur effect: starts blurred (20px) → clear (0px)
+  const rawBlur    = useTransform(scrollY, [y_position - 200, y_position, y_position + 200], [20, 0, 0])
 
-    return (
-        <AnimatePresence>
-            {isVisible && 
-            <motion.div initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 40 }}
-                        transition={{ duration: 0.4 }}>
-                        {children}
-            </motion.div>
-            }
-        </AnimatePresence>
+  // Optional: smooth all with spring
+    const opacity = useSpring(rawOpacity, { duration: 0.8 });
+    const scale   = useSpring(rawScale,   { duration: 0.8 });
+    const blur    = useSpring(rawBlur,    { duration: 0.8 });
+    const filter  = useTransform(blur, (b) => `blur(${b}px)`);
+ 
+return (
+    <motion.div
+        ref={ref}
+        style={{opacity, scale, filter, willChange: "opacity, transform, filter" }}
+        className="transition-all"
+        >
+        {children}
+    </motion.div>
     )
-
 }
 
 function Dashboard() {
-    const [scrollY, setScrollY] = useState(0);
 
     return ( 
         <div className="flex flex-col w-full">
             <Dashboard_Banner/>
             <Dashboard_Section y_position={200}> <Dashboard_Bestselling/> </Dashboard_Section>
             <Dashboard_Section y_position={700}> <Dashboard_Blog/> </Dashboard_Section>
-            <div className='h-[400px]'></div>
         </div>
     )
 }

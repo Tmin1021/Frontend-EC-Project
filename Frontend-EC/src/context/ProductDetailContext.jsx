@@ -3,6 +3,7 @@ import { isDummy, products } from "../data/dummy";
 import { useParams } from "react-router-dom";
 import { useProduct } from "./ProductContext";
 import GlobalApi from "../../service/GlobalApi";
+import { useDynamicPricing } from "./DynamicPricingContext";
 
 const ProductDetailContext = createContext()
 
@@ -10,6 +11,7 @@ const BASE_URL = 'http://localhost:1337';
 
 export function ProductDetailProvider({children}) {
     const {id} = useParams()
+    const {getCondition, getDynamicPrice} = useDynamicPricing()
 
     const [product, setProduct] = useState(null);
     const [extra, setExtra] = useState([])
@@ -84,8 +86,9 @@ export function ProductDetailProvider({children}) {
                 const data = {
                 ...item,
                 product_id: item?.documentId,
+                dynamic_price: item?.type==='flower' ? getDynamicPrice(item?.price, item?.fill_stock_date) : item?.price,
+                condition: getCondition(item?.fill_stock_date),
                 image_url: item.image_url.map(image => BASE_URL+image.url),
-                flower_details: item?.flower_details
             }
 
             setProduct(data);

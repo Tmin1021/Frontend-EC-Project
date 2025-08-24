@@ -260,7 +260,7 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
       <div className='w-full lg:w-[75%] flex flex-col gap-6 bg-white px-2 md:px-6 py-6 shadow-lg border-1 border-gray-100 rounded-sm'>
         <div className='grid grid-cols-3 gap-1 md:gap-4'>
           <Text_Item name={'type'} content={type} setter={handleEdit}/>
-          <Text_Item name={'name'} content={name} placeholder='Taylor Swift'/>
+          <Text_Item name={'name'} content={name} setter={handleEdit} placeholder='Taylor Swift'/>
           <Bool_Item name={'available'} content={available} setter={handleEdit}/>
         </div>
 

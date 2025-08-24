@@ -10,8 +10,7 @@ import { useAuth } from '../../context/AuthContext'
 import { useCart } from '../../context/CartContext'
 
 function Checkout() {
-  const {isAuthenticated, user} = useAuth()
-  const navigate = useNavigate()
+  const {user} = useAuth()
 
   //if (!isAuthenticated) navigate('/login')
   //if (isAuthenticated && (cart.length === 0 || user.role!='user')) navigate('/')
@@ -20,7 +19,7 @@ function Checkout() {
     <AnimatePresence>
       <div className='flex flex-col gap-4 p-4 md:p-8 lg:p-16 bg-gray-50'>
         {/* Title */}
-        <p className='text-3xl text-pink-700/90 font-semibold mx-auto'>The cart of Hoa</p>
+        <p className='text-3xl text-pink-700/90 font-semibold mx-auto'>The cart of {user.name}</p>
 
         <div className='flex flex-col md:flex-row gap-2 md:gap-4 lg:gap-8'>
           {/* Left part or upper part */}
