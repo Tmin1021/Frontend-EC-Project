@@ -37,8 +37,10 @@ export const Admin_Order_Detail = () => {
     const fetchData = async () => {
       try {
         // 1. Order Item
-        const resItem = await GlobalApi.OrderItemApi.getById(id);
+        const resItem = await GlobalApi.OrderItemApi.getByOrderId(id);
         const item = resItem.data.data;
+        console.log(item[0].products)
+
         if (item) {
           setOrderItem({
             order_id: item[0]?.order_id,

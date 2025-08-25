@@ -32,14 +32,14 @@ export function ProductProvider({children, isSearch=false, searchResult=[]}) {
         product_id: item?.documentId,
         dynamic_price: item?.type==='flower' ? getDynamicPrice(item?.price, item?.fill_stock_date) : item?.price,
         condition: getCondition(item?.fill_stock_date),
-        image_url: item?.image_url.map(image => BASE_URL+image.url) ?? demo_1,
+        image_url: item?.image_url?.map(image => BASE_URL+image.url) ?? demo_1,
     }))
 
 
     let new_data = data
     if (type==='flower') new_data=data.filter(item=>item.type==='flower')
     else if (type==='accessory') new_data=data.filter(item=>item.type!=='flower')
-    setCurrentProduct(new_data)
+    setCurrentProduct(new_data.filter(item => item.available))
     setInitialProduct(data)
     } catch (err) {
         console.error("Failed to fetch products", err);

@@ -166,7 +166,7 @@ export const Order_Product_Preview = () => {
                             <div className='flex gap-2 items-center'>
                                 <p className='text-sm font-extralight'>Quantity: <span className='text-base font-semibold'>{item.quantity}</span></p>
                                 <p className='text-2xl'>|</p>
-                                <p className='text-sm font-extralight'>Total: <span className='text-base font-semibold'>{item.price - item.off_price}</span></p>
+                                <p className='text-sm font-extralight'>Total: <span className='text-base font-semibold'>{Math.round(100*(item.price - item.off_price), 2)/100}</span></p>
                                 {item.off_price >0  &&  <p className='text-sm font-extralight'><span className='text-base text-gray-400 font-semibold line-through'>{item.price}</span></p>}
                             </div>
 
@@ -191,7 +191,7 @@ const Order_Preview = ({order}) => {
         try {
             const res = await GlobalApi.OrderItemApi.getByOrderId(order.order_id);
             const dataOrderItem = res.data.data.map(item => ({
-                order_id: item?.documentId,
+                products: item.products
             }));
 
             setUserProducts(dataOrderItem);

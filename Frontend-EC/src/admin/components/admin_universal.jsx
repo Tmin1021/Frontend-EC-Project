@@ -14,6 +14,7 @@ export const order_status = {
 
 export default function Admin_Universal_Item({which, info=null, header=0, lastRow=false}) {
   const {sortUniversal} = useAdmin() 
+
   const main_infos = {
     inventory:  {product_id: ["Product ID", info?.product_id], name: ["Name", info?.name], type: ['Type', info?.type], price: ['Price', info?.price],
                  stock: ['Stock', info?.stock], available: ['Status', info?.available]},
@@ -21,8 +22,8 @@ export default function Admin_Universal_Item({which, info=null, header=0, lastRo
                  phone: ['Phone', info?.phone], address: ['Address', info?.address]},
     order:      {order_id: ['Order ID', info?.order_id], user_id: ['User ID', info?.user_id], order_date: ['Order date', (info?.order_date)],
                  shipping_address: ['Shipping adress', info?.shipping_address], total_amount: ['Total amount', info?.total_amount], status: ['Status', info?.status]}, 
-    order_item: {product_id: ['Product ID', info?.product_id], option: ['Option', info?.option?.name], price: ['Base price', info?.option?.price ?? info?.price],
-                 quantity: ['Quantity', info?.quantity], off_price: ['Off price', info?.off_price], total: ['Total',  ((info?.option?.price ?? info?.price) - info?.off_price) * info?.quantity]
+    order_item: {product_id: ['Product ID', info?.product_id], option: ['Option', info?.option?.name], price: ['Base price', Math.round(100*(info?.option?.price ?? info?.price), 2)/100],
+                 quantity: ['Quantity', info?.quantity], off_price: ['Off price', info?.off_price], total: ['Total',  Math.round(100*((info?.option?.price ?? info?.price) - info?.off_price) * info?.quantity, 2)/100]
     },
     order_item_lastRow: {product_id: ['Product ID', ''], option: ['Option', ''], price: ['Base price', ''],
                  quantity: ['Quantity', ''], off_price: ['Off price', ''], total: ['Total',  info?.total_amount-info?.off_price]}          
