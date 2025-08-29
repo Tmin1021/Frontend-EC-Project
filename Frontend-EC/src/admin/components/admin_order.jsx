@@ -39,7 +39,6 @@ export const Admin_Order_Detail = () => {
         // 1. Order Item
         const resItem = await GlobalApi.OrderItemApi.getByOrderId(id);
         const item = resItem.data.data;
-        console.log(item[0].products)
 
         if (item) {
           setOrderItem({
