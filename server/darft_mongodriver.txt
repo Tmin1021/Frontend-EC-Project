@@ -1,0 +1,114 @@
+/***************/
+// connect.js
+const { MongoClient } = require("mongodb")
+require("dotenv").config({path: "./.config.env"})
+
+// this function creates client who has the key (URI) (encrypted by dotenv) and wants to connect to the real DB
+// the db or colelction itself haveas built-in functions to support CRUD
+// router has GET (Retrieve); POST (Create); PUT (Update); DELETE (Delete)
+// with mongodriver: CRUD: find(); insertOne()
+// with mongoose: CRUD: mongoose.model(..., mongoose.Schema).find()/.save()/.create()/.findById()/.findByIdAndUpdate()/.findByIdAndDelete()
+const client = new MongoClient(process.env.ATLAS_URI)
+const db_name = 'ToDoApp'
+let db
+
+async function connectDB() {
+    if (db) return db
+    try {
+        await client.connect()
+        // const collections = await client.db("ToDoApp").collections()
+        // collections.forEach((collection) => console.log(collection.s.namespace.collection))
+        db = await client.db(db_name)
+        return db
+
+    } catch(e) {
+        console.error("MongoDB connection error:", e)
+        throw e
+    } 
+    /*
+    finally {
+        await client.close(). // this force to close the server
+    }
+    */
+}
+
+connectDB()
+
+module.exports = connectDB
+
+/***************/
+// userModel.js
+const connectDB = require("../connect")
+
+async function getUserCollection() {
+    const db = await connectDB()
+    return db.collection("Users")
+}
+
+module.exports = getUserCollection
+
+/***************/
+// userRoutes.js
+const express = require("express")
+const router = express.Router()
+const getUserCollection = require("../models/userModel")
+const bcrypt = require("bcrypt") // for hasing password
+
+// GET all users
+router.get("/", async (req, res) => {
+    try {
+        const users = await (await getUserCollection()).find().toArray()
+        res.json(users)
+    } catch (err) {
+        res.status(500).json({error: err.message})
+    }
+})
+
+// CREATE user
+router.post("/", async (req, res) => {
+  try {
+    // check req
+    const { name, email, phone, password, address, role} = req.body // req.body is for JSON (app.use(express.json())), if query (use req.query: not safe)
+    if (!name || !email || !password || !address || !role) {
+      return res.status(400).json({ error: "Name, email, password, address and role are required" })
+    }
+
+    // hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10) // 10 = salt rounds
+
+    // req to mongo
+    const newUser = { name, email, phone, password: hashedPassword, address, role}
+    const result = await (await getUserCollection()).insertOne(newUser) // sends a create request to MongoDB
+
+    res.status(201).json({ message: "User created", userId: result.insertedId })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+// FIND user (login)
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" })
+    }
+
+    const user = await (await getUserCollection()).findOne({ email })
+    if (!user) {
+      return res.status(401).json({ error: "Invalid email or password" })
+    }
+
+    // compare plain password with hashed password
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+      return res.status(401).json({ error: "Invalid email or password" })
+    }
+
+    res.json({ message: "Login successful", user: { id: user._id, name: user.name, email: user.email } })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+module.exports = router
