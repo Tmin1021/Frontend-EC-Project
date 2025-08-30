@@ -71,11 +71,11 @@ function App() {
 
             <Route element={<RoutedeAdmin><UserLayout/></RoutedeAdmin>}>
               <Route path="/" element={<Dashboard/>}/>
-              <Route path="/:type" element={<List_Product/>}/>
-              <Route path="/:type/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
+              <Route path="/flower" element={<ProductProvider><List_Product/></ProductProvider>}/>
+              <Route path="/flower/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
               <Route path="/personal" element={<ProtectedRoute><Personal/></ProtectedRoute>}/>
               <Route path="/personal/:orderID" element={<Order_Product_Preview/>}/>
-              <Route path='/search' element={<ProductProvider><Search_Page/></ProductProvider>} />
+              <Route path='/search' element={<ProductProvider isSearchPage={true}><List_Product/></ProductProvider>} />
               <Route path="/support" element={<SupportPage/>}/>    
               <Route path="/blog/:slug" element={<BlogDetail />} />
            </Route>

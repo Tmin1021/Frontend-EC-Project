@@ -5,7 +5,6 @@ import Dashboard_Why from "./components/dashboard_why";
 import Dashboard_Blog from "./components/dashborad_blog";
 import Dashboard_Recommend from "./components/dashboard_recommend";
 import ShopInfo from "../support/components/shop_info";
-const API_KEY=import.meta.env.VITE_STRAPI_API_KEY;
 import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 
 function Dashboard_Section({children, y_position}) {
@@ -37,7 +36,6 @@ return (
 }
 
 function Dashboard() {
-    console.log(API_KEY)
 
     return ( 
         <div className="flex flex-col w-full">

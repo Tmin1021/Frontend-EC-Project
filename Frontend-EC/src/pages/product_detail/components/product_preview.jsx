@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {useState} from 'react'
+import { demo_1 } from '../../../data/dummy';
 
 function Preview_Slide({images, setIndex}) {
   const [indexSlide, setIndexSlide] = useState(0)
@@ -47,7 +48,7 @@ function Product_Preview({images}) {
         style={{ transform: `translateX(-${index * 100}%)` }}>
         {images.map((img, i) => (
           <div key={i} className='min-w-full aspect-square'>
-              <img src={img} className="w-full h-full object-cover rounded-lg"/>
+              <img src={demo_1} className="w-full h-full object-cover rounded-lg"/>
           </div>
         ))}
       </div>

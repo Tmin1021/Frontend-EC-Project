@@ -6,7 +6,6 @@ import { useCart } from "../../context/CartContext";
 import Search_Space from "./search";
 import { useAuth } from '../../context/AuthContext'
 import Chatbot from './chatbot';
-import logo from "/src/assets/logo.PNG";
 
 
 function Header_Item({name, onHandleClick}) {

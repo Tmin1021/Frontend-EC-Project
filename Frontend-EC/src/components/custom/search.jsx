@@ -2,14 +2,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProductProvider, useProduct } from "../../context/ProductContext";
-import { Search, Flower, Flower2, ExternalLink, X, Box } from "lucide-react";
+import { Search, Flower, X, Box } from "lucide-react";
 
 function Search_Item({product, isSelected, closeSearch}) {
     const navigate = useNavigate()
     const [isHover, setIsHover] = useState(false)
 
     return (
-        <div className={`flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-white shadow-lg rounded-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product.product_id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
+        <div className={`flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-white shadow-lg rounded-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product._id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
             {product.type !== 'flower' ? <Box className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-green-500' : 'text-green-300'}`}/>
             : <Flower className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-pink-500' : 'text-pink-300'}`}/>}
             <p className={`py-1 font-light md:text-sm text-lg hover:font-semibold transition-all ${isSelected? 'font-semibold':""}`}>{product.name}</p>
@@ -17,27 +17,12 @@ function Search_Item({product, isSelected, closeSearch}) {
     )
 }
 
-function Search_Link({name="Demo"}) {
-    const navigate = useNavigate()
-
-    const mapping = {
-        "Demo": '/product'
-    }
-
-    return (
-        <div className='flex items-center gap-2 px-1' onClick={()=>navigate(mapping[name])}>
-            <ExternalLink className='w-4 h-4'/>
-            <p className='font-light hover:font-semibold transition-all'>{name}</p>
-        </div>
-    )
-}
-
 function Search_Inner({closeSearch}) {
-    const {searchProduct, searchPrediction} = useProduct()
+    const {searchProduct, searchPrediction, products} = useProduct()
     const [input, setInput] = useState("")
     const [selectedIndex, setSelectedIndex] = useState(-1)
-    const searchResults = searchProduct(input)
-    const prediction = searchPrediction(input)
+    const [searchResults, setSearchResults] = useState(products) 
+    const [prediction, setPrediction] = useState('') 
     const navigate = useNavigate()
     
     const onHandleInput = (e)=>{
@@ -45,16 +30,49 @@ function Search_Inner({closeSearch}) {
         setInput(value);
     }
 
-    // handle scrolling 
+    // handle scrolling
     useEffect(() => {
-      //document.body.style.overflow = 'hidden';
-      window.addEventListener('scroll', closeSearch);
+        //document.body.style.overflow = 'hidden';
+        window.addEventListener('scroll', closeSearch);
 
-      return () => {
-          //document.body.style.overflow = 'auto'; 
-          window.removeEventListener('scroll', closeSearch);
-      };
-  }, []);
+        return () => {
+            //document.body.style.overflow = 'auto'; 
+            window.removeEventListener('scroll', closeSearch);
+        }
+    }, [])
+
+    // handle search update
+    useEffect(() => {
+        // if the await function has finish and start to setState but then search is close immediately, make the react error (it cannot find the component)
+        // if search is close then isMounted will false immediately
+        let isMounted = true
+
+        const fetchSearch = async () => {
+            try {
+                const results = await searchProduct(input)
+                const pred = await searchPrediction(input)
+
+            if (isMounted) {
+                setSearchResults(results || []);
+                setPrediction(pred || '');
+            }
+            } catch (err) {
+                console.error("Search error:", err);
+            }
+        };
+
+        if (input.trim()) {
+            fetchSearch();
+        } else {
+            setSearchResults(products);
+            setPrediction('');
+        }
+
+        return () => {
+            isMounted = false
+        }
+    }, [input, searchProduct, searchPrediction])
+
 
     // handle naviagtion keys
     useEffect(()=>{
@@ -67,17 +85,18 @@ function Search_Inner({closeSearch}) {
                 setSelectedIndex(selectedIndex>Math.min(4, searchResults.length-1) ? 0:selectedIndex+1)
             }
             else if (e.key === 'Enter' && selectedIndex!==-1) {
-                navigate(`/product/${searchResults[selectedIndex].product_id}`)
+                navigate(`/flower/${searchResults[selectedIndex].product_id}`)
                 closeSearch()
             }
             else if (e.key === 'Enter') {
-                navigate(`/search?query=${encodeURIComponent(input)}`)
+                navigate(`/search?search=${encodeURIComponent(input)}`)
                 closeSearch()
             }
             else if (e.key === 'ArrowRight') {
                 setInput(prediction ? input+prediction:input)
             }
         }
+
         document.addEventListener('keydown', handleKeyDown)
         
         // since useState won't affect the useEffect in this component, if leave the dependencies array empty here, the listener will capture only first initialized value of selectedIndex,...

@@ -9,14 +9,14 @@ export const filter_types = {
   "Flower Type": ["Anemones", "Dried Flowers", "Hydrangeas", "Lilies", "Orchids", "Peonies", "Ranunculus", "Roses", "Succulents", "Sunflowers", "Tropical"],
   "Occassions": ["Birthday", "Sympathy", "Just Because", "Anniversary", "Housewarming", "Get Well", "Congrats", "I'm sorry", "New Baby", "Thank you", "Party Boxes"],
   "Colors": ["Pink Flowers", "Red Flowers", "White Flowers", "Yellow Flowers"],
-  "Sort": ["Best Sellers", "Price: Low to High", "Price: High to Low", "Condition: New to Old", "Condition: Old to New"]
+  "Sort": ["Best Sellers", "A to Z", "Z to A", "Price: Low to High", "Price: High to Low", "Condition: New to Old", "Condition: Old to New"]
 }
 
 function Filter_Option({type, whichOption, onHandleClick}) {
   // Sort: allow 1 option only, must appear that option in <p>
   return (
     <div className={`cursor-pointer ${type==="Sort"? 'flex flex-col gap-0 absolute right-0 w-[180px] h-[125px] py-2 px-4 overflow-auto rounded-lg bg-white shadow-sm' : 'grid grid-cols-2 gap-2 h-full'} 
-                    md:flex md:flex-col md:gap-0 md:absolute md:right-0 md:translate-x-1/4 md:${type==="Sort"? 'w-[200px]': 'w-[180px]'} md:h-[125px] md:py-2 md:px-4 md:overflow-auto no-scrollbar md:rounded-lg md:bg-white md:shadow-sm`}>
+                    md:flex md:flex-col md:gap-0 md:absolute md:right-0 md:translate-x-1/4 md:w-[210px] md:h-[125px] md:py-2 md:px-4 md:overflow-auto no-scrollbar md:rounded-lg md:bg-white md:shadow-sm`}>
       
       {filter_types[type].map((option, index) => (
         <div key={option} className={`${type==='Sort'? '': (whichOption[index]? 'border-3 border-green-700' : 'border-1 border-gray-200')} 
@@ -36,13 +36,13 @@ function Filter_Option({type, whichOption, onHandleClick}) {
 export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) {
   const [whichOption, setWhichOption] = useState(Array(filter_types[name].length).fill(false))
   const {filterProduct, sortProduct} = useProduct()
-  const [sortOption, setSortOption] = useState('Best sellers')
+  const [sortOption, setSortOption] = useState('Best Sellers')
 
   const handleOption = (type, value, index) => {
     if(type!=='Sort') {
       const newWhichOption = whichOption.slice()
       newWhichOption[index] = !newWhichOption[index]
-      filterProduct({type: type, value: value, isChosen: newWhichOption[index]})
+      filterProduct({name: type, value: value, isChosen: newWhichOption[index]})
       setWhichOption(newWhichOption)
     }
     else {
@@ -54,8 +54,7 @@ export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) 
     }
 }
 
-  // click Filter_Option will propagate that click to the parent --> trigger onHandleClick --> had better to separate or stopPropagation
-  //         
+  // click Filter_Option will propagate that click to the parent --> trigger onHandleClick --> had better to separate or stopPropagation     
   return (
     <div className=' md:relative'>
       {/* Title */}
@@ -87,10 +86,9 @@ export function Filter({name='Sort', isOpenFilter=false, onHandleClick=()=>{}}) 
   )
 }
 
-function List_Filter({isFlower=false}) {
+function List_Filter() {
   const [isOpenFilters, setIsOpenFilters] = useState(Array(4).fill(false))
   const [isOpen, setIsOpen] = useState(false)
-  const {type} = useParams()
 
   const handleClick = (index) => {
     const current_index = !isOpenFilters[index]
@@ -103,7 +101,7 @@ function List_Filter({isFlower=false}) {
   return (
     <div className='min-w-full flex items-center justify-between' onClick={()=>setIsOpenFilters(Array(4).fill(false))}>
       {/* Filter */}
-      <div className={`${(type==='flower' || isFlower) ? '':'hidden'}`} onClick={(e) => e.stopPropagation()}>
+      <div onClick={(e) => e.stopPropagation()}>
         <div className='flex gap-1 items-center md:hidden' onClick={()=>setIsOpen(true)}>
           <Funnel/>
           <p className='font-semibold'>FILTER BY</p>

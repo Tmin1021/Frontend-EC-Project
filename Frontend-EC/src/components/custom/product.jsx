@@ -1,0 +1,22 @@
+import { useDynamicPricing } from "../../context/DynamicPricingContext"
+
+export default function Product_Item({product}) {
+    const {condition_mapping} = useDynamicPricing()
+    const findStartingPrice = () => product.type==='flower' ? (Math.round(Math.min(...product.flower_details.options.map(option => option.stems))*product.dynamic_price*100, 2)/100) : product.price
+
+    return (
+        <div className="min-w-[170px] bg-white dark:bg-black">
+            <div className='w-full aspect-square overflow-hidden rounded-sm'>
+                <img src={product?.image_url[0]} className='w-full h-full object-cover'/>
+            </div>
+
+            <p className='font-bold text-sm md:text-base pt-3'>{product.name}</p>
+
+            <div className='flex justify-between items-center'>
+                <p className='font-light text-sm py-1'>from <span className='font-bold text-lg'>${findStartingPrice()}</span></p>
+                <p className={`${condition_mapping[product.condition]} whitespace-nowrap overflow-hidden text-ellipsis text-sm font-semibold h-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 transition-all`}>{product.condition}</p>
+            </div>
+        </div>
+
+    )
+}

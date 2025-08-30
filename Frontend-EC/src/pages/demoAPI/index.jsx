@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { toast, Toaster } from "sonner";
 import BEApi from "../../../service/BEApi";
+import { createProductParams } from "../../components/functions/product_functions";
 
 function DemoAPI() {
   const fileInputRef = useRef(null);
@@ -9,7 +10,7 @@ function DemoAPI() {
     async function fetchUsers() {
       try {
         console.log("Hello");
-        const res = await BEApi.UserApi.getAll();
+        const res = await BEApi.ProductApi.getAll(createProductParams({type: 'flower'}))
         console.log(res.data);
       } catch (err) {
         console.log(err);
