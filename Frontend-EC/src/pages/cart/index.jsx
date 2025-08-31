@@ -56,38 +56,41 @@ function Cart() {
                     exit={isSmallScreen ? { x: "100%" } : { scale: 0.9, opacity: 0 }}
                     transition={{ duration: 0.4, ease: "easeInOut"}}
                     style={isSmallScreen ? { originX: 0.5, originY: 0.5 } : undefined}
-                    className="absolute right-0 md:relative w-5/6 h-screen md:w-[500px] md:h-[500px] p-2 md:p-4 bg-white/80 backdrop-blur-lg rounded-t-lg overflow-y-auto no-scrollbar" onClick={(e) =>e .stopPropagation()}>
+                    className="absolute right-0 md:relative w-5/6 h-screen md:w-[500px] md:h-[500px] p-2 md:p-4 bg-white/80 backdrop-blur-lg rounded-lg overflow-y-auto no-scrollbar" onClick={(e) =>e .stopPropagation()}>
           <div>
             {isCartEmpty ? 
             <Cart_Empty/>
             : 
-            <div className='w-full h-full'>
-              {/* Delete tab */}
-                <div className="w-full flex items-center justify-between pb-4">
-                  <div className='flex items-center justify-between gap-4'>
-                    <Check_Box isSelected={selectedAll} onHandleSelectedItems={handleSelectedAll} />
-                    <p className='text-gray-500/80 font-semibold'>All</p>
-                </div>
+            <div className='relative w-full h-full'>
+                <div className='w-full overflow-y-auto'>
+                  {/* Delete tab */}
+                    <div className="w-full flex items-center justify-between pb-4">
+                      <div className='flex items-center justify-between gap-4'>
+                        <Check_Box isSelected={selectedAll} onHandleSelectedItems={handleSelectedAll} />
+                        <p className='text-gray-500/80 font-semibold'>All</p>
+                      </div>
 
-                <div onClick={removeCart}>
-                  <Trash2 />
-                </div>
-              </div>
+                      <div onClick={removeCart}><Trash2 /></div>
+                    </div>
 
-              {/* Items */}
-              <div className='flex flex-col gap-2'>
-              {cart.map((item, i) => (
-                <div key={i} className='flex items-center justify-between gap-1 md:gap-4'>
-                  <Check_Box isSelected={item.isSelected} onHandleSelectedItems={()=>handleSelectedItems(i)}/>
-                  <Cart_Item key={i} product={item} />
-                </div>))}
-              </div>      
-              
+                  {/* Items */}
+                  <div className='flex flex-col gap-4 md:gap-2'>
+                  {cart.map((item, i) => (
+                    <div key={i} className='flex items-center justify-start gap-1 md:gap-2'>
+                      <Check_Box isSelected={item.isSelected} onHandleSelectedItems={()=>handleSelectedItems(i)}/>
+                      <Cart_Item key={i} product={item} />
+                    </div>))}
+                  </div>      
+
+                  {/* Dummy space} */}
+                  <div className='h-[40px]'></div>
+               </div>
+
+                {/* Sum */}
+                {!isCartEmpty && <Cart_Sum/>}
             </div>}
-          </div>
 
-          {/* Sum */}
-          {!isCartEmpty && <Cart_Sum/>}
+          </div>
         </motion.div>
 
       </motion.div>}

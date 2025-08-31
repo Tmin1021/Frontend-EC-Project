@@ -9,9 +9,8 @@ function Search_Item({product, isSelected, closeSearch}) {
     const [isHover, setIsHover] = useState(false)
 
     return (
-        <div className={`flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-white shadow-lg rounded-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product._id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
-            {product.type !== 'flower' ? <Box className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-green-500' : 'text-green-300'}`}/>
-            : <Flower className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-pink-500' : 'text-pink-300'}`}/>}
+        <div className={`cursor-pointer flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-white shadow-lg rounded-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product._id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
+            <Box className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-green-600 w-5 h-5' : 'text-green-300'}`}/>
             <p className={`py-1 font-light md:text-sm text-lg hover:font-semibold transition-all ${isSelected? 'font-semibold':""}`}>{product.name}</p>
         </div>
     )
@@ -23,6 +22,7 @@ function Search_Inner({closeSearch}) {
     const [selectedIndex, setSelectedIndex] = useState(-1)
     const [searchResults, setSearchResults] = useState(products) 
     const [prediction, setPrediction] = useState('') 
+    const [click, setClick] = useState(false)
     const navigate = useNavigate()
     
     const onHandleInput = (e)=>{
@@ -106,11 +106,11 @@ function Search_Inner({closeSearch}) {
     return (
         <div className="flex flex-col gap-8 px-4 md:px-10 lg:px-32">
             {/* Input field */}
-            <div className='flex gap-2 w-full items-center'>
-                <Search className='w-8 h-8 text-gray-500' />
+            <div className='flex gap-2 w-full items-center' onClick={()=>setClick(true)}>
+                <Search className={`w-8 h-8 ${click? 'text-gray-500' : 'text-gray-300'} transition-all`}/>
 
                 <div className='relative min-w-[200px]'>
-                    <div className='text-3xl md:text-2xl font-medium text-gray-500 dark:text-white'>
+                    <div className={`text-3xl md:text-2xl font-medium ${click? 'text-gray-500' : 'text-gray-200'} transition-all`}>
                         {input===""? "Search Hoa" : <p>{input}<b>{prediction}</b></p>}
                     </div>
 

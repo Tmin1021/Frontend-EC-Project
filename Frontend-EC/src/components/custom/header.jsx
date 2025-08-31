@@ -7,7 +7,6 @@ import Search_Space from "./search";
 import { useAuth } from '../../context/AuthContext'
 import Chatbot from './chatbot';
 
-
 function Header_Item({name, onHandleClick}) {
     const {cart} = useCart()
 
@@ -61,7 +60,10 @@ function Header() {
     }
 
     const handleClick = (name) => {
-        if (name === "Cart") {openCart()}
+        if (name === "Cart") {
+            if (!isAuthenticated)  navigate("/login", { state: { from: location.pathname }, replace: true })
+            else openCart()
+            }
         if (name ===  "Search") {setIsSearch(!isSearch)}
         if (name === "Personal") {navigate(isAuthenticated? '/personal' : '/login')}
         else if (navigateMap[name]) {navigate(navigateMap[name])}

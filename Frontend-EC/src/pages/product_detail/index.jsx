@@ -11,6 +11,8 @@ import GlobalApi from '../../../service/GlobalApi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDynamicPricing } from '../../context/DynamicPricingContext';
 import Product_Banner from './components/product_banner';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Fly_To_Cart = ({image, isAllowed, setIsAllowed}) => {
 
@@ -35,10 +37,14 @@ const Fly_To_Cart = ({image, isAllowed, setIsAllowed}) => {
 
 
 function Product_Detail() {
- const {product, quantity, selectedExtra} = useProductDetail()
+ const {product, quantity, isLoading} = useProductDetail()
  const {condition_mapping} = useDynamicPricing()
  const {addCart} = useCart()
  const [isAllowed, setIsAllowed] = useState(false)
+ const {isAuthenticated} = useAuth()
+ const navigate = useNavigate()
+
+ if (isLoading) return <p className="text-lg text-gray-500">Loading product...</p>
 
  if (!product) return <p className='text-2xl md:text-3xl font-bold'><span className='line-through'>404</span>, <span className= 'text-pink-500'>product not found</span>.</p>
 
@@ -61,19 +67,21 @@ function Product_Detail() {
             <div className='w-full flex flex-col gap-4'>
                 <Product_Banner/>
                 <p className='font-semibold text-4xl mx-auto hidden md:flex'>{product.name}</p>
-                {product.stock!=0 && <Product_Quantity curStock={product.stock}/>}
+                <Product_Option />
+                {product.stock!=0 && <Product_Quantity/>}
 
                 {/* Stock and Condition */}
                 <div className='flex gap-2'>
                     {product.stock!=0 && <p className={`${product.stock<5 ? 'bg-red-600/80':'bg-green-600/80'} font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 hover:bg-red-600-90 transition-all`}>In stock: {product.stock}</p>}
                     {product.stock!=0 && <p className={`bg-pink-400/80 font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 hover:bg-red-600-90 transition-all`}>Stems: {product.stems}</p>}
                     {product.stock!=0 && <p className={`${condition_mapping[product.condition]} font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 transition-all`}>{product.condition}</p>}
+                    <p className='bg-gray-500/80 font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 transition-all'>Sold: {product.sales_count}</p>
                 </div>
 
                 {/* Add to cart */}
                 <div className={`relative ${!product.stock ? 'bg-gray-500/80 hover:bg-gray-500 pointer-events-none': 'bg-green-800/80 hover:bg-green-800'} min-w-[300px] h-[50px] flex items-center rounded-sm hover:shadow-lg shadow-gray-300 transition-all`} 
-                     onClick={() => {setIsAllowed(true); addCart({ product: product,  quantity: quantity});
-                     if (selectedExtra) {addCart({ product: selectedExtra, quantity: 1})}}}>
+                     onClick={() => {if (!isAuthenticated) {navigate("/login", { state: { from: location.pathname }, replace: true })}
+                                     else {setIsAllowed(true); addCart({ product: product,  quantity: quantity})}}}>
                     <p className='font-semibold text-lg text-white mx-auto cursor-pointer'>{!product.stock ? 'OUT OF STOCK' : "ADD TO CART"}</p>
                     <Fly_To_Cart image={product.image_url[0]} isAllowed={isAllowed} setIsAllowed={setIsAllowed}/>
                 </div>
@@ -85,7 +93,7 @@ function Product_Detail() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 30 }}
                     transition={{ duration: 0.4 }}>
-            <></>
+            <Product_Comment product_id={product.product_id}/>
         </motion.div>
 
     </div>
@@ -94,5 +102,4 @@ function Product_Detail() {
 }
 
 export default Product_Detail
-
-//             <Product_Comment product_id={product.product_id}/>
+ 

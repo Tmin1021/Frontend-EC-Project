@@ -1,70 +1,72 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import GlobalApi from "../../service/GlobalApi";
-import {isDummy, users } from "../data/dummy";
-import { toast } from "sonner";
-import bcrypt from "bcryptjs";
-
+import BEApi from "../../service/BEApi";
 
 const AuthContext = createContext()
 
 export function AuthProvider({children}) {
     const [user, setUser] = useState(null)
+
     const handleGetFresh = () => {
         window.location.reload();
     }
 
     useEffect(() => {
-        const savedUser = JSON.parse(localStorage.getItem('user'))
-        if (savedUser) setUser(savedUser)
-    }, [])
-
-
-    const login = async (mail, password, navigate) => {
-        if (isDummy) {
-            let newUser = null
-            if (password === 'admin') newUser = users[0]
-            else newUser = users[1]
-            setUser(newUser)
-            localStorage.setItem('user', JSON.stringify(newUser))
-            navigate(newUser.role === 'user' ? '/' : '/admin', { replace: true })
-            return
-        }
-
+    async function fetchUser(id) {
         try {
-            const res = await GlobalApi.UserApi.getByMail(mail);
-            const users = res.data.data;
+        const res = await BEApi.UserApi.getById(id);
+        const data = res.data;
+        return { ...data, id: data._id };
+        } catch (err) {
+        localStorage.removeItem("user");
+        setUser(null);
+        console.error("Require new login", err);
+        return null;
+        }
+    }
 
-            if (users.length === 0) {
-                alert("Invalid mail");
-                return;
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+    if (savedUser) {
+        (async () => {
+        const newUser = await fetchUser(savedUser.id);
+        if (newUser) {
+            localStorage.setItem("user", JSON.stringify(newUser));
+            setUser(newUser);
+        } else {
+            localStorage.removeItem("user");
+            setUser(null);
+        }
+        })();
+    }
+    }, []);
+
+
+    const login = async (email, password, navigate, location) => {
+        try {
+            const res = await BEApi.UserApi.login(email, password)
+            const user = res.data.user
+
+            if (!user) {
+                alert("Login failed")
+                return
             }
 
-            /*
-            const isMatch = await bcrypt.compare(password, users[0]?.password);
+            // Save user
+            setUser(user)
+            localStorage.setItem("user", JSON.stringify(user))
 
-            if (!isMatch) {
-                alert("Wrong password");
-                return;
-            }*/
+            // Decide where to go
+            const redirectPath = location.state?.from
+            ? location.state.from // go back to where user was
+            : user.role === "user"
+                ? "/personal"
+                : "/admin"
 
-            const user = {
-                user_id: users[0]?.documentId,
-                name: users[0]?.name,
-                mail: users[0]?.mail,
-                phone: users[0]?.phone,
-                address: users[0]?.address,
-                role: users[0]?.role
-            };
-
-            setUser(user);
-            localStorage.setItem('user', JSON.stringify(user));
-            navigate(user.role === 'user' ? '/personal' : '/admin', { replace: true });
-
+            navigate(redirectPath, { replace: true })
         } catch (err) {
-            console.error("Login error", err);
-            alert("Login failed");
+            console.error("Login error", err)
+            alert("Invalid email or password")
         }
-    };
+    }
 
 
     const logout = (navigate) => {

@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useDynamicPricing } from './DynamicPricingContext';
 import { useLocation } from 'react-router-dom'
 import { createProductParams, fetchProducts, fetchSearchPreview } from '../components/functions/product_functions';
 import BEApi from '../../service/BEApi';
@@ -12,25 +11,26 @@ export function ProductProvider({children, isSearchPage=false}) {
   // const {getDynamicPrice, getCondition, getDiffDays} = useDynamicPricing()
   const [products, setProducts] = useState([]);
   const [currentValues, setCurrentValues] = useState({
-    "Flower Type": new Set([""]),
-    "Occassions": new Set([""]),
-    "Colors": new Set([""]),
+    "Flower Type": new Set(),
+    "Occassions": new Set(),
+    "Colors": new Set(),
     "Sort": "Best Seller",
-  });
+    "Search": '',
+    "Page": 1
+  })
 
-  // for search
   const location = useLocation()
   const params = new URLSearchParams(location.search)
   const search = params.get('search') || ''   // automatically decodes URL encoding
-  const flowerTypes = params.get('flowerType')?.split(",") || []
+  const flowerTypes = params.get('flowerTypes')?.split(",") || []
   const occasions = params.get('occasions')?.split(",") || []
   const colors = params.get('colors')?.split(",") || []
   const sort = params.get('sort') || ''
   const page = parseInt(params.get('page') || "1")
 
   useEffect(() => {
+    // for search
     const productParams = createProductParams({search: search, flowerTypes: flowerTypes, occasions: occasions, colors: colors, sort: sort, page: page})
-
     fetchProducts(setProducts, productParams)
     
     setCurrentValues({
@@ -38,17 +38,19 @@ export function ProductProvider({children, isSearchPage=false}) {
       "Occassions": new Set(occasions),
       "Colors": new Set(colors),
       "Sort": sort,
+      "Search": search,
+      "Page": page
    })
 
   }, [location, isSearchPage]) 
 
   // f 
   const filterProduct = ({name, value, isChosen}) => { 
-    let newValues = currentValues
+    let newValues =    {...currentValues, [name]: new Set(currentValues[name])}
     isChosen ? newValues[name].add(value) : newValues[name].delete(value)
 
-    const productParams = createProductParams({search: search, flowerTypes: [...newValues['Flower Type']], occasions: [...newValues.Occassions], colors: [...newValues.Colors], sort: newValues.Sort})
-    fetchProducts(setProducts, productParams)
+    const productParams = createProductParams({search: newValues.Search, flowerTypes: [...newValues['Flower Type']], occasions: [...newValues.Occassions], colors: [...newValues.Colors], sort: newValues.Sort})
+    //fetchProducts(setProducts, productParams)
     
     navigate(`/${isSearchPage ? "search":"flower"}?${productParams.toString()}`, {replace: true})
     setCurrentValues(newValues)
@@ -93,7 +95,7 @@ export function ProductProvider({children, isSearchPage=false}) {
     let newValues = currentValues
     newValues["Sort"] = value
 
-    const productParams = createProductParams({search: search, flowerTypes: [...newValues['Flower Type']], occasions: [...newValues.Occassions], colors: [...newValues.Colors], sort: newValues.Sort})
+    const productParams = createProductParams({search: newValues.Search, flowerTypes: [...newValues['Flower Type']], occasions: [...newValues.Occassions], colors: [...newValues.Colors], sort: newValues.Sort})
     fetchProducts(setProducts, productParams)   
 
     navigate(`/${isSearchPage ? "search":"flower"}?${productParams.toString()}`, {replace: true})

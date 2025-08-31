@@ -10,7 +10,7 @@ function DemoAPI() {
     async function fetchUsers() {
       try {
         console.log("Hello");
-        const res = await BEApi.ProductApi.getAll(createProductParams({type: 'flower'}))
+        const res = await BEApi.UserApi.getById('68b192b6f62f87ee1a7f23ae')
         console.log(res.data);
       } catch (err) {
         console.log(err);

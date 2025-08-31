@@ -29,6 +29,7 @@ const CommentApi = {
 const UserApi = {
   getAll: () => axiosClient.get("/api/users"),
   getById: (id) => axiosClient.get(`/api/users/${id}`),
+  login: (email, password) => axiosClient.post('/api/users/login', {email, password}),
   create: (data) => axiosClient.post("/api/users", data),
   update: (id, data) => axiosClient.put(`/api/users/${id}`, data),
   delete: (id) => axiosClient.delete(`/api/users/${id}`)
@@ -43,10 +44,18 @@ const ProductApi = {
   delete: (id) => axiosClient.delete(`/api/products/${id}`)
 }
 
+const OrderApi = {
+  getAll: () => axiosClient.get("/api/orders"),
+  getById: (id) => axiosClient.get(`/api/orders/${id}`),
+  getByUserId: (id) => axiosClient.get(`/api/orders/user/${id}`),
+  create: (data) => axiosClient.post("/api/orders", data),
+  update: (id, data) => axiosClient.put(`/api/orders/${id}`, data),
+}
+
 const ImageApi = {
   upload: (formData) => axiosClient.post("/api/images/upload", formData),
 }
 
 export default {
-  UserApi, ProductApi, ImageApi, CommentApi, CartApi
+  UserApi, ProductApi, ImageApi, CommentApi, CartApi, OrderApi
 }

@@ -3,36 +3,33 @@ import login_wallpaper from '/src/assets/login-wallpaper.png'
 import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from "framer-motion";
+import { useLocation } from 'react-router-dom'
 
+// route: if not authenticated => login => (1): bring to the previous state (2): bring to default personal or admin
+// route: if authenticated => bring to previous state (if available)
 export const Login = () => {
     const {login, user, isAuthenticated} = useAuth()
     const navigate = useNavigate()
+    const location = useLocation()
+    const from = location.state?.from?.pathname || "/personal"
 
+    // protect login
     useEffect(()=> {
-      if(isAuthenticated && user.role==='user') navigate('/personal')
-      if(isAuthenticated && user.role==='admin') navigate('/admin')
-    }, [])
+      if(isAuthenticated && user.role==='user') navigate(from)
+      if(isAuthenticated && user.role==='admin') navigate(from)
+    }, [isAuthenticated])
 
 
     const [form, setForm] = useState({
         email: '',
         password: ''
-    });
+    })
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        login(form.email, form.password, navigate)
-    };
-
-    // Handle input changes
-    const handleChange = (e) => {
-      setForm({
-        ...form,
-        [e.target.name]: e.target.value
-      });
-      setError(''); // Clear error on input change
-    };
+        await login(form.email, form.password, navigate, location)
+    }
 
   return (
     <div className="relative min-h-screen">

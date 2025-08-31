@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from 'react'
-import { demo_1, isDummy, order_items, orders, users } from '../../../data/dummy'
+import { demo_1, demo_3 } from '../../../data/dummy'
 import { Admin_Universal_Order_Status, order_status } from '../../../admin/components/admin_universal'
 import { AnimatePresence, motion } from "framer-motion";
-import { data, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Text_Item } from '../../../admin/components/admin_inventory';
-import GlobalApi from '../../../../service/GlobalApi';
 import { useAuth } from '../../../context/AuthContext'
+import { fetchProduct, getFormatDate, getProduct, getRoundPrice } from '../../../components/functions/product_functions';
+import BEApi from '../../../../service/BEApi';
 
 export const BASE_URL = 'http://localhost:1337';
 
@@ -14,102 +15,45 @@ export const Order_Product_Preview = () => {
     const {orderID} = useParams()
     const [items, setItems] = useState([])
     const [orderInfo, setOrderInfo] = useState()
-    const [userInfo, setUserInfo] = useState()
+    const {user} = useAuth()
 
-    const info = {name: ["Name", userInfo?.name], mail: ["Mail", userInfo?.mail], phone: ['Phone', userInfo?.phone], 
+    const info = {name: ["Name", orderInfo?.user_name], mail: ["Email", user?.email], phone: ['Phone', user?.phone], 
                 order_date: ['Order date', orderInfo?.order_date], shipping_address: ['Shipping address', orderInfo?.shipping_address], 
-                order_message: ['Message', orderInfo?.shipping_address]}
+                message: ['Message', orderInfo?.message]}
 
     useEffect(() => {
-        const fetchOrder = async () => {
-            let userID
-            try {
-                const res = await GlobalApi.OrderApi.getById(orderID)
-                const data = res.data.data
-                const dataOrder = {
-                    ...data,
-                    order_id: data?.documentId,
-                    order_date: data?.order_date.split('T')[0] + ' at ' + data?.order_date.split('T')[1].replace('.000Z', '')
-                }
+    const fetchOrderAndItems = async () => {
+        try {
+            // 1. Get order
+            const res = await BEApi.OrderApi.getById(orderID);
+            const item = res.data;
 
-                setOrderInfo(dataOrder);
-                userID = data.user_id
-                
-                fetchUser(userID)
+            const orderData = {
+                ...item,
+                order_id: item?._id,
+                order_date: getFormatDate(item.createdAt),
+            };
+            setOrderInfo(orderData);
 
+            // 2. Fetch products for each item
+            const itemsWithProduct = await Promise.all(
+                item.items.map(async (it) => {
+                    const productInfo = await getProduct(it.product_id);
+                    return {
+                        ...it,
+                        product_info: productInfo, 
+                    };
+                    })
+            );
+
+            setItems(itemsWithProduct);
             } catch (err) {
-                console.error("Failed to fetch order by order id", err);
-            }
+            console.error("Failed to fetch order or products", err);
         }
-    
-        const fetchUser = async (userID) => {
-            try {
-                const res = await GlobalApi.UserApi.getById(userID)
-                const data = res.data.data
-                const dataUser = {
-                    ...data,
-                    user_id: data?.documentId,
-                }
+    };
 
-                setUserInfo(dataUser);
-
-            } catch (err) {
-                console.error("Failed to fetch user by user id", err);
-            }
-        }
-
-        const fetchItems = async () => {
-            try {
-                const res = await GlobalApi.OrderItemApi.getByOrderId(orderID)
-                const data = res.data.data[0]
-                const dataItems = {
-                    products: await Promise.all(
-                        data.products.map(async (product) => ({
-                        ...product,
-                        product_info: await fetchProduct(product.product_id)
-                        }))
-                    )
-                }
-
-                setItems(dataItems.products);
-
-            } catch (err) {
-                console.error("Failed to fetch item by order id", err);
-            }
-        }
-
-        const fetchProduct = async (product_id) => {
-            // products: [{product_info: fetch, product_id: , option: , quantity, price, off_price}]
-            try {                
-                const res = await GlobalApi.ProductApi.getById(product_id)
-                const data = res.data.data
-                const product = {
-                    ...data,
-                    product_id: data?.documentId,
-                    image_url: data.image_url?.map(image => BASE_URL + image.url),
-                };
-
-                return product
-
-            } catch (err) {
-                console.error("Failed to fetch item by order id", err);
-            }
-
-        }
-
-        const fetchDummy = () => {
-            setItems(order_items.find(order_item => order_item.order_id.toString()===orderID)?.products)
-            setOrderInfo(orders.find(order=>order.order_id.toString()===orderID))
-            setUserInfo(users.find(user=>user.user_id===orderInfo.user_id))
-        }
-
-        if (isDummy) fetchDummy()
-        else {
-            fetchOrder()
-            //fetchUser()
-            fetchItems()    
-        }
-    },[])
+    if (orderID) fetchOrderAndItems();
+    }, [orderID]);
 
     return (
         <AnimatePresence>
@@ -131,7 +75,7 @@ export const Order_Product_Preview = () => {
                 {/* Status and Payment*/}
                 <div className='hidden lg:flex w-full lg:w-[25%] h-fit flex-col gap-2 bg-white px-4 py-4 shadow-lg border-1 border-gray-100 rounded-sm'>
                     <p className='text-xs font-semibold text-gray-500'>Status</p>
-                    <div className='w-full flex items-center justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.order_status}</div>
+                    <div className='w-full flex items-center justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.status}</div>
                     <div className='w-full flex items-center justify-center py-2 bg-green-50 text-xs text-green-600 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.payment_method}</div>
                 </div>
             </motion.div>
@@ -143,7 +87,7 @@ export const Order_Product_Preview = () => {
                         className='flex flex-col gap-6 px-3 md:px-6 py-6 bg-white shadow-lg border-1 border-gray-100 rounded-sm'>
                 <div className='flex justify-between lg:hidden'>
                     <div className='w-[100px] flex items-center justify-center py-2 bg-green-50 text-xs text-green-600 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.payment_method}</div>
-                    <div className='w-[100px] flex justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.order_status}</div>
+                    <div className='w-[100px] flex justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.status}</div>
                 </div>
                 
                 {items?.map((item, i) => (
@@ -154,20 +98,14 @@ export const Order_Product_Preview = () => {
 
                         <div className='flex flex-col justify-between w-full'>
                             {/* Name */}
-                            <p className='text-base md:text-lg'>{item.product_info.name}</p>
-        
-                            {/* Option */}
-                            {item.option && <div className='flex gap-2'>
-                                <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{item.option.name}</div>
-                                <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{item.option.stems} stems</div>
-                            </div>}
+                            <p className='text-base md:text-lg'>{item.product_name}</p>
 
                             {/* Total Quantity and Price */}
                             <div className='flex gap-2 items-center'>
                                 <p className='text-sm font-extralight'>Quantity: <span className='text-base font-semibold'>{item.quantity}</span></p>
                                 <p className='text-2xl'>|</p>
-                                <p className='text-sm font-extralight'>Total: <span className='text-base font-semibold'>{Math.round(100*(item.price - item.off_price), 2)/100}</span></p>
-                                {item.off_price >0  &&  <p className='text-sm font-extralight'><span className='text-base text-gray-400 font-semibold line-through'>{item.price}</span></p>}
+                                <p className='text-sm font-extralight'>Total: <span className='text-base font-semibold'>{getRoundPrice(item.subtotal-item.off_price)}</span></p>
+                                {item.off_price >0  &&  <p className='text-sm font-extralight'><span className='text-base text-gray-400 font-semibold line-through'>{item.subtotal}</span></p>}
                             </div>
 
                         </div>
@@ -183,53 +121,21 @@ export const Order_Product_Preview = () => {
 }
 
 const Order_Preview = ({order}) => {
-    const [userProducts, setUserProducts] = useState()
-    const [candidateProduct, setCandidateProduct] = useState(order_items[0].products[0].product)
+    const [candidateProduct, setCandidateProduct] = useState(order?.items[0] ?? [])
 
     useEffect(() => {
-        const fetchOrderItem = async () => {
-        try {
-            const res = await GlobalApi.OrderItemApi.getByOrderId(order.order_id);
-            const dataOrderItem = res.data.data.map(item => ({
-                products: item.products
-            }));
-
-            setUserProducts(dataOrderItem);
-
-            // fetch candidate product if available
-            if (dataOrderItem?.length > 0 && dataOrderItem[0].products?.length > 0) {
-            const productId = dataOrderItem[0].products[0]?.product_id;
-            if (productId) {
-                const resProd = await GlobalApi.ProductApi.getById(productId);
-                const item = resProd.data.data;
-                const product = {
-                    ...item,
-                    product_id: item?.documentId,
-                    image_url: item.image_url?.map(image => BASE_URL + image.url),
-                };
-                setCandidateProduct(product);
-            }
-            }
-
-        } catch (err) {
-            console.error("Failed to fetch order items or product", err);
-        }
-        };
-
-        if (isDummy) {
-            setUserProducts(order_items.find(order_item => order_item.order_id === order.order_id)?.products)
-            setCandidateProduct(order_items[0].products[0].product);
-        } else fetchOrderItem()
+        if (!order) return 
+        fetchProduct(order?.items[0].product_id, setCandidateProduct)
     }, [])
 
     const navigate = useNavigate()
-    if (!userProducts) return <div></div>
+    if (!candidateProduct) return <div></div>
 
     return (
         <div className='flex flex-col gap-2 p-2 md:p-4 bg-white dark:bg-black shadow-sm rounded-sm hover:shadow-lg hover:rounded-lg transition-all'>
             {/* Preview Item */}
             <div className='h-[100px] w-full md:h-[120px] flex gap-4'>
-                <img src={candidateProduct?.image_url[0]} className='h-full aspect-square object-cover rounded-sm'/>
+                <img src={candidateProduct?.image_url?.length > 0 ? candidateProduct.image_url[0] : demo_1} className='h-full aspect-square object-cover rounded-sm'/>
 
                 <div className='flex flex-col justify-between w-full'>
                     <div className='w-full flex justify-between'>
@@ -240,18 +146,12 @@ const Order_Preview = ({order}) => {
                             <p className={`text-sm p-1 rounded-sm ${order_status[order?.status][1]} ${order_status[order?.status][3]} font-semibold`}>{order?.status}</p>
                         </div>
                     </div>
-  
-                    {/* Option */}
-                    {candidateProduct.option && <div className='flex gap-2'>
-                        <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{candidateProduct?.option?.name}</div>
-                        <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{candidateProduct?.option?.stems} stems</div>
-                    </div>}
 
                     {/* Total Quantity and Price */}
                     <div className='flex gap-2 items-center'>
-                        <p className='text-sm font-extralight'>Quantity: <span className='text-base font-semibold'>{userProducts.length}</span></p>
+                        <p className='text-sm font-extralight'>Quantity: <span className='text-base font-semibold'>{order?.items?.length}</span></p>
                         <p className='text-2xl'>|</p>
-                        <p className='text-sm font-extralight'>Total: <span className='text-base font-semibold'>{order.total_amount-order.off_price}</span></p>
+                        <p className='text-sm font-extralight'>Total: <span className='text-base font-semibold'>${getRoundPrice(order?.subtotal - order?.off_price)}</span></p>
                     </div>
 
                 </div>
@@ -260,7 +160,7 @@ const Order_Preview = ({order}) => {
             <div className="w-full" style={{ borderBottom: '0.5px solid #e0e0e0' }} />
             
             {/* Detail Button */}
-            <div className='mx-auto text-blue-500 cursor-pointer' onClick={()=>navigate(`/personal/${order.order_id}`)}>See more</div>
+            <div className='mx-auto text-blue-500 cursor-pointer' onClick={()=>navigate(`/personal/order/${order._id}`)}>See more</div>
         </div>
 
     )
@@ -275,12 +175,10 @@ function Personal_Order() {
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const res = await GlobalApi.OrderApi.getByUserId(user.user_id);
-                const data = res.data.data.map(item => ({
+                const res = await BEApi.OrderApi.getByUserId(user.id?? user._id);
+                const data = res.data.map(item => ({
                     ...item,
-                    order_id: item?.documentId,
-                    order_date: GlobalApi.formatDate(item?.order_date),
-                    status: item?.order_status
+                    order_date: getFormatDate(item.createdAt)
                 }))
 
                 setInitialOrder(data)
@@ -291,20 +189,13 @@ function Personal_Order() {
             }
         }
 
-        if (isDummy) {
-            setInitialOrder(orders.filter(order => order.user_id===1))
-            setCurrentOrder(orders.filter(order => order.user_id===1))
-        }
-        else fetchOrder()
-        
-
-    }, [])
+        fetchOrder()
+    }, [user])
 
   const filterStatus = (status) => {
     if (status === 'All') setCurrentOrder(initialOrder)
     else setCurrentOrder(initialOrder.filter(order => order.status === status))
   }
-
   
   return (
     <div className='flex flex-col gap-4'>
@@ -312,7 +203,7 @@ function Personal_Order() {
         <Admin_Universal_Order_Status statusChosen={statusChosen} setStatusChosen={setStatusChosen} filterStatus={filterStatus}/>
 
         {currentOrder.map((order) => (
-            <Order_Preview key={order.order_id} order={order}/>
+            <Order_Preview key={order._id} order={order}/>
         ))}
 
     </div>

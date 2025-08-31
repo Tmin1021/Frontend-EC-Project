@@ -1,9 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import GlobalApi from "../../service/GlobalApi";
 import {useAuth} from "../context/AuthContext"
 import { toast } from "sonner";
-import { useDynamicPricing } from "./DynamicPricingContext";
 import BEApi from "../../service/BEApi";
+import { getRoundPrice } from "../components/functions/product_functions";
 
 const CartContext = createContext()
 
@@ -14,13 +13,10 @@ export function CartProvider({children}) {
     const [selectedAll, setSelectedAll] = useState(false)
     //const [bonus, setBonus] = useState([])
     const {user, isAuthenticated} = useAuth()
-    const {getDynamicPrice} = useDynamicPricing()
     const prevIsCartOpen = useRef(isCartOpen)       // useRef avoid reload
 
     useEffect(() => {
-        if (isAuthenticated && user?.role==='user') {
-            fetchCart()
-        }
+        if (isAuthenticated && user?.role==='user') fetchCart()
 
     }, [user, isAuthenticated, isCartOpen]) 
 
@@ -35,29 +31,25 @@ export function CartProvider({children}) {
 
     // a
     async function addCart(product) {
-        // format: product = (product, option, quantity)
+        // format: product = (product, quantity)
         // 3 cases: (1) same product, different option; (2) same product, same option (reupdate that item); (3) new item
         let newCart
         setCart((prevCart) => {
             let found = false
 
             const updatedCart = prevCart.map(item => {
-                const isSameProduct = item.product_id === product.product.product_id
-                const isSameOption =
-                    (item.option && product.option && item.option.name === product.option.name) ||
-                    (!item.option && !product.option)
+                const isSameProduct = (item.product_id === product.product.product_id)
 
-                if (isSameProduct && isSameOption) {
+                if (isSameProduct) {
                     found = true
                     const newQuantity = Math.min(item.quantity + product.quantity, product.product.stock)
-                    return { ...item, total_price: newQuantity*(item.option?.stems ?? 1)*product.product.dynamic_price, quantity: newQuantity }
+                    return { ...item, subtotal: newQuantity*product.product.dynamicPrice, quantity: newQuantity }
                 }
                 return item
             })
 
             if (!found) { 
-                newCart =  [...updatedCart, {product_id: product.product.product_id, total_price: Math.round(100*(product.quantity*(product.product.type==='flower' ? product.product.dynamic_price : product.product.price)*(product?.option?.stems ?? 1)),2)/100, 
-                                            quantity: product.quantity, off_price: 0, isSelected: false, ...(product?.option && { option: product.option })}]
+                newCart =  [...updatedCart, {product_id: product.product.product_id, product_name: product.product.name, quantity: product.quantity, subtotal: product.quantity*product.product.dynamicPrice, off_price: 0, isSelected: false}]
 
                 return newCart
             } 
@@ -71,12 +63,10 @@ export function CartProvider({children}) {
         if (!isAuthenticated) return
 
         const data = {
-            data: {
-                products: newCart
-            }
+            items: newCart
         }
 
-        GlobalApi.CartApi.update(cartId, data).then(resp=>{
+        BEApi.CartApi.update(cartId, data).then(resp=>{
             toast.success( `${product.product.name} is added to cart.`)
             }, ()=>{
             toast.error('Error. Please try again.')
@@ -88,18 +78,20 @@ export function CartProvider({children}) {
 
     // f
     async function fetchCart() {
+
         try {
-            const res = await BEApi.CartApi.getByUserId(user.user_id)
+            const res = await BEApi.CartApi.getByUserId(user.id)
             const item = res.data
 
+       
             // user has cart already
             if (item) {
                 const data = {
                     user_id: user.user_id,
-                    products: item.products ?? []
+                    items: item.items ?? []
                 }
                 
-                const newCart = await preprocessCart(data.products)
+                const newCart = await preprocessCart(data.items)
 
                 setCart(newCart)
                 setCartId(item._id)
@@ -109,7 +101,7 @@ export function CartProvider({children}) {
             else {
                 const data = {
                     user_id: user.user_id,
-                    products: []
+                    items: []
                 }
                 await BEApi.CartApi.create(data);
             }
@@ -195,13 +187,13 @@ export function CartProvider({children}) {
     const getTotal = useCallback(() => {
         // useCallBack to force it to update based on watching change of cart and selectedItems
         const number_of_selected_items = cart.map(item=> item.isSelected).filter(Boolean).length
-        const total = Math.round(cart.map((item) => item.isSelected? (item.total_price) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
+        const total = getRoundPrice(cart.map((item) => item.isSelected? (item.subtotal) : 0).reduce((acc, cur)=> acc+cur, 0))
 
         return [number_of_selected_items, total]
     }, [cart])
 
     const getTotalOff = () => {
-        return cart.reduce((acc, item) => acc+item.off_price,0)
+        return getRoundPrice(cart.reduce((acc, item) => acc+item.off_price,0))
     }
 
     // h
@@ -212,14 +204,16 @@ export function CartProvider({children}) {
         if (newCart.map(item => item.isSelected).filter(Boolean).length === newCart.length) setSelectedAll(true)
         else setSelectedAll(false)
 
-        getOptimizedPromotions(cart)
+        //getOptimizedPromotions(cart)
+        setCart(newCart)
     }
 
     const handleSelectedAll = () => {
         const newCart = cart.map(item => ({...item, isSelected: !selectedAll}))
         setSelectedAll(!selectedAll)
 
-        getOptimizedPromotions(newCart)
+        //getOptimizedPromotions(newCart)
+        setCart(newCart)
     }
 
     // o
@@ -237,28 +231,15 @@ export function CartProvider({children}) {
             const product = res.data
 
             // product not found or out of stock or not available => discard
-            if (!product || product.stock===0 || !product.available) {continue}
-
-            // product from db has new change => discard
-            if ((item.option && product.type!='flower') || (!item.option && product.type=='flower')) {continue}
+            if (!product || product.stock===0 || !product.available || item.quantity > product.stock) {continue}
+            const newQuantity = Math.min(product.stock, item.quantity)
             
-            // update to the current availale stock
-            let newQuantity = Math.min(product.stock, item.quantity)
-            if (item.option && product.flower_details?.options) {
-                const matchedOption = product.flower_details.options.find(option => option.name === item.option.name)
-                // no match option anymore (name or stems)
-                if (!matchedOption || matchedOption.stems != item.option.stems) {continue}
-                // out of stock
-                if (item.quantity*item.option.stems > product.stock) {continue}
-                newQuantity = item.quantity
-            }
-
             // update price
             const updatedItem = {
                 ...item,
                 product_name: product.name,
                 quantity: newQuantity,  
-                subtotal: newQuantity*(item.option?.stems ?? 1) * (product.type==='flower' ? getDynamicPrice(product.price, product.fill_stock_date):product.price),          
+                subtotal: newQuantity*product.dynamicPrice,          
                 off_price: 0, 
             }
 
@@ -278,7 +259,7 @@ export function CartProvider({children}) {
         }))
 
         const data = {
-            products: newCart
+            items: newCart
         }
 
         BEApi.CartApi.update(cartId, data).then(resp=> {          
@@ -297,7 +278,7 @@ export function CartProvider({children}) {
 
         // update to db
         const data = {
-            products: newCart
+            items: newCart
         }
 
         BEApi.CartApi.update(cartId, data).then(resp=> {  
@@ -314,20 +295,23 @@ export function CartProvider({children}) {
         // the reason why not update cart directly here is because the promotion use the old data before it get the new one
         // could use other option: useCallBack like the getTotal()
         // create new cart
+        console.log(quantity)
 
         // the caller has managed the quantity compare already
         const updatedCart = cart.map(item =>
-                item === product
-                ? { ...item, total_price: item.total_price*quantity/item.quantity , quantity: quantity }
+                item.product_id === product.product_id
+                ? { ...item, subtotal: getRoundPrice(product.dynamicPrice*quantity), quantity: quantity }
                 : item
         )
 
+        setCart(updatedCart)
         // calculate the bonus
-        getOptimizedPromotions(updatedCart)
+        //getOptimizedPromotions(updatedCart)
+        
     }
 
     return (
-        <CartContext.Provider value={{addCart, cart, closeCart, fetchCart, getOptimizedPromotions, getTotal, getTotalOff, handleSelectedAll, handleSelectedItems, isCartOpen, openCart, removeCart, setCart, selectedAll, setSelectedAll, updateCart}}>
+        <CartContext.Provider value={{addCart, cart, closeCart, fetchCart, getTotal, getTotalOff, handleSelectedAll, handleSelectedItems, isCartOpen, openCart, removeCart, setCart, selectedAll, setSelectedAll, updateCart}}>
             {children}
         </CartContext.Provider>
     )

@@ -14,23 +14,16 @@ const isDummy = 0
 
 const productPlaceHolder =   {
     product_id: "Create",
-    type: "flower",
     name: "Red Rose Bouquet",
-    price: 1.99,
+    price: 5,
+    stems: 5,
     stock: 10,
     available: true,
     description: "Assorted stems of seasonal roses.",
     image_url: [demo_1, demo, demo_2, demo_3],
-    flower_details: {
-      occasion: ["Wedding"],
-      color: ["Pink Flowers"],
-      flower_type: "Roses",
-      options: [
-        {name: "original", stock: 5, stems: 5},
-        {name: "deluxe", stock: 5, stems: 10},
-        {name: "grand", stock: 5, stems: 15}
-      ],
-    },
+    occasions: ["Wedding"],
+    colors: ["Pink Flowers"],
+    flower_type: "Roses",
   }
 
 /*

@@ -7,21 +7,22 @@ import { AnimatePresence, motion } from "framer-motion";
 import GlobalApi from '../../../../service/GlobalApi'
 import { useAuth } from '../../../context/AuthContext'
 import { toast } from 'sonner'
+import BEApi from '../../../../service/BEApi'
 
 function Personal_Info() {
-  const { user: authUser, handleGetFresh } = useAuth();
-  const user = isDummy ? users[0] : authUser;
+  const { user, handleGetFresh } = useAuth();
 
   const [name, setName] = useState(user.name)
-  const [mail, setMail] = useState(user.mail)
+  const [email, setEmail] = useState(user.email)
   const [phone, setPhone] = useState(user.phone)
   const [address, setAddress] = useState(user.address)
+  const [password, setPassword] = useState('')
 
   const mapping = {
     'name': [name, setName],
-    'mail': [mail, setMail],
+    'email': [email, setEmail],
     'phone': [phone, setPhone],
-    'password': [phone, setPhone],
+    'change password': [password, setPassword],
     'address': [address, setAddress]
   }
 
@@ -31,19 +32,17 @@ function Personal_Info() {
 
   const handleUpdate = () => {
     const data = {
-      data:{
         name,
-        mail,
+        email,
         phone,
         address
-        }
       }
 
-    GlobalApi.UserApi.update(user.user_id, data).then(resp=>{
+    BEApi.UserApi.update(user.id, data).then(resp=>{
       toast.success("Updated successfully")
       handleGetFresh()
-    }, ()=>{
-      toast.error('Error. Please try again.')
+    }, (err)=>{
+      toast.error(err.response?.data?.error || "Failed to update");
     }
     )
   };
@@ -61,12 +60,12 @@ function Personal_Info() {
         <div className='w-full lg:w-[75%] flex flex-col gap-4 bg-white px-3 md:px-6 py-6 shadow-lg border-1 border-gray-100 rounded-sm'>
           <div className='grid grid-cols-2 md:grid-cols-2 gap-4'>
             <Text_Item name={'name'} content={name} setter={handleChange}/>
-            <Text_Item name={'mail'} content={mail} setter={handleChange}/>
-            <Text_Item name={'password'} content={mail} setter={handleChange}/>
+            <Text_Item name={'email'} content={email} setter={handleChange}/>
+            <Text_Item name={'change password'} content={password} setter={handleChange}/>
             <Number_Item name={'phone'} content={phone} setterButton={false} setter={handleChange}/>
           </div>
 
-          <Text_Item name={'address'} content={address} setter={handleChange} />
+          <Text_Item name={'address'} content={address} setter={handleChange} row={2}/>
         </div>
 
         <Confirm_Box getDelete={false} saveSetter={handleUpdate}/>
