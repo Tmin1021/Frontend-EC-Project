@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 })
 
 // GET order by order_id 
-router.get("/order/:orderid", async (req, res) => {
+router.get("/:orderid", async (req, res) => {
     try {
         const order = await Order.findById(req.params.orderid)
         if (!order) return res.status(404).json({ error: `Order ${req.params.orderid} not found` })
@@ -64,6 +64,17 @@ router.put("/:id", async (req, res) => {
     res.json(updated)
   } catch (err) {
     res.status(400).json({ error: err.message })
+  }
+})
+
+// DELETE order
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleted = await Order.findByIdAndDelete(req.params.id)
+    if (!deleted) return res.status(404).json({ error: "Not found" })
+    res.json({ message: "Deleted successfully" })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
   }
 })
 

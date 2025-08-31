@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
 // GET cart by user_id
 router.get('/:userid', async (req, res) => {
     try {
-        const cart = await Cart.findById(req.params.userid)
+        const cart = await Cart.findOne({user_id: req.params.userid})
         if (!cart) return res.status(404).json({ error: `Cart of user ${req.params.id} not found` })
         res.json(cart)
     } catch (err) {

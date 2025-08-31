@@ -7,7 +7,8 @@ require("dotenv").config({path: "./.config.env"})
 // the db or colelction itself haveas built-in functions to support CRUD
 // router has GET (Retrieve); POST (Create); PUT (Update); DELETE (Delete)
 // with mongodriver: CRUD: find(); insertOne()
-// with mongoose: CRUD: mongoose.model(..., mongoose.Schema).find()/.save()/.create()/.findById()/.findByIdAndUpdate()/.findByIdAndDelete()
+// with mongoose: CRUD: mongoose.model(..., mongoose.Schema).find()/.findOne()/.save()/.create()/.findById()/.findByIdAndUpdate()/.findByIdAndDelete()
+// with find(): .sort(), .filter(), .select(), ("-attr"), .limit
 const client = new MongoClient(process.env.ATLAS_URI)
 const db_name = 'ToDoApp'
 let db

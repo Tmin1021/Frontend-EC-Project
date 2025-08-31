@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 // GET user by ID
 router.get("/:id", async (req, res) => {
   try {
-    const user = await User.findById({}, "-password")
+    const user = await User.findById(req.params.id).select("-password")
     if (!user) return res.status(404).json({ error: "User not found"})
     res.json(user)
   } catch (err) {
@@ -72,10 +72,21 @@ router.post("/login", async (req, res) => {
 
     res.json({ 
       message: "Login successful", 
-      user: { id: user._id, name: user.name, email: user.email, role: user.role } 
+      user: { id: user._id, name: user.name, email: user.email, phone: user.phone, address: user.address, role: user.role } 
     })
   } catch (err) {
     res.status(500).json({ error: err.message })
+  }
+})
+
+// UPDATE user
+router.put("/:id", async (req, res) => {
+  try {
+    const updated = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    if (!updated) return res.status(404).json({ error: "Not found" })
+    res.json(updated)
+  } catch (err) {
+    res.status(400).json({ error: err.message })
   }
 })
 
