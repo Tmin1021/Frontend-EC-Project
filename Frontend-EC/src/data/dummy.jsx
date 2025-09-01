@@ -15,7 +15,7 @@ import glowing from "/src/assets/Glowing.png";
 import honeymoon from  "/src/assets/Honeymoon.png";
 import lemonade from "/src/assets/Lemonade.png";
 import love_you_forever from "/src/assets/Love You Forever.png";
-import picnic from "/src/assets/picnic.png";
+import picnic from "/src/assets/Picnic.png";
 import strawberry_sunset from "/src/assets/Strawberry Sunset.png";
 import sugar_crush from "/src/assets/Sugar Crush.png";
 import waterlemon_candy from "/src/assets/Watermelon Candy.png";
