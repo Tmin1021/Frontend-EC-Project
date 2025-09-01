@@ -5,21 +5,23 @@ import { Minus, Plus, TicketPercent, Trash } from 'lucide-react'
 import GlobalApi from '../../../../service/GlobalApi'
 import { useNavigate } from "react-router-dom";
 import { useDynamicPricing } from '../../../context/DynamicPricingContext'
+import BEApi from '../../../../service/BEApi'
+import { getRoundPrice } from '../../../components/functions/product_functions'
 
 // product: ..., option:,  total_price: , quantity: ,off_price:
 
 const BASE_URL = 'http://localhost:1337';
 
-const Cart_Item = ({product}) => {
+const Cart_Item = ({product, handleClick}) => {
     const [productInfo, setProductInfo] = useState()
     const {getDynamicPrice} = useDynamicPricing()
 
     useEffect(() => {
         async function fetchProduct(product_id) {
             try {
-                const res = await GlobalApi.ProductApi.getById(product_id)
+                const res = await BEApi.ProductApi.getById(product_id)
                 if (res) {
-                    setProductInfo(res.data.data)
+                    setProductInfo(res.data)
                 }
             }
             catch (err) {
@@ -33,21 +35,21 @@ const Cart_Item = ({product}) => {
 
     return (
         <div className='h-[130px] w-full md:h-[120px] p-1 md:p-4 flex gap-2 md:gap-4 rounded-lg border-1 border-gray-100 hover:shadow-lg hover:shadow-gray-200 transition-all'>
-            <img src={productInfo?.image_url?.[0] ? `${BASE_URL}${productInfo.image_url[0].url}` : demo_1} className='h-full aspect-square object-cover rounded-lg'/>
+            <div onClick={handleClick}><img src={productInfo?.image_url?.length > 0 ? productInfo.image_url[0] : demo_1} className='h-full aspect-square object-cover rounded-lg'/></div>
 
             <div className='flex flex-col justify-between w-full'>
                 <div className='flex justify-between'>
                     {/* Name */}
                     <p className='font-semibold text-sm w-[150px] md:w-full'>{productInfo?.name}</p>
                     {/* Base Price */}
-                    <p className='font-extrabold text-sm'>{productInfo?.type==='flower' ? getDynamicPrice(productInfo?.price ?? 1, productInfo?.fill_stock_date) : productInfo?.price}</p>
+                    <p className='font-extrabold text-sm'>{productInfo?.dynamicPrice}</p>
                 </div>
                 
                 {/* Option */}
-                {product.option && <div className='flex gap-2'>
-                    <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{product?.option?.name}</div>
-                    <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{product?.option?.stems} stems</div>
-                </div>}
+                <div className='flex gap-2'>
+                    <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{productInfo?.condition}</div>
+                    <div className='text-xs font-semibold text-gray-500 bg-gray-100 p-1 rounded-sm w-fit'>{productInfo?.stems} stems</div>
+                </div>
 
                 <div className='flex flex-col md:flex-row justify-between gap-1'>
                     {/* Modify quantity 
@@ -64,11 +66,11 @@ const Cart_Item = ({product}) => {
                     {/* Total and Off Price and Remove button*/}
                     <div className='flex gap-2 items-center justify-between md:justify-end'>
                         <p className='font-bold text-sm'><span className='text-gray-400 font-medium'>Quantity: </span>{product?.quantity}</p>
-                        <p className='font-bold text-sm'><span className='text-gray-400 font-medium'>Total: </span>{Math.round(100*(product?.total_price-product?.off_price),2)/100}</p>
+                        <p className='font-bold text-sm'><span className='text-gray-400 font-medium'>Total: </span>{getRoundPrice(product?.subtotal - product?.off_price)}</p>
                          {product?.off_price>0 && 
                         <div className='flex items-center gap-1'>
                             <TicketPercent className='text-blue-500 w-5 h-5 hidden md:inline'/>
-                            <p className='line-through text-sm font-bold text-gray-500'>{product?.total_price}</p>
+                            <p className='line-through text-sm font-bold text-gray-500'>{product?.subtotal}</p>
                         </div>}
 
                         <div className='hidden bg-pink-500 text-white text-xs p-1 rounded-sm font-medium shadow-gray-400 shadow-sm hover:shadow-md transition-all'>Remove</div>
@@ -87,10 +89,8 @@ function CartList() {
   const navigate = useNavigate()
   
   useEffect(() => {
-        if (isDummy) return
         fetchCart()
-        //console.log(cart)
-        if (cart.filter(Boolean).length === 0) return
+        if (cart.filter(Boolean).length === 0) navigate("/")
   },[])
 
   return (
@@ -101,7 +101,7 @@ function CartList() {
         </div>
 
         {cart?.map((product, i) => (
-            product.isSelected && <Cart_Item key={i} product={product} />
+            product.isSelected && <Cart_Item key={i} product={product} handleClick={()=>navigate(`/flower/${product.product_id}`)} />
         ))}
     </div>
   )

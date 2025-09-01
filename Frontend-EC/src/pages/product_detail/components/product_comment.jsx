@@ -7,6 +7,15 @@ import { toast } from 'sonner'
 import BEApi from '../../../../service/BEApi'
 
 function Comment_Item({comment}) {
+  const {user, handleGetFresh} = useAuth()
+
+  const deleteComment = async () => {
+    BEApi.CommentApi.delete(comment._id).then(
+      () => {toast.success('Comment deleted'); handleGetFresh()},
+      () => {toast.error('Cannot delete comment. Try again later.')})
+
+  }
+
   return (
     <div className='flex flex-col gap-4 w-full p-4 rounded-lg bg-gray-50 shadow-sm hover:shadow-xl hover:bg-gray-200 transition-all'>
         {/* title */}
@@ -27,6 +36,10 @@ function Comment_Item({comment}) {
 
         {/* content */}
         <p className='text-sm font-light'> {comment.content}</p>
+        {user?.id === comment.user._id && 
+        <div className='flex justify-end' onClick={deleteComment}>
+          <p className='p-1 cursor-pointer text-red-500/80 font-semibold text-sm hover:bg-red-500/80 hover:text-white hover:rounded-xl transition-all'>Delete</p>
+        </div>} 
 
     </div>
   )

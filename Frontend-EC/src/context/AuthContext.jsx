@@ -13,14 +13,14 @@ export function AuthProvider({children}) {
     useEffect(() => {
     async function fetchUser(id) {
         try {
-        const res = await BEApi.UserApi.getById(id);
-        const data = res.data;
-        return { ...data, id: data._id };
-        } catch (err) {
-        localStorage.removeItem("user");
-        setUser(null);
-        console.error("Require new login", err);
-        return null;
+            const res = await BEApi.UserApi.getById(id);
+            const data = res.data;
+            return { ...data, id: data._id };
+            } catch (err) {
+            localStorage.removeItem("user");
+            setUser(null);
+            console.error("Require new login", err);
+            return null;
         }
     }
 
@@ -68,6 +68,31 @@ export function AuthProvider({children}) {
         }
     }
 
+    const signup = async (email, name, address, phone, password, navigate, location) => {
+        try {
+            const data = { email, name, address, phone, password, role: 'user' }
+
+            const resp = await BEApi.UserApi.create(data)
+            const newUser = {
+                id: resp?.data.userId,
+                _id: resp?.data.userId,
+                email,
+                name, 
+                address,
+                phone,
+                role: 'user'
+            }
+
+            setUser(newUser)
+            localStorage.setItem("user", JSON.stringify(newUser))
+
+            const redirectPath = location.state?.from || "/"
+            navigate(redirectPath, { replace: true })
+            handleGetFresh()
+        } catch (err) {
+            alert(err.response?.data?.error || "Could not create account now. Try again later.")
+        }
+    }
 
     const logout = (navigate) => {
         setUser(null)
@@ -76,7 +101,7 @@ export function AuthProvider({children}) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user, handleGetFresh}}>
+        <AuthContext.Provider value={{ user, login, signup, logout, isAuthenticated: !!user, handleGetFresh}}>
             {children}
         </AuthContext.Provider>
     )

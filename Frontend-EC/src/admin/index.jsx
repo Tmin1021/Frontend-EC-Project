@@ -4,7 +4,7 @@ import { AdminProvider } from '../context/AdminContext'
 import Admin_User from './components/admin_user'
 import Admin_Order from './components/admin_order'
 import { useNavigate, Outlet, useLocation } from 'react-router-dom'
-import { Menu, PanelRightOpen, User, Store, Box, LayoutDashboard, LogOut } from 'lucide-react' 
+import { Menu, PanelRightOpen, User, Store, Box, LayoutDashboard, LogOut, Fingerprint } from 'lucide-react' 
 import { AnimatePresence, motion } from 'framer-motion'
 import Dashboard from '../pages/dashboard'
 import { Toaster } from 'sonner'
@@ -17,6 +17,7 @@ function Admin() {
    "Inventory": ['inventory', <Store/>], 
    "Order": ['order', <Box/>],
    "Dashboard" : ['dashboard', <LayoutDashboard/>],
+   "Account": ['account', <Fingerprint/>],
   }
 
   const {logout} = useAuth()

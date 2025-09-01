@@ -9,7 +9,7 @@ function Search_Item({product, isSelected, closeSearch}) {
     const [isHover, setIsHover] = useState(false)
 
     return (
-        <div className={`cursor-pointer flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-white shadow-lg rounded-lg':''}`} onClick={()=> {closeSearch(); navigate(`/product/${product._id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
+        <div className={`cursor-pointer flex items-center gap-2 px-1 transition-all ${isSelected? 'bg-white shadow-lg rounded-lg':''}`} onClick={()=> {closeSearch(); navigate(`/flower/${product._id}`)}} onMouseEnter={()=>setIsHover(true)} onMouseLeave={()=>setIsHover(false)}>
             <Box className={`w-4 h-4 transition-all ${isHover||isSelected ? 'text-green-600 w-5 h-5' : 'text-green-300'}`}/>
             <p className={`py-1 font-light md:text-sm text-lg hover:font-semibold transition-all ${isSelected? 'font-semibold':""}`}>{product.name}</p>
         </div>

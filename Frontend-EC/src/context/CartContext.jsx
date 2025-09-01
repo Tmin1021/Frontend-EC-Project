@@ -3,17 +3,21 @@ import {useAuth} from "../context/AuthContext"
 import { toast } from "sonner";
 import BEApi from "../../service/BEApi";
 import { getRoundPrice } from "../components/functions/product_functions";
+import { demo_1 } from "../data/dummy";
 
 const CartContext = createContext()
 
 export function CartProvider({children}) {
     const [cart, setCart] = useState([])
     const [cartId, setCartId] = useState('')
-    const [isCartOpen, setIsCardOpen] = useState(false)
+    const [isCartOpen, setIsCartOpen] = useState(false)
     const [selectedAll, setSelectedAll] = useState(false)
-    //const [bonus, setBonus] = useState([])
     const {user, isAuthenticated} = useAuth()
     const prevIsCartOpen = useRef(isCartOpen)       // useRef avoid reload
+
+    // for flying cart
+    const [flyingImage, setFlyingImage] = useState(demo_1)
+    const [allowFly, setAllowFly] = useState(false)
 
     useEffect(() => {
         if (isAuthenticated && user?.role==='user') fetchCart()
@@ -30,84 +34,96 @@ export function CartProvider({children}) {
     }, [isCartOpen]);
 
     // a
+    // format: product = (product, quantity)
+    // 3 cases: (1) same product, different option; (2) same product, same option (reupdate that item); (3) new item
     async function addCart(product) {
-        // format: product = (product, quantity)
-        // 3 cases: (1) same product, different option; (2) same product, same option (reupdate that item); (3) new item
-        let newCart
-        setCart((prevCart) => {
-            let found = false
+    if (!isAuthenticated) return;
 
-            const updatedCart = prevCart.map(item => {
-                const isSameProduct = (item.product_id === product.product.product_id)
+    setCart((prevCart) => {
+        let found = false;
 
-                if (isSameProduct) {
-                    found = true
-                    const newQuantity = Math.min(item.quantity + product.quantity, product.product.stock)
-                    return { ...item, subtotal: newQuantity*product.product.dynamicPrice, quantity: newQuantity }
-                }
-                return item
-            })
+        const updatedCart = prevCart.map(item => {
+            const isSameProduct = (item.product_id === product.product.product_id);
 
-            if (!found) { 
-                newCart =  [...updatedCart, {product_id: product.product.product_id, product_name: product.product.name, quantity: product.quantity, subtotal: product.quantity*product.product.dynamicPrice, off_price: 0, isSelected: false}]
+            if (isSameProduct) {
+                found = true;
+                const newQuantity = Math.min(
+                    item.quantity + product.quantity,
+                    product.product.stock
+                );
+                return {
+                    ...item,
+                    quantity: newQuantity,
+                    subtotal: newQuantity * product.product.dynamicPrice,
+                };
+            }
+            return item;
+        });
 
-                return newCart
-            } 
-
-            newCart = updatedCart
-            
-            return updatedCart
-        })
-
-        // update db
-        if (!isAuthenticated) return
-
-        const data = {
-            items: newCart
+        let newCart;
+        if (!found) {
+            newCart = [
+                ...updatedCart,
+                {
+                    product_id: product.product.product_id,
+                    product_name: product.product.name,
+                    quantity: product.quantity,
+                    subtotal: product.quantity * product.product.dynamicPrice,
+                    off_price: 0,
+                    isSelected: false,
+                },];
+        } else {
+            newCart = updatedCart;
         }
 
-        BEApi.CartApi.update(cartId, data).then(resp=>{
-            toast.success( `${product.product.name} is added to cart.`)
-            }, ()=>{
-            toast.error('Error. Please try again.')
+        // update DB
+        BEApi.CartApi.update(cartId, { items: newCart })
+        .then(() => {
+            toast.success(`${product.product.name} is added to cart.`);
         })
+        .catch(() => {
+            toast.error("Error. Please try again.");
+        });
+
+        return newCart;
+    });
     }
 
     // c
-    const closeCart = () => setIsCardOpen(false)
+    const closeCart = () => setIsCartOpen(false)
 
     // f
     async function fetchCart() {
-
         try {
-            const res = await BEApi.CartApi.getByUserId(user.id)
-            const item = res.data
+            const res = await BEApi.CartApi.getByUserId(user.id);
+            const item = res.data;
 
-       
-            // user has cart already
             if (item) {
-                const data = {
-                    user_id: user.user_id,
-                    items: item.items ?? []
-                }
-                
-                const newCart = await preprocessCart(data.items)
+            const data = {
+                user_id: user.user_id,
+                items: item.items ?? []
+            };
 
-                setCart(newCart)
-                setCartId(item._id)
-                setSelectedAll(newCart.length > 0 && newCart.every(item => item.isSelected))
-            }
-            // create cart for the first-time user
-            else {
-                const data = {
-                    user_id: user.user_id,
-                    items: []
-                }
-                await BEApi.CartApi.create(data);
-            }
+            const newCart = await preprocessCart(data.items);
 
+            setCart(newCart);
+            setCartId(item._id);
+            setSelectedAll(newCart.length > 0 && newCart.every(item => item.isSelected));
+            }
         } catch (err) {
-            console.error("Failed to fetch cart or create cart", err);
+            if (err.response?.status === 404) {
+            // no cart exists → create one
+            try {
+                const data = { user_id: user.id, items: [] };
+                const created = await BEApi.CartApi.create(data);
+                setCart([]); 
+                setCartId(created.data._id);
+            } catch (createErr) {
+                console.error("Failed to create cart", createErr);
+            }
+            } else {
+                console.error("Failed to fetch cart", err);
+            }
         }
     }
 
@@ -217,7 +233,7 @@ export function CartProvider({children}) {
     }
 
     // o
-    const openCart = () =>  setIsCardOpen(true)
+    const openCart = () =>  setIsCartOpen(true)
 
     // p
     const preprocessCart = async (tmpCart) => {
@@ -311,7 +327,7 @@ export function CartProvider({children}) {
     }
 
     return (
-        <CartContext.Provider value={{addCart, cart, closeCart, fetchCart, getTotal, getTotalOff, handleSelectedAll, handleSelectedItems, isCartOpen, openCart, removeCart, setCart, selectedAll, setSelectedAll, updateCart}}>
+        <CartContext.Provider value={{addCart, allowFly, cart, closeCart, fetchCart, flyingImage, getTotal, getTotalOff, handleSelectedAll, handleSelectedItems, isCartOpen, openCart, pushCart, removeCart, setCart, selectedAll, setAllowFly, setFlyingImage, setIsCartOpen, setSelectedAll, updateCart}}>
             {children}
         </CartContext.Provider>
     )

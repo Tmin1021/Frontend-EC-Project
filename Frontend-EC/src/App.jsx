@@ -1,5 +1,4 @@
 import Header from './components/custom/header'
-import { useCart } from './context/CartContext'
 import Cart from './pages/cart'
 import Dashboard from './pages/dashboard'
 import List_Product from './pages/list_product'
@@ -10,15 +9,13 @@ import SupportPage from './pages/support'
 import Login from './pages/login'
 import Signup from './pages/signup/components/signup'
 import BlogDetail from './pages/blog_detail';
-import Search_Page from './pages/search'
 import { ProductProvider } from './context/ProductContext'
 import { ProductDetailProvider } from './context/ProductDetailContext'
 import Admin from './admin'
 import Admin_Order, { Admin_Order_Detail } from './admin/components/admin_order'
-import Admin_User from './admin/components/admin_user'
+import Admin_User, { Admin_User_Detail } from './admin/components/admin_user'
 import Admin_Inventory, { Admin_Inventory_Detail } from './admin/components/admin_inventory'
 
-import { Children } from 'react'
 import { useAuth } from './context/AuthContext'
 import Admain_Dashboard from './admin/components/admin_dashboard'
 import Checkout from './pages/checkout'
@@ -27,8 +24,6 @@ import DemoAPI from './pages/demoAPI'
 import { Toaster } from 'sonner'
 import { CheckoutProvider } from './context/CheckoutContext'
 import Inform from './pages/inform'
-import Success from './pages/inform/components/success'
-import Failure from './pages/inform/components/failure'
 
 const UserLayout = () => {
 
@@ -94,9 +89,8 @@ function App() {
 
             <Route path="/login" element={<Login/>}/>
             <Route path="/signup" element={<Signup/>}/>
-            <Route path='/checkout' element={<CheckoutProvider><Checkout/></CheckoutProvider>}/>
-            <Route path='/success' element={<Success/>}/>
-            <Route path='/failure' element={<Failure/>}/>
+            <Route path='/checkout' element={<Checkout/>}/>
+            <Route path='/inform' element={<Inform/>}/>
 
             <Route element={<ProtectFromAdmin><UserLayout/></ProtectFromAdmin>}>
               <Route path="/" element={<Dashboard/>}/>
@@ -113,6 +107,9 @@ function App() {
             <Route path="/admin" element={<ProtectAdmin><Admin/></ProtectAdmin>}>
               <Route index element={<Admin_User />} />
               <Route path="user" element={<Admin_User />} />
+              <Route path="account" element={<Admin_User_Detail isCreate={false}/>} />
+              <Route path="user/create" element={<Admin_User_Detail isCreate={true}/>} />
+              <Route path="create" element={<Admin_User_Detail isCreate={true}/>} />
               <Route path="inventory" element={<Admin_Inventory/>} />
               <Route path="inventory/:id" element={<Admin_Inventory_Detail/>} />
               <Route path="inventory/create" element={<Admin_Inventory_Detail isCreate={true}/>} />

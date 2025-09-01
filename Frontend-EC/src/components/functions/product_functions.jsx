@@ -24,7 +24,7 @@ async function fetchProducts(setter = () => {}, params) {
             const newData = res.data.products.map(item => ({
                 ...item,
                 product_id: item?._id,
-                image_url: [demo_1, demo_3],
+                image_url: item?.image_url ?? [demo_1],
             })).filter(item => item.available)
 
             setter(newData)
@@ -49,7 +49,7 @@ async function fetchSearchPreview(params) {
             const newData = res.data.products.map(item => ({
                 ...item,
                 product_id: item?._id,
-                image_url: [demo_1, demo_3],
+                image_url: item?.image_url ?? [demo_1],
             })).filter(item => item.available)
 
             return newData
@@ -75,7 +75,7 @@ async function getProduct(product_id) {
             const data = {
                 ...item,
                 product_id: item?._id,
-                image_url: [demo_1, demo_3],
+                image_url: item?.image_url ?? [demo_1],
             }
 
             return data
@@ -103,7 +103,7 @@ async function fetchProduct(product_id, setter = () => {}) {
             const data = {
                 ...item,
                 product_id: item?._id,
-                image_url: [demo_1, demo_3],
+                image_url: item?.image_url ?? [demo_1],
             }
 
             setter(data)

@@ -1,10 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import signup_wallpaper from '/src/assets/signup-wallpaper.png';
 import { AnimatePresence, motion } from "framer-motion";
+import { useAuth } from '../../../context/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+const SignUp_Item = ({title="Name", type="text", name="name", content='', placeholder="Enter your name",  handleChange=()=>{}}) => {
+  return (
+    <div>
+      <label className="block text-sm font-medium mb-1 text-gray-700">{title}</label>
+      <input
+        type={type}
+        name={name}
+        value={content}
+        onChange={(e) => handleChange(e)}
+        className="w-full px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/30 backdrop-blur-sm"
+        placeholder={placeholder}
+        required
+      />
+    </div>
+  )
+}
 
 export const Signup = () => {
+  const {signup, isAuthenticated} = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || "/personal"
+
+  // protect signup
+  useEffect(()=> {
+    if(isAuthenticated) navigate(from)
+  }, [isAuthenticated])
+
   const [form, setForm] = useState({
     email: '',
+    name: '',
+    address: '',
+    phone: '',
     password: '',
     confirmPassword: ''
   });
@@ -20,13 +52,13 @@ export const Signup = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirmPassword) {
       setError('Passwords do not match!');
       return;
     }
-    console.log(form);
+    await signup(form.email, form.name, form.address, form.phone, form.password, navigate, location)
   };
 
   return (
@@ -50,42 +82,14 @@ export const Signup = () => {
         <div className="w-full max-w-md p-6 sm:p-8 rounded-lg bg-white/40 backdrop-blur-xs border-1 border-white/20 hover:shadow-gray-50 hover:shadow-lg transition-all">
           <p className="text-3xl font-bold mb-6 text-gray-800">Sign Up</p>
           <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                className="w-full px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/30 backdrop-blur-sm"
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">Password</label>
-              <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                className="w-full px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/30 backdrop-blur-sm"
-                placeholder="Enter your password"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1 text-gray-700">Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                className="w-full px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-200 bg-white/30 backdrop-blur-sm"
-                placeholder="Confirm your password"
-                required
-              />
-            </div>
+
+            <SignUp_Item title='Email' type='email' name='email' content={form.email} placeholder='Enter your email' handleChange={handleChange}/>
+            <SignUp_Item title='Name' type='text' name='name' content={form.name} placeholder='Enter your name' handleChange={handleChange}/>
+            <SignUp_Item title='Address' type='text' name='address' content={form.address} placeholder='Enter your address' handleChange={handleChange}/>
+            <SignUp_Item title='Phone' type='tel' name='phone' content={form.phone} placeholder='Enter your phone number' handleChange={handleChange}/>
+            <SignUp_Item title='Password' type='password' name='password' content={form.password} placeholder='Enter your password' handleChange={handleChange}/>
+            <SignUp_Item title='Confirm Password' type='password' name='confirmPassword' content={form.confirmPassword} placeholder='Confirm password' handleChange={handleChange}/>
+            
             {error && (
               <div className="text-red-500 text-sm font-semibold">{error}</div>
             )}

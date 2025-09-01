@@ -5,6 +5,24 @@ import demo_3 from "/src/assets/demo_3.png";
 import demo_4 from "/src/assets/demo_4.png";
 import demo_5 from "/src/assets/demo_5.png";
 import demo_6 from "/src/assets/demo_6.png";
+import black_magic  from "/src/assets/Black Magic.png";
+import butter_cream from "/src/assets/Butter Cream.png";
+import cool_breeze from "/src/assets/Cool Breeze.png";
+import exuberance from "/src/assets/Exuberance.png";
+import flirtatious from "/src/assets/Flirtatious.png";
+import french_linen from "/src/assets/French Linen.png";
+import glowing from "/src/assets/Glowing.png";
+import honeymoon from  "/src/assets/Honeymoon.png";
+import lemonade from "/src/assets/Lemonade.png";
+import love_you_forever from "/src/assets/Love You Forever.png";
+import picnic from "/src/assets/picnic.png";
+import strawberry_sunset from "/src/assets/Strawberry Sunset.png";
+import sugar_crush from "/src/assets/Sugar Crush.png";
+import waterlemon_candy from "/src/assets/Watermelon Candy.png";
+
+export const assets = [demo_1, demo_2, demo_3, black_magic, butter_cream, cool_breeze, exuberance, flirtatious, french_linen, glowing, honeymoon, lemonade, 
+        love_you_forever, picnic, strawberry_sunset, sugar_crush, waterlemon_candy
+]
 
 // when add item to cart, store as: [product: the product itself, option: if available, quantity]
 // in cart, it will mapped into => [product_id, option, total_price, quantity, off_price]
@@ -26,6 +44,13 @@ const productPlaceHolder =   {
     flower_type: "Roses",
   }
 
+const adminPlaceHolder = {
+  name: "Admin",
+  email: "admin@example.com",
+  phone: "0901234567",
+  address: "TP.HCM",
+  password: "",
+} 
 /*
 vr7nhymdm6sy1nef87xr7124
 l23fcdml6c0cuf4mwcfas7aa
@@ -332,4 +357,4 @@ const carts = [
 ];
 
 
-export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser, productPlaceHolder, demo_1, demo_3};
+export { products, carts, comments, bonus_gifts, users, orders, order_items, isDummy, dummyUser, productPlaceHolder, adminPlaceHolder, demo_1, demo_3};

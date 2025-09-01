@@ -1,16 +1,55 @@
 import { useEffect, useState } from 'react'
 import { useAdmin } from '../../context/AdminContext'
-import { Check, ChevronDown, ChevronUp } from 'lucide-react'
+import { Check, ChevronDown, ChevronUp, Plus } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { filter_types } from '../../pages/list_product/components/list_filter'
 import { AnimatePresence, motion } from "framer-motion";
 import Admin_Universal_Item, { Admin_Universal_Page } from './admin_universal'
-import { demo_1, productPlaceHolder } from '../../data/dummy'
+import { assets, demo_1, productPlaceHolder } from '../../data/dummy'
 import { toast } from 'sonner'
 import Product_Delivery_Date from '../../pages/product_detail/components/product_delivery_date'
 import BEApi from '../../../service/BEApi'
 
-export const Text_Item = ({name='', content='', setter={}, placeholder='', rows=1, isEditable=true}) => {
+export const Text_Item = ({name='', content='', setter={}, placeholder='', isEditable=true, rows=1}) => {
+
+  return (
+    <div className='flex flex-col justify-between gap-1'>
+      <p className='font-semibold text-xs'>{name}</p>
+        
+      <textarea 
+            type='text'
+            placeholder={placeholder}
+            value={content}
+            readOnly={!isEditable}
+            required
+            onChange={(e)=>{if (typeof setter === "function") {setter(name, e.target.value.trim())}}}
+            className={`bg-white text-sm font-light border-1 border-gray-200 rounded-sm pl-4 py-2 resize-none focus:outline-purple-500 transtion-all ${isEditable? '':'border-none'}`}
+            rows={rows}
+      /> 
+    </div>
+  )
+}
+
+export const Text_Item_2 = ({name='', content='', setter={}, type='text', placeholder='', isEditable=true}) => {
+
+  return (
+    <div className='flex flex-col justify-between gap-1'>
+      <p className='font-semibold text-xs'>{name}</p>
+        
+      <input 
+            type={type}
+            placeholder={placeholder}
+            value={content}
+            readOnly={!isEditable}
+            required
+            onChange={(e)=>{if (typeof setter === "function") {setter(name, e.target.value.trim())}}}
+            className={`bg-white text-sm font-light border-1 border-gray-200 rounded-sm pl-4 py-2 resize-none focus:outline-purple-500 transtion-all ${isEditable? '':'border-none'}`}
+      /> 
+    </div>
+  )
+}
+
+const Select_Item = ({name, content, setter}) => {
   const types = ['flower', 'vase', 'ribbon']
   const [isTypeClicked, setIsTypeClicked] = useState(false)
 
@@ -18,30 +57,20 @@ export const Text_Item = ({name='', content='', setter={}, placeholder='', rows=
     <div className='flex flex-col justify-between gap-1'>
       <p className='font-semibold text-xs'>{name}</p>
 
-      {name==='type' ?
         <div className='relative flex items-center pl-4 pr-2 border-1 border-gray-300 rounded-sm resize-none h-full'>
           <div className='flex justify-between gap-4 items-center w-full' onClick={()=>setIsTypeClicked(!isTypeClicked)}>
             <p className='text-sm font-light'>{content}</p>
             <ChevronDown className={`${isTypeClicked ? 'rotate-[-180deg]' : ''} transition-all`}/>
           </div>
 
-          {isTypeClicked && <div className='absolute left-0 -bottom-20 bg-gray-100 shadow-lg rounded-lg w-[150px] py-2 px-4 overflow-auto z-50'>
+          {isTypeClicked && 
+          <div className='absolute left-0 -bottom-20 bg-gray-100 shadow-lg rounded-lg w-[150px] py-2 px-4 overflow-auto z-50'>
             {types.map((type) => (
               <div key={type} className='cursor-pointer text-sm font-light' onClick={()=>{setter(name, type); setIsTypeClicked(!isTypeClicked)}}>{type}</div>
             ))}
-
           </div>}
         </div>
-        
-      : <textarea 
-            type="text" 
-            placeholder={placeholder}
-            value={content}
-            readOnly={!isEditable}
-            onChange={(e)=>{if (typeof setter === "function") {setter(name, e.target.value)}}}
-            className={`bg-white text-sm font-light border-1 border-gray-200 rounded-sm pl-4 py-2 resize-none focus:outline-purple-500 transtion-all ${isEditable? '':'border-none'}`}
-            rows={rows}
-      /> }
+
     </div>
   )
 }
@@ -99,9 +128,38 @@ export function Confirm_Box({getSave=true, getDelete=false, saveSetter={}, delet
   )
 }
 
+export function AlbumSelect({selectedImages=[], setSelectedImages=()=>{}, isAlbumClick, setIsAlbumClick}) {
+
+  return (
+    <div className={` ${isAlbumClick? 'fixed inset-0 flex justify-center items-center bg-black/20 backdrop-blur-sm':''} transition-all`} onClick={()=>setIsAlbumClick(false)}>
+        <div className={`${isAlbumClick ? 'w-[90%] md:w-[60%] bg-white/80 max-h-[80vh] overflow-y-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 no-scrollbar':'bg-gray-100'} p-4 rounded-lg duration-500 ease-in-out`} 
+             onClick={(e)=> e.stopPropagation()}>
+
+          {!isAlbumClick && 
+          <div className='flex justify-between items-center gap-2'>
+              <div className='w-full aspect-square overflow-hidden rounded-md hover:shadow-lg hover:shadow-gray-300'>
+                <img src={selectedImages[0] ?? demo_1} className='w-full h-full object-cover'/>
+              </div>
+              <div className='rounded-md p-2 bg-gray-200' onClick={()=>setIsAlbumClick(true)}><Plus className='w-6 h-6 text-gray-700/80'/></div>
+          </div>}
+          
+          {isAlbumClick && assets.map((image) => (
+            <div key={image} className={`${selectedImages.includes(image)? 'border-3 border-purple-500/70' : ''} 
+                                        w-full aspect-square overflow-hidden rounded-md hover:shadow-lg hover:shadow-gray-300`}
+                              onClick={()=>{!selectedImages.includes(image) ? setSelectedImages([...selectedImages, image]) 
+                                            : selectedImages.length >1 && setSelectedImages(selectedImages.filter(img => img!==image))}}>
+              <img src={image} className='w-full h-full object-cover'/>
+            </div>
+          ))}
+        </div>
+    </div>
+  )
+}
+
 export const Admin_Inventory_Detail = ({isCreate=false}) => {
   const {id} = useParams()
   const { currentInventory, handleGetFresh } = useAdmin()
+  const [isAlbumClick, setIsAlbumClick] = useState(false)
   const navigate = useNavigate()
   let product = isCreate? productPlaceHolder : currentInventory.find(p => p._id === id)
 
@@ -115,11 +173,33 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
   const [flower_type, setFlowerType] = useState('')
   const [occasions, setOccasions] = useState([])
   const [colors, setColors] = useState([])
+  const [selectedImages, setSelectedImages] = useState([])
 
   const [isOpenCalendar, setIsOpenCalendar] = useState(false)
   const today = new Date()
 
   const handleUpdate = () => {
+    // Check if any field is blank
+    if (!name || !price || !stock) {
+      toast.error("All fields are required.");
+      return;
+    }
+
+    if (price < 0 || price > 50) {
+      toast.error("Price must be in range 0-50");
+      return;
+    }
+
+    if (stock < 0) {
+      toast.error("Stock cannot be negative");
+      return;
+    }
+
+    if (stems < 0) {
+      toast.error("Stems cannot be negative");
+      return;
+    }
+
     const data = {
         name,
         price,
@@ -129,7 +209,8 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
         fill_stock_date,
         flower_type,   
         occasions,   
-        colors,        
+        colors,     
+        image_url: selectedImages.map(img => img.toString())   
       }
 
     BEApi.ProductApi.update(id, data).then(resp=>{
@@ -156,7 +237,7 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
         colors,   
     }
 
-    BEApi.ProductApi.create(data).then(resp=>{
+    BEApi.ProductApi.create(data).then(()=>{
       toast.success("Created successfully")
       handleGetFresh()
       navigate('/admin/inventory', { replace: true })
@@ -167,7 +248,7 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
   };
 
   const handleDelete = () => {
-    BEApi.ProductApi.delete(id).then(resp=>{
+    BEApi.ProductApi.delete(id).then(()=>{
       toast.success("Deleted successfully")
       navigate('/admin/inventory', { replace: true })
       handleGetFresh()
@@ -189,7 +270,9 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
       setFlowerType(product.flower_type || '')
       setOccasions(product.occasions || [])
       setColors(product.colors || [])
+      setSelectedImages(product.image_url || [demo_1])
     }
+    console.log(product)
   }, [product])
 
   if (!product && !isCreate) return <div>ERROR</div>
@@ -240,7 +323,8 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
         </div>
 
         <div className='grid grid-cols-2 gap-1 md:gap-4'>
-          <Text_Item name={'description'} content={description} setter={handleEdit} rows={3} placeholder='Assorted stems of seasonal roses.'/>
+          <Text_Item name={'description'} content={description} setter={handleEdit} rows={4} placeholder='Assorted stems of seasonal roses.'/>
+          <AlbumSelect selectedImages={selectedImages} setSelectedImages={setSelectedImages} isAlbumClick={isAlbumClick} setIsAlbumClick={setIsAlbumClick}/>
         </div>
 
       {/* Flower Option && Detail */}

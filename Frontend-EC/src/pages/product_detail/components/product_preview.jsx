@@ -48,7 +48,7 @@ function Product_Preview({images}) {
         style={{ transform: `translateX(-${index * 100}%)` }}>
         {images.map((img, i) => (
           <div key={i} className='min-w-full aspect-square'>
-              <img src={demo_1} className="w-full h-full object-cover rounded-lg"/>
+              <img src={img} className="w-full h-full object-cover rounded-lg"/>
           </div>
         ))}
       </div>

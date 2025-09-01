@@ -134,8 +134,6 @@ export function Admin_Universal_Setting() {
   return (
     <div className='relative w-[32px] aspect-square flex items-center justify-center bg-white border-1 border-gray-300 rounded-sm hover:bg-gray-100 transition-all'>
       <Settings className='w-4 h-4 text-gray-700'/>
-
-      
     </div>
   )
 }

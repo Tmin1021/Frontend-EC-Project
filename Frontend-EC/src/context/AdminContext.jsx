@@ -43,7 +43,7 @@ export function AdminProvider({children}) {
                     const newData = res.data.products.map((item, i) => ({
                         ...item,
                         norm_id: i,
-                        image_url: [demo_1, demo_3],
+                        image_url: item?.image_url ?? [demo_1],
                     }))
 
                     setInitialInventory(newData)

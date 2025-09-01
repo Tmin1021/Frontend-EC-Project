@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 import Cart_Sum from "./components/cart_sum";
 import Cart_Empty from "./components/cart_empty";
 import { Trash2, Check } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
 
 const Check_Box = ({isSelected, onHandleSelectedItems}) => {
 
@@ -49,48 +48,44 @@ function Cart() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-150 flex flex-col items-center justify-center bg-black/30 backdrop-blur-xs" onClick={closeCart}>
+            className="fixed inset-0 z-150 flex flex-col items-end md:items-center justify-center bg-black/30 backdrop-blur-xs" onClick={closeCart}>
         
         <motion.div initial={isSmallScreen ? { x: "100%"} : { scale: 0.7, opacity: 0 }}
                     animate={isSmallScreen ? { x: 0} : { scale: 1, opacity: 1 }}
                     exit={isSmallScreen ? { x: "100%" } : { scale: 0.9, opacity: 0 }}
                     transition={{ duration: 0.4, ease: "easeInOut"}}
                     style={isSmallScreen ? { originX: 0.5, originY: 0.5 } : undefined}
-                    className="absolute right-0 md:relative w-5/6 h-screen md:w-[500px] md:h-[500px] p-2 md:p-4 bg-white/80 backdrop-blur-lg rounded-lg overflow-y-auto no-scrollbar" onClick={(e) =>e .stopPropagation()}>
-          <div>
+                    className="relative w-5/6 h-screen md:w-[500px] md:h-[500px] p-1 md:p-2 bg-white/80 backdrop-blur-lg rounded-l-lg md:rounded-lg overflow-y-auto no-scrollbar" onClick={(e) =>e .stopPropagation()}>
             {isCartEmpty ? 
             <Cart_Empty/>
             : 
-            <div className='relative w-full h-full'>
-                <div className='w-full overflow-y-auto'>
-                  {/* Delete tab */}
-                    <div className="w-full flex items-center justify-between pb-4">
-                      <div className='flex items-center justify-between gap-4'>
-                        <Check_Box isSelected={selectedAll} onHandleSelectedItems={handleSelectedAll} />
-                        <p className='text-gray-500/80 font-semibold'>All</p>
-                      </div>
+            <div className='w-full overflow-y-auto'>
+              {/* Delete tab */}
+                <div className="w-full flex items-center justify-between pb-4">
+                  <div className='flex items-center justify-between gap-4'>
+                    <Check_Box isSelected={selectedAll} onHandleSelectedItems={handleSelectedAll} />
+                    <p className='text-gray-500/80 font-semibold'>All</p>
+                  </div>
 
-                      <div onClick={removeCart}><Trash2 /></div>
-                    </div>
+                  <div onClick={removeCart}><Trash2 /></div>
+                </div>
 
-                  {/* Items */}
-                  <div className='flex flex-col gap-4 md:gap-2'>
-                  {cart.map((item, i) => (
-                    <div key={i} className='flex items-center justify-start gap-1 md:gap-2'>
-                      <Check_Box isSelected={item.isSelected} onHandleSelectedItems={()=>handleSelectedItems(i)}/>
-                      <Cart_Item key={i} product={item} />
-                    </div>))}
-                  </div>      
+              {/* Items */}
+              <div className='flex flex-col gap-4 md:gap-2'>
+              {cart.map((item, i) => (
+                <div key={i} className='flex items-center justify-start gap-1 md:gap-2'>
+                  <Check_Box isSelected={item.isSelected} onHandleSelectedItems={()=>handleSelectedItems(i)}/>
+                  <Cart_Item key={i} product={item} />
+                </div>))}
+              </div>      
 
-                  {/* Dummy space} */}
-                  <div className='h-[40px]'></div>
-               </div>
-
-                {/* Sum */}
-                {!isCartEmpty && <Cart_Sum/>}
+              {/* Dummy space} */}
+              <div className='h-[80px]'></div>
+                          
             </div>}
 
-          </div>
+            {/* Sum */}                            
+            <Cart_Sum/>
         </motion.div>
 
       </motion.div>}
@@ -99,4 +94,4 @@ function Cart() {
   );
 }
 
-export default Cart;
+export default Cart;                

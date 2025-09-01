@@ -7,6 +7,29 @@ import Search_Space from "./search";
 import { useAuth } from '../../context/AuthContext'
 import Chatbot from './chatbot';
 
+export const Fly_To_Cart = () => {
+    const {flyingImage, allowFly, setAllowFly} = useCart()
+
+    //const curWidth = window.innerWidth/2.8
+
+    return (
+        <AnimatePresence>
+        {allowFly && 
+        <motion.div initial={{ opacity: 0, x: -180, y: 180 }}
+                    animate={{ opacity: 1, x: 0, y: 0 }}
+                    exit={{ opacity: 0, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    onAnimationComplete={() => {
+                        if (allowFly) setAllowFly(false);
+                    }}
+                    className='absolute'>
+            <img src={flyingImage} className='w-[35px] shadow-lg aspect-square object-fit rounded-sm'/>
+        </motion.div>}
+        </AnimatePresence>
+    )
+}
+
+
 function Header_Item({name, onHandleClick}) {
     const {cart} = useCart()
 
@@ -23,6 +46,7 @@ function Header_Item({name, onHandleClick}) {
                     {cart.length >0 && <div className='absolute -right-2 -top-2 flex justify-center items-center w-[20px] aspect-square bg-purple-500 text-xs text-white font-semibold rounded-full shadow-gray-500 shadow-md'>
                         {cart.length}
                     </div>}
+                    <Fly_To_Cart/>
                 </div>,
     }
 

@@ -7,46 +7,27 @@ import { useCart } from '../../context/CartContext';
 import Product_Comment from './components/product_comment';
 import Product_Quantity from './components/product_quantity';
 import { useProductDetail } from '../../context/ProductDetailContext';
-import GlobalApi from '../../../service/GlobalApi';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDynamicPricing } from '../../context/DynamicPricingContext';
 import Product_Banner from './components/product_banner';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const Fly_To_Cart = ({image, isAllowed, setIsAllowed}) => {
-
-    const curWidth = window.innerWidth/2.8
-
-    return (
-        <AnimatePresence>
-        {isAllowed && 
-        <motion.div initial={{ opacity: 0, x: 0, y: 0 }}
-                    animate={{ opacity: 1, x: curWidth, y: -500 }}
-                    exit={{ opacity: 0, y: -500 }}
-                    transition={{ duration: 0.6 }}
-                    onAnimationComplete={() => {
-                        if (isAllowed) setIsAllowed(false);
-                    }}
-                    className='absolute'>
-            <img src={image} className='w-[30px] aspect-square object-fit rounded-sm'/>
-        </motion.div>}
-        </AnimatePresence>
-    )
-}
-
-
 function Product_Detail() {
  const {product, quantity, isLoading} = useProductDetail()
  const {condition_mapping} = useDynamicPricing()
- const {addCart} = useCart()
- const [isAllowed, setIsAllowed] = useState(false)
+ const {addCart, setFlyingImage, setAllowFly} = useCart()
  const {isAuthenticated} = useAuth()
  const navigate = useNavigate()
 
  if (isLoading) return <p className="text-lg text-gray-500">Loading product...</p>
 
  if (!product) return <p className='text-2xl md:text-3xl font-bold'><span className='line-through'>404</span>, <span className= 'text-pink-500'>product not found</span>.</p>
+
+ const handleFlyCart = (image) => {
+    setFlyingImage(image)
+    setAllowFly(true)
+ } 
 
  return (
     <AnimatePresence>
@@ -81,9 +62,8 @@ function Product_Detail() {
                 {/* Add to cart */}
                 <div className={`relative ${!product.stock ? 'bg-gray-500/80 hover:bg-gray-500 pointer-events-none': 'bg-green-800/80 hover:bg-green-800'} min-w-[300px] h-[50px] flex items-center rounded-sm hover:shadow-lg shadow-gray-300 transition-all`} 
                      onClick={() => {if (!isAuthenticated) {navigate("/login", { state: { from: location.pathname }, replace: true })}
-                                     else {setIsAllowed(true); addCart({ product: product,  quantity: quantity})}}}>
+                                     else {handleFlyCart(product.image_url[0]); addCart({ product: product,  quantity: quantity})}}}>
                     <p className='font-semibold text-lg text-white mx-auto cursor-pointer'>{!product.stock ? 'OUT OF STOCK' : "ADD TO CART"}</p>
-                    <Fly_To_Cart image={product.image_url[0]} isAllowed={isAllowed} setIsAllowed={setIsAllowed}/>
                 </div>
 
             </div>

@@ -20,8 +20,8 @@ const Cart_Item = ({product}) => {
     }, [])
 
     return (
-        <div className='h-[100px] w-full md:h-[120px] px-1 md:p-4 flex gap-4 md:gap-2'>
-            <img src={productInfo?.image_url?.[0]} className='h-full aspect-square object-cover rounded-sm'/>
+        <div className='h-[100px] w-full md:h-[120px] px-1 md:p-4 flex gap-2'>
+            <img src={productInfo?.image_url?.[0]} className='h-full p-2 md:p-0 aspect-square object-cover rounded-sm'/>
 
             <div className='flex flex-col justify-between w-full'>
                 {/* Name and Option*/}
@@ -39,7 +39,7 @@ const Cart_Item = ({product}) => {
 
                 {/* Price */}
                 <div className='flex items-center gap-4 w-full'>
-                    <p className='text-red-500/80 font-semibold text-lg w-[50px] md:w-[80px]'>${product.subtotal}</p>
+                    <p className='text-red-400/90 font-semibold tetx-base md:text-lg w-[50px] md:w-[80px]'>${getRoundPrice(product.subtotal)}</p>
                     {productInfo?.dynamicPrice < productInfo?.price && <div className='flex items-center gap-1'>
                         <TicketPercent className='text-blue-500'/>
                         <p className='line-through text-sm font-medium text-gray-500 '>${getRoundPrice(product.quantity*productInfo?.price)}</p>
@@ -51,12 +51,12 @@ const Cart_Item = ({product}) => {
                 <div className=' w-[50%] md:w-[25%] flex items-center justify-between gap-2 cursor-pointer'>
                     <div className={`p-1 rounded-full ${product.quantity===1 ? 'bg-gray-200/40 pointer-events-none':'bg-gray-200/80'} backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all`}
                          onClick={()=>updateCart(productInfo, Math.max(1, product.quantity-1))}>
-                        <Minus className='w-4 h-4 text-gray-700' />
+                        <Minus className='w-3 h-3 md:w-4 md:h-4 text-gray-700' />
                     </div>
                     <p className='text-lg pr-1 font-semibold'> {product.quantity} </p>
                     <div className={`p-1 rounded-full ${product.quantity===productInfo?.stock ? 'bg-gray-200/40 pointer-events-none':'bg-green-400/60'} backdrop-blur-xs shadow-gray-400 shadow-sm hover:shadow-md transition-all`}
                          onClick={()=>updateCart(productInfo, Math.min(productInfo?.stock, product.quantity+1))}>
-                        <Plus className='w-4 h-4 text-white' />
+                        <Plus className='w-3 h-3 md:w-4 md:h-4 text-white' />
                     </div>
                 </div>
             </div>
