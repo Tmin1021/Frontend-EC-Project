@@ -4,13 +4,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-vnpay": "nodemon src/vnpay.js"
+    "vnpay": "nodemon src/vnpay.js",
+    "start": "nodemon src/payos.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@payos/node": "^2.0.2",
     "body-parser": "^2.2.0",
     "config": "^4.1.0",
     "cors": "^2.8.5",
