@@ -82,7 +82,13 @@ router.post("/login", async (req, res) => {
 // UPDATE user
 router.put("/:id", async (req, res) => {
   try {
-    const updated = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    const updateData = { ...req.body }
+    if (updateData.password) {
+      const salt = await bcrypt.genSalt(10)
+      updateData.password = await bcrypt.hash(updateData.password, salt)
+    }
+
+    const updated = await User.findByIdAndUpdate(req.params.id, updateData, { new: true })
     if (!updated) return res.status(404).json({ error: "Not found" })
     res.json(updated)
   } catch (err) {

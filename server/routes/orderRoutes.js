@@ -1,6 +1,8 @@
 const express = require("express")
 const router = express.Router()
 const Order = require("../models/orderModel")
+const Product = require("../models/productModel");
+const mongoose = require('mongoose');
 
 // GET all orders
 router.get("/", async (req, res) => {
@@ -45,7 +47,8 @@ router.get("/product/:productid", async (req, res) => {
     }
 })
 
-// CREATE order
+// CREATE order (need lock and rollback)
+/*
 router.post("/", async (req, res) => {
     try {
         const order = new Order(req.body)
@@ -54,7 +57,54 @@ router.post("/", async (req, res) => {
     } catch (err) {
         res.status(400).json({ error: err.message })
     }
+})*/
+
+router.post("/", async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { items } = req.body;
+
+    // 1. Create the order in a transaction
+    const [order] = await Order.create([req.body], { session });
+
+    // 2. Update stock & sales for each product
+    for (const item of items) {
+      const product = await Product.findById(item.product_id).session(session);
+
+      if (!product) {
+        throw new Error(`Product not found: ${item.product_id}`);
+      }
+
+      // check stock availability
+      if (product.stock < item.quantity) {
+        throw new Error(`Insufficient stock for ${product.name}`);
+      }
+
+      await Product.findByIdAndUpdate(
+        item.product_id,
+        {
+          $inc: { stock: -item.quantity, sales_count: item.quantity }
+        },
+        { session }
+      );
+    }
+
+    // 3. Commit transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(201).json(order);
+  } catch (err) {
+    // rollback
+    await session.abortTransaction();
+    session.endSession();
+
+    res.status(400).json({ error: err.message });
+  }
 })
+
 
 // UPDATE order
 router.put("/:id", async (req, res) => {

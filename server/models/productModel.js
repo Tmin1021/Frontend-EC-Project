@@ -7,7 +7,7 @@ const productSchema = new mongoose.Schema({
   available: { type: Boolean, default: true },
   stems: { type: Number, required: true},
   description: String,
-  image_url: String,
+  image_url: [String],
   fill_stock_date: Date,
   sales_count: { type: Number, default: 0 },
 
