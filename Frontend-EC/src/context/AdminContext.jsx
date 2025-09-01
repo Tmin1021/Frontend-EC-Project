@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import {demo_1, demo_3 } from "../data/dummy";
 import BEApi from "../../service/BEApi";
-import { getFormatDate } from "../components/functions/product_functions";
+import { getFormatDate, refreshImageURL } from "../components/functions/product_functions";
 
 const AdminContext = createContext()
 
@@ -43,7 +43,7 @@ export function AdminProvider({children}) {
                     const newData = res.data.products.map((item, i) => ({
                         ...item,
                         norm_id: i,
-                        image_url: item?.image_url ?? [demo_1],
+                        image_url: refreshImageURL(item?.image_url),
                     }))
 
                     setInitialInventory(newData)

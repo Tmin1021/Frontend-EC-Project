@@ -40,7 +40,7 @@ function Order_Summary() {
 
         <div className='border-1 w-full border-gray-100'></div>
 
-        <Order_Summary_Item title='Total' price={subtotal+shipping-off_price}/>
+        <Order_Summary_Item title='Total' price={getRoundPrice(subtotal+shipping-off_price)}/>
 
         <div className='cursor-pointer flex justify-center bg-pink-700/70 rounded-lg text-white font-semibold text-sm w-full p-2 hover:shadow-lg hover:shadow-gray-300 hover:bg-pink-700/90 transition-all'
              onClick={()=>{createOrder(getRoundPrice(subtotal+shipping-off_price), getRoundPrice(off_price), navigate)}}>

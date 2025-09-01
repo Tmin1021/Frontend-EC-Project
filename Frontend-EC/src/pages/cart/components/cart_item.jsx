@@ -2,7 +2,7 @@ import { TicketPercent, Truck, Plus, Minus } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useCart } from '../../../context/CartContext'
 import GlobalApi from '../../../../service/GlobalApi'
-import { demo_1, isDummy } from '../../../data/dummy'
+import { assets, demo_1, isDummy } from '../../../data/dummy'
 import { fetchProduct, getRoundPrice } from '../../../components/functions/product_functions'
 import { useDynamicPricing } from '../../../context/DynamicPricingContext'
 
@@ -21,7 +21,7 @@ const Cart_Item = ({product}) => {
 
     return (
         <div className='h-[100px] w-full md:h-[120px] px-1 md:p-4 flex gap-2'>
-            <img src={productInfo?.image_url?.[0]} className='h-full p-2 md:p-0 aspect-square object-cover rounded-sm'/>
+            <img src={assets[productInfo?.image_url?.[0]] ?? demo_1} className='h-full p-2 md:p-0 aspect-square object-cover rounded-sm'/>
 
             <div className='flex flex-col justify-between w-full'>
                 {/* Name and Option*/}

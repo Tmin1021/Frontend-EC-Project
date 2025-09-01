@@ -1,7 +1,7 @@
 import BEApi from "../../../service/BEApi"
-import {demo_1, demo_3} from "../../data/dummy"
+import {assets, demo_1, demo_3} from "../../data/dummy"
 
-function createProductParams({search='', flowerTypes=[], occasions=[], colors=[], sort='Best Seller', page=1, limit=12} = {}) {
+function createProductParams({search='', flowerTypes=[], occasions=[], colors=[], sort='Best Sellers', page=1, limit=12} = {}) {
     return new URLSearchParams({
                 search,
                 flowerTypes: flowerTypes.join(","),
@@ -24,7 +24,7 @@ async function fetchProducts(setter = () => {}, params) {
             const newData = res.data.products.map(item => ({
                 ...item,
                 product_id: item?._id,
-                image_url: item?.image_url ?? [demo_1],
+                image_url: refreshImageURL(item?.image_url),
             })).filter(item => item.available)
 
             setter(newData)
@@ -49,7 +49,7 @@ async function fetchSearchPreview(params) {
             const newData = res.data.products.map(item => ({
                 ...item,
                 product_id: item?._id,
-                image_url: item?.image_url ?? [demo_1],
+                image_url: refreshImageURL(item?.image_url),
             })).filter(item => item.available)
 
             return newData
@@ -75,7 +75,7 @@ async function getProduct(product_id) {
             const data = {
                 ...item,
                 product_id: item?._id,
-                image_url: item?.image_url ?? [demo_1],
+                image_url: refreshImageURL(item?.image_url),
             }
 
             return data
@@ -103,7 +103,7 @@ async function fetchProduct(product_id, setter = () => {}) {
             const data = {
                 ...item,
                 product_id: item?._id,
-                image_url: item?.image_url ?? [demo_1],
+                image_url: refreshImageURL(item?.image_url),
             }
 
             setter(data)
@@ -161,4 +161,11 @@ const getFormatDate = (str) => {
   return (date+ ' at ' +cleanTime.slice(0,8))
 }
 
-export {fetchProducts, fetchProduct, fetchSearchPreview, createProductParams, getRoundPrice, getFormatDate, fetchComment, getProduct}
+const refreshImageURL = (image_url=[]) => {
+    if (!image_url) return [demo_1]
+    const keys = Object.keys(assets)
+    const newImageURL = image_url.filter(image => keys.includes(image))
+    return newImageURL.length > 0 ? newImageURL : [keys[0]]
+}
+
+export {fetchProducts, fetchProduct, fetchSearchPreview, createProductParams, getRoundPrice, getFormatDate, fetchComment, getProduct, refreshImageURL}

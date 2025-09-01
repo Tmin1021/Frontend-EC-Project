@@ -34,7 +34,7 @@ const Dashboard_Bestselling = () => {
             {/* Button */}
             <div className="w-[250px] min-w-[80px] flex items-center justify-between mx-auto cursor-pointer bg-green-700 hover:bg-green-900 transition-all py-2 px-6 rounded-sm" 
                  onClick={()=>navigate("/flower")}>
-                <p className="text-sm md:text-base mx-auto font-bold text-white">SHOP ALL BEST SELLERS</p>
+                <p className="text-sm md:text-base mx-auto font-bold text-white">SHOP ALL BOUQUETS</p>
             </div>
           </div>
       )

@@ -20,9 +20,9 @@ import strawberry_sunset from "/src/assets/Strawberry Sunset.png";
 import sugar_crush from "/src/assets/Sugar Crush.png";
 import waterlemon_candy from "/src/assets/Watermelon Candy.png";
 
-export const assets = [demo_1, demo_2, demo_3, black_magic, butter_cream, cool_breeze, exuberance, flirtatious, french_linen, glowing, honeymoon, lemonade, 
+export const assets = {demo_1, demo_2, demo_3, black_magic, butter_cream, cool_breeze, exuberance, flirtatious, french_linen, glowing, honeymoon, lemonade, 
         love_you_forever, picnic, strawberry_sunset, sugar_crush, waterlemon_candy
-]
+}
 
 // when add item to cart, store as: [product: the product itself, option: if available, quantity]
 // in cart, it will mapped into => [product_id, option, total_price, quantity, off_price]

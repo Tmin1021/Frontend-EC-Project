@@ -1,7 +1,7 @@
 import axios from "axios"
 import { createProductParams } from "../src/components/functions/product_functions"
 
-const API_BASE = "https://frontend-ec-project-server.onrender.com"
+const API_BASE = "http://localhost:5001" //"https://frontend-ec-project-server.onrender.com"
 //"http://localhost:5001"
 
 const axiosClient = axios.create({

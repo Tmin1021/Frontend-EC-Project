@@ -138,16 +138,16 @@ export function AlbumSelect({selectedImages=[], setSelectedImages=()=>{}, isAlbu
           {!isAlbumClick && 
           <div className='flex justify-between items-center gap-2'>
               <div className='w-full aspect-square overflow-hidden rounded-md hover:shadow-lg hover:shadow-gray-300'>
-                <img src={selectedImages[0] ?? demo_1} className='w-full h-full object-cover'/>
+                <img src={selectedImages[0] ? assets[selectedImages[0]] : demo_1} className='w-full h-full object-cover'/>
               </div>
               <div className='rounded-md p-2 bg-gray-200' onClick={()=>setIsAlbumClick(true)}><Plus className='w-6 h-6 text-gray-700/80'/></div>
           </div>}
           
-          {isAlbumClick && assets.map((image) => (
-            <div key={image} className={`${selectedImages.includes(image)? 'border-3 border-purple-500/70' : ''} 
+          {isAlbumClick && Object.entries(assets).map(([key, image]) => (
+            <div key={key} className={`${selectedImages.includes(key)? 'border-3 border-purple-500/70' : ''} 
                                         w-full aspect-square overflow-hidden rounded-md hover:shadow-lg hover:shadow-gray-300`}
-                              onClick={()=>{!selectedImages.includes(image) ? setSelectedImages([...selectedImages, image]) 
-                                            : selectedImages.length >1 && setSelectedImages(selectedImages.filter(img => img!==image))}}>
+                              onClick={()=>{!selectedImages.includes(key) ? setSelectedImages([...selectedImages, key]) 
+                                            : selectedImages.length >1 && setSelectedImages(selectedImages.filter(img => img!==key))}}>
               <img src={image} className='w-full h-full object-cover'/>
             </div>
           ))}
@@ -210,7 +210,7 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
         flower_type,   
         occasions,   
         colors,     
-        image_url: selectedImages.map(img => img.toString())   
+        image_url: selectedImages 
       }
 
     BEApi.ProductApi.update(id, data).then(resp=>{

@@ -2,9 +2,11 @@ import { useEffect, useRef } from "react";
 import { toast, Toaster } from "sonner";
 import BEApi from "../../../service/BEApi";
 import { createProductParams } from "../../components/functions/product_functions";
+import { assets } from "../../data/dummy";
 
 function DemoAPI() {
   const fileInputRef = useRef(null);
+  console.log(Object.keys(assets))
 
   useEffect(() => {
     async function fetchUsers() {

@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {useState} from 'react'
-import { demo_1 } from '../../../data/dummy';
+import { assets, demo_1 } from '../../../data/dummy';
 
 function Preview_Slide({images, setIndex}) {
   const [indexSlide, setIndexSlide] = useState(0)
@@ -24,7 +24,7 @@ function Preview_Slide({images, setIndex}) {
         <div className="flex gap-2 duration-500 ease-in-out" style={{ transform: `translateX(-${indexSlide/3 * 100}%)` }}>
         {images.map((image, i) => (
           <div key ={i} className="flex-none" onClick={(()=>setIndex(i))}>
-            <img src={image} className='w-[60px] h-[60px] object-cover'/>
+            <img src={assets[image] ?? demo_1} className='w-[60px] h-[60px] object-cover'/>
           </div>
         ))}
         </div>
@@ -48,7 +48,7 @@ function Product_Preview({images}) {
         style={{ transform: `translateX(-${index * 100}%)` }}>
         {images.map((img, i) => (
           <div key={i} className='min-w-full aspect-square'>
-              <img src={img} className="w-full h-full object-cover rounded-lg"/>
+              <img src={assets[img] ?? demo_1} className="w-full h-full object-cover rounded-lg"/>
           </div>
         ))}
       </div>

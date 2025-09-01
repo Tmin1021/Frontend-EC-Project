@@ -1,4 +1,5 @@
 import { useDynamicPricing } from "../../context/DynamicPricingContext"
+import { assets, demo_1 } from "../../data/dummy"
 
 export default function Product_Item({product}) {
     const {condition_mapping} = useDynamicPricing()
@@ -6,7 +7,7 @@ export default function Product_Item({product}) {
     return (
         <div className="min-w-[170px] bg-white dark:bg-black">
             <div className='w-full aspect-square overflow-hidden rounded-sm'>
-                <img src={product?.image_url[0]} className='w-full h-full object-cover'/>
+                <img src={assets[product?.image_url?.[0]] ?? demo_1} className='w-full h-full object-cover'/>
             </div>
 
             <p className='font-bold text-sm md:text-base pt-3'>{product.name}</p>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { demo_1, demo_3 } from '../../../data/dummy'
+import { assets, demo_1, demo_3 } from '../../../data/dummy'
 import { Admin_Universal_Order_Status, order_status } from '../../../admin/components/admin_universal'
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -94,7 +94,7 @@ export const Order_Product_Preview = () => {
                 <div key={i}>
                     {/* Preview Item */}
                     <div className='h-[100px] w-full md:h-[120px] flex gap-4 mb-2'>
-                        <img src={item.product_info.image_url[0]} className='h-full aspect-square object-cover rounded-sm'/>
+                        <img src={assets[item.product_info?.image_url[0]] ?? demo_1} className='h-full aspect-square object-cover rounded-sm'/>
 
                         <div className='flex flex-col justify-between w-full'>
                             {/* Name */}
@@ -135,7 +135,7 @@ const Order_Preview = ({order}) => {
         <div className='flex flex-col gap-2 p-2 md:p-4 bg-white dark:bg-black shadow-sm rounded-sm hover:shadow-lg hover:rounded-lg transition-all'>
             {/* Preview Item */}
             <div className='h-[100px] w-full md:h-[120px] flex gap-4'>
-                <img src={candidateProduct?.image_url?.length > 0 ? candidateProduct.image_url[0] : demo_1} className='h-full aspect-square object-cover rounded-sm'/>
+                <img src={candidateProduct?.image_url?.length > 0 ? assets[candidateProduct.image_url[0]] : demo_1} className='h-full aspect-square object-cover rounded-sm'/>
 
                 <div className='flex flex-col justify-between w-full'>
                     <div className='w-full flex justify-between'>

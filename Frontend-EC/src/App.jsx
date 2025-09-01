@@ -24,6 +24,7 @@ import DemoAPI from './pages/demoAPI'
 import { Toaster } from 'sonner'
 import { CheckoutProvider } from './context/CheckoutContext'
 import Inform from './pages/inform'
+import Accessories from './pages/acessories'
 
 const UserLayout = () => {
 
@@ -96,6 +97,7 @@ function App() {
               <Route path="/" element={<Dashboard/>}/>
               <Route path="/flower" element={<ProductProvider><List_Product/></ProductProvider>}/>
               <Route path="/flower/:id" element={<ProductDetailProvider ><Product_Detail/></ProductDetailProvider>}/>
+              <Route path="/accessory" element={<Accessories/>}/>
               <Route path="/personal" element={<ProtectPersonal><Personal page={"Information"}/></ProtectPersonal>}/>
               <Route path="/personal/order" element={<ProtectPersonal><Personal page={"Orders"}/></ProtectPersonal>}/>
               <Route path="/personal/order/:orderID" element={<Order_Product_Preview/>}/>
