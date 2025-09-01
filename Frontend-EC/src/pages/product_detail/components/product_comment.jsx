@@ -1,38 +1,45 @@
 import React, { useEffect, useState } from 'react'
-import { isDummy, users } from '../../../data/dummy'
-import { ChevronLeft, ChevronRight, Send, Star } from 'lucide-react'
+import { Send, Star } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useProductDetail } from '../../../context/ProductDetailContext'
 import { useAuth } from '../../../context/AuthContext';
-import GlobalApi from '../../../../service/GlobalApi'
 import { toast } from 'sonner'
+import BEApi from '../../../../service/BEApi'
 
-
-// find return the first matching or undefined, while filter return an array
 function Comment_Item({comment}) {
+  const {user, handleGetFresh} = useAuth()
+
+  const deleteComment = async () => {
+    BEApi.CommentApi.delete(comment._id).then(
+      () => {toast.success('Comment deleted'); handleGetFresh()},
+      () => {toast.error('Cannot delete comment. Try again later.')})
+
+  }
+
   return (
-    <div className='flex flex-col gap-4 w-full p-4 rounded-lg bg-gray-100 shadow-sm hover:shadow-xl hover:bg-gray-200 transition-all'>
+    <div className='flex flex-col gap-4 w-full p-4 rounded-lg bg-gray-50 shadow-sm hover:shadow-xl hover:bg-gray-200 transition-all'>
         {/* title */}
         <div className="flex justify-between">
-            <p className='font-bold'>{comment.title}</p>
-            <p>{comment.date}</p>
+            <p className='text-md font-semibold'>{comment.user.name}</p>
+            <p className='text-gray-400'>{comment.createdAt.slice(0,10)}</p>
+        </div>
+
+        {/* rating */}
+        <div className='flex'>
+          {Array.from({length: comment.star}).map((_,i) => (
+            <Star key={i} fill="currentColor" className="text-yellow-500" />
+          ))}
+          {Array.from({length: 5-comment.star}).map((_, i) => (
+            <Star key={i} className="text-yellow-500" />
+          ))}
         </div>
 
         {/* content */}
-        <div className="flex justify-between">
-            <div className='flex'>
-              {Array.from({length: comment.star}).map((_,i) => (
-                <Star key={i} fill="currentColor" className="text-yellow-500" />
-              ))}
-              {Array.from({length: 5-comment.star}).map((_, i) => (
-                <Star key={i} className="text-yellow-500" />
-              ))}
-            </div>
-
-            <p>{isDummy? users.find(user => user.user_id === comment.user_id)?.name : comment.user_id}</p>
-        </div>
-        
         <p className='text-sm font-light'> {comment.content}</p>
+        {user?.id === comment.user._id && 
+        <div className='flex justify-end' onClick={deleteComment}>
+          <p className='p-1 cursor-pointer text-red-500/80 font-semibold text-sm hover:bg-red-500/80 hover:text-white hover:rounded-xl transition-all'>Delete</p>
+        </div>} 
 
     </div>
   )
@@ -83,20 +90,16 @@ function Product_Comment() {
   const [commentContent, setCommentContent] = useState('')
   const [whichStar, setWhichStar] = useState(4)
   const {product} = useProductDetail()
-  const mapping = ["Awful", "Bad", "Normal", "Good", "Excellent"]
 
-  const handleCommit = () => {
+  const handleCommit = async () => {
     const data = {
-      data: {
-        user_id: user.user_id,
-        product_id: product.product_id,
-        title: mapping[whichStar],
+        user_id: user.id,
+        product_id: product._id,
         content: commentContent,
-        date: new Date().toISOString().split("T")[0],
         star: whichStar+1,
-      }
     }
-    GlobalApi.CommentApi.create(data).then(resp=> {
+    BEApi.CommentApi.create(data).then(resp=> {
+      // refresh 
       setCommentContent('')
       setWhichStar(4)
       toast.success('Thank for your sharing.')
@@ -123,7 +126,7 @@ function Product_Comment() {
   }, [])
 
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='my-4 flex flex-col gap-4'>
         <p className='font-bold text-2xl'>Ratings & Reviews</p>
         {/* Rating */}
         <Product_Rating comments={comments}/>

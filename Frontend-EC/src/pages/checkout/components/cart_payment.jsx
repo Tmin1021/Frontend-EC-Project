@@ -6,12 +6,12 @@ const Payment_Item = ({title, color, description , whichPayment, setter}) => {
     return (
         <div className={`flex flex-col border-1 border-gray-100 rounded-lg p-4 transition-all ${whichPayment===title ? 'bg-teal-50 outline-2 outline-teal-400' : ''}`}
              onClick={setter}>
-            <div className='flex gap-2'>
+            <div className='cursor-pointer flex gap-2'>
                 <p className='text-sm font-bold'>{title}</p>
                 <div className={`${title==='Cash on Delivery' ? 'hidden' : ''} text-xs text-white font-bold ${color} px-1 rounded-sm flex items-center`}>{title}</div>
             </div>
 
-            <p className='text-xs text-gray-400 font-semibold'>{description}</p>
+            <p className='cursor-pointer text-xs text-gray-400 font-semibold'>{description}</p>
         </div>
     )
 }
@@ -19,9 +19,8 @@ const Payment_Item = ({title, color, description , whichPayment, setter}) => {
 function Cart_Payment() {
     const mapping = {
         'Cash on Delivery': ['bg-white', 'Pay when you receive'],
-        'PayPal': ['bg-blue-600/70', 'Secure online payment'],
         'VNPAY': ['bg-blue-600/70', 'Vietnamese payment gateway'],
-        'MoMo': ['bg-pink-700/70', 'Mobile Wallet payment'],
+
     }
 
     const {whichPayment, setwhichPayment} = useCheckout()
@@ -41,3 +40,6 @@ function Cart_Payment() {
 }
 
 export default Cart_Payment
+
+// 'MoMo': ['bg-pink-700/70', 'Mobile Wallet payment'],
+//  'PayPal': ['bg-blue-600/70', 'Secure online payment'],

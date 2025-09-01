@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import {useState} from 'react'
+import { demo_1 } from '../../../data/dummy';
 
 function Preview_Slide({images, setIndex}) {
   const [indexSlide, setIndexSlide] = useState(0)

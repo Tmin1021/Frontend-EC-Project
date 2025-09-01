@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import {isDummy, orders, products, users } from "../data/dummy";
-import GlobalApi from '../../service/GlobalApi';
+import {demo_1, demo_3 } from "../data/dummy";
+import BEApi from "../../service/BEApi";
+import { getFormatDate } from "../components/functions/product_functions";
 
 const AdminContext = createContext()
-const BASE_URL = 'http://localhost:1337';
 
 export function AdminProvider({children}) {
     const [initialUser, setInitialUser] = useState([])
@@ -21,17 +21,14 @@ export function AdminProvider({children}) {
     useEffect(()=> {
         async function fetchUsers() {
             try {
-                const res = await GlobalApi.UserApi.getAll()
-                const data = res.data.data.map(item => ({
+                const res = await BEApi.UserApi.getAll()
+                const data = res.data.map((item, i) => ({
                     ...item,
-                    user_id: item?.documentId,
-                    norm_id: item?.id,
-
+                    norm_id: i,
                 }))
 
-                const new_data = data.filter(item => item.role==='user')
-                setInitialUser(new_data)
-                setCurrentUser(new_data)
+                setInitialUser(data)
+                setCurrentUser(data)
             } catch (err) {
                 console.error("Failed to fetch users", err);
             }
@@ -39,17 +36,20 @@ export function AdminProvider({children}) {
 
         async function fetchProducts() {
             try {
-                const res = await GlobalApi.ProductApi.getAll()
-                const data = res.data.data.map(item => ({
-                    ...item,
-                    product_id: item?.documentId,
-                    norm_id: item?.id,
-                    image_url: item.image_url.map(image => BASE_URL+image.url),
-            }))
-            
-            setInitialInventory(data)
-            setCurrentInventory(data)
+                const res = await BEApi.ProductApi.getAll()
+                const data = res.data.products
+                
+                if (data && data.length>0) {
+                    const newData = res.data.products.map((item, i) => ({
+                        ...item,
+                        norm_id: i,
+                        image_url: item?.image_url ?? [demo_1],
+                    }))
 
+                    setInitialInventory(newData)
+                    setCurrentInventory(newData)
+                }
+            
             } catch (err) {
                 console.error("Failed to fetch products", err);
             }
@@ -57,13 +57,11 @@ export function AdminProvider({children}) {
 
         async function fetchOrders() {
             try {
-                const res = await GlobalApi.OrderApi.getAll()
-                const data = res.data.data.map(item => ({
+                const res = await BEApi.OrderApi.getAll()
+                const data = res.data.map((item, i) => ({
                     ...item,
-                    order_id: item?.documentId,
-                    norm_id: item?.id,
-                    order_date: GlobalApi.formatDate(item?.order_date),
-                    status: item?.order_status,
+                    norm_id: i,
+                    order_date: getFormatDate(item?.createdAt)
                 }))
 
                 setInitialOrder(data)
@@ -73,20 +71,9 @@ export function AdminProvider({children}) {
             }
         }
 
-        function fetchDummy() {
-            setInitialUser(users)
-            setInitialInventory(products)
-            setInitialOrder(orders)
-            setCurrentUser(users)
-            setCurrentInventory(products)
-            setCurrentOrder(orders)
-        }
-
-        if (isDummy) fetchDummy() 
-        else {
-            fetchUsers()
-            fetchProducts()
-            fetchOrders()}
+        fetchUsers()
+        fetchProducts()
+        fetchOrders()
     }, [getFresh])
 
     // for inventory

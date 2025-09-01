@@ -5,7 +5,6 @@ import Dashboard_Why from "./components/dashboard_why";
 import Dashboard_Blog from "./components/dashborad_blog";
 import Dashboard_Recommend from "./components/dashboard_recommend";
 import ShopInfo from "../support/components/shop_info";
-
 import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
 
 function Dashboard_Section({children, y_position}) {

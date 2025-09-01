@@ -1,141 +1,109 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { order_items, isDummy, products, demo_1 } from '../data/dummy'
-import GlobalApi from '../../service/GlobalApi';
-import { useParams } from 'react-router-dom';
-import { useDynamicPricing } from './DynamicPricingContext';
+import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom'
+import { createProductParams, fetchProducts, fetchSearchPreview } from '../components/functions/product_functions';
+import BEApi from '../../service/BEApi';
 
 const ProductContext = createContext()
-const BASE_URL = 'http://localhost:1337';
 
-export function ProductProvider({children, isSearch=false, searchResult=[]}) {
-  const {type} = useParams()
-  const {getDynamicPrice, getCondition, getDiffDays} = useDynamicPricing()
-
-  const [currentProduct, setCurrentProduct] = useState([]);
-  const [initialProduct, setInitialProduct] = useState([]);
+export function ProductProvider({children, isSearchPage=false}) {
+  const navigate = useNavigate()
+  // const {getDynamicPrice, getCondition, getDiffDays} = useDynamicPricing()
+  const [products, setProducts] = useState([]);
   const [currentValues, setCurrentValues] = useState({
-    "Flower Type": new Set([""]),
-    "Occassions": new Set([""]),
-    "Colors": new Set([""]),
-    "Sort": new Set([""]),
-  });
+    "Flower Type": new Set(),
+    "Occassions": new Set(),
+    "Colors": new Set(),
+    "Sort": "Best Seller",
+    "Search": '',
+    "Page": 1
+  })
+
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const search = params.get('search') || ''   // automatically decodes URL encoding
+  const flowerTypes = params.get('flowerTypes')?.split(",") || []
+  const occasions = params.get('occasions')?.split(",") || []
+  const colors = params.get('colors')?.split(",") || []
+  const sort = params.get('sort') || ''
+  const page = parseInt(params.get('page') || "1")
 
   useEffect(() => {
-    // Skip API fetch — just use passed-in search results
-    if (isSearch) return;
+    // for search
+    const productParams = createProductParams({search: search, flowerTypes: flowerTypes, occasions: occasions, colors: colors, sort: sort, page: page})
+    fetchProducts(setProducts, productParams)
     
-    async function fetchProducts() {
-    try {
-    const res = await GlobalApi.ProductApi.getAll()
-    const data = res.data.data.map(item => ({
-        ...item,
-        product_id: item?.documentId,
-        dynamic_price: item?.type==='flower' ? getDynamicPrice(item?.price, item?.fill_stock_date) : item?.price,
-        condition: getCondition(item?.fill_stock_date),
-        image_url: item?.image_url?.map(image => BASE_URL+image.url) ?? demo_1,
-    }))
+    setCurrentValues({
+      "Flower Type": new Set(flowerTypes),
+      "Occassions": new Set(occasions),
+      "Colors": new Set(colors),
+      "Sort": sort,
+      "Search": search,
+      "Page": page
+   })
 
+  }, [location, isSearchPage]) 
 
-    let new_data = data
-    if (type==='flower') new_data=data.filter(item=>item.type==='flower')
-    else if (type==='accessory') new_data=data.filter(item=>item.type!=='flower')
-    setCurrentProduct(new_data.filter(item => item.available))
-    setInitialProduct(data)
-    } catch (err) {
-        console.error("Failed to fetch products", err);
-    }
-  }
-
-    function fetchDummy() {
-      let new_data = products
-      if (type==='flower') new_data=products.filter(item=>item.type==='flower')
-      else if (type==='accessory') new_data=products.filter(item=>item.type!=='flower')
-      setCurrentProduct(new_data)
-      setInitialProduct(products)
-    } 
-    
-    isDummy? fetchDummy() : fetchProducts()
-  }, [type]) 
-
-  useEffect(() => {
-    if (isSearch) {
-      setCurrentProduct(searchResult)
-      setInitialProduct(searchResult)
-    }
-  }, [searchResult]) 
-
-  // function
   // f 
-  const filterProduct = ({type, value, isChosen}) => { 
-    let new_product = initialProduct.filter(product => product.type==='flower')
-    let new_values = currentValues
+  const filterProduct = ({name, value, isChosen}) => { 
+    let newValues =    {...currentValues, [name]: new Set(currentValues[name])}
+    isChosen ? newValues[name].add(value) : newValues[name].delete(value)
 
-    isChosen ? new_values[type].add(value) : new_values[type].delete(value)
-    new_product = (new_values["Flower Type"]?.size!==1 ? initialProduct.filter((product) => new_values["Flower Type"].has(product.flower_details?.flower_type)) : new_product)
-    new_product = (new_values["Occassions"]?.size!==1 ? new_product.filter((product) => product.flower_details?.occasion.some(i=>new_values["Occassions"].has(i))): new_product)
-    new_product = (new_values["Colors"]?.size!==1? new_product.filter((product) => product.flower_details?.color.some(i=>new_values["Colors"].has(i))) : new_product)
+    const productParams = createProductParams({search: newValues.Search, flowerTypes: [...newValues['Flower Type']], occasions: [...newValues.Occassions], colors: [...newValues.Colors], sort: newValues.Sort})
+    //fetchProducts(setProducts, productParams)
     
-    setCurrentValues(new_values)
-    setCurrentProduct(new_product.filter(product => product.type==='flower'))
+    navigate(`/${isSearchPage ? "search":"flower"}?${productParams.toString()}`, {replace: true})
+    setCurrentValues(newValues)
   }
 
   // g
+  /*
   const getTotalSold = product_id => {
     return order_items.reduce((total, order_item) => {
       const product = order_item.products.find(p => p.product_id === product_id)
       return product ? total + product.quantity : total
     }, 0)
-  }
+  }*/
 
   // s
-  const searchPrediction = (input) => {
-    const predictions = []
+  const searchPrediction = async (input) => {
+    const res = await BEApi.ProductApi.getPrediction(input)
+    const predictions = res.data
+    const newPredictions = []
 
-    initialProduct.forEach((product) => {
+    predictions.forEach((product) => {
       const name = product.name;
       const index = name.toLowerCase().indexOf(input.toLowerCase())
 
       if (index !== -1 && index + input.length < name.length) {
         const remaining = name.slice(index + input.length)
-        if (name.toLowerCase().split(" ").includes((input+remaining).split(" ")[0])) {predictions.push(remaining)}
+        if (name.toLowerCase().split(" ").includes((input+remaining).split(" ")[0])) {newPredictions.push(remaining)}
       }
     })
 
-    return predictions[0]
+    return newPredictions[0]
   }
 
-  const searchProduct = (input) => {
-    const new_input = input.toLowerCase()
-    const matches = [
-      ...initialProduct.filter(product => product.name.toLowerCase().includes(new_input)),
-      ...initialProduct.filter(product => product.type === 'flower' && product.flower_details.flower_type.toLowerCase().includes(new_input)),
-      ...initialProduct.filter(product => product.type === 'flower' && product.flower_details.occasion.some(i => i.toLowerCase().includes(new_input))),
-      ...initialProduct.filter(product => product.type === 'flower' && product.flower_details.color.some(i => i.toLowerCase().includes(new_input))),
-    ]
+  const searchProduct = async (input='') => {
+    const productParams = createProductParams({search: input})
+    const searchResults = await fetchSearchPreview(productParams)
 
-    const uniqueMatches = Array.from(new Set(matches))
-    return uniqueMatches
+    return searchResults
   }
 
   const sortProduct = value => {
-    let new_product = currentProduct.slice()
-    if (value === 'Price: Low to High') new_product = new_product.sort((a,b) => a.price-b.price)
-    else if (value === 'Price: High to Low') new_product = new_product.sort((a,b) => b.price-a.price)
-    else if (value === 'Condition: New to Old') new_product = new_product.sort((a,b) => getDiffDays(a.fill_stock_date)-getDiffDays(b.fill_stock_date)) 
-    else if (value === 'Condition: Old to New') new_product = new_product.sort((a,b) => getDiffDays(b.fill_stock_date)-getDiffDays(a.fill_stock_date)) 
+    let newValues = currentValues
+    newValues["Sort"] = value
 
-    else if (value === 'Best Sellers') {
-      new_product = new_product
-        .map(product => [product, getTotalSold(product.product_id)])
-        .sort((a, b) => b[1] - a[1])
-        .map(pair => pair[0])
-    }
+    const productParams = createProductParams({search: newValues.Search, flowerTypes: [...newValues['Flower Type']], occasions: [...newValues.Occassions], colors: [...newValues.Colors], sort: newValues.Sort})
+    fetchProducts(setProducts, productParams)   
 
-    setCurrentProduct([...new_product])
+    navigate(`/${isSearchPage ? "search":"flower"}?${productParams.toString()}`, {replace: true})
+    setCurrentValues(newValues)
   }
 
   return (
-    <ProductContext.Provider value={{currentProduct, initialProduct, setCurrentProduct, filterProduct, searchProduct, searchPrediction, sortProduct}}>
+    <ProductContext.Provider value={{search, products, filterProduct, searchProduct, searchPrediction, sortProduct, isSearchPage}}>
       {children}
     </ProductContext.Provider>
   )

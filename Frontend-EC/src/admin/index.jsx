@@ -3,8 +3,8 @@ import Admin_Inventory from './components/admin_inventory'
 import { AdminProvider } from '../context/AdminContext'
 import Admin_User from './components/admin_user'
 import Admin_Order from './components/admin_order'
-import { useNavigate, Outlet } from 'react-router-dom'
-import { Menu, PanelRightOpen, User, Store, Box, LayoutDashboard, LogOut } from 'lucide-react' 
+import { useNavigate, Outlet, useLocation } from 'react-router-dom'
+import { Menu, PanelRightOpen, User, Store, Box, LayoutDashboard, LogOut, Fingerprint } from 'lucide-react' 
 import { AnimatePresence, motion } from 'framer-motion'
 import Dashboard from '../pages/dashboard'
 import { Toaster } from 'sonner'
@@ -17,22 +17,20 @@ function Admin() {
    "Inventory": ['inventory', <Store/>], 
    "Order": ['order', <Box/>],
    "Dashboard" : ['dashboard', <LayoutDashboard/>],
+   "Account": ['account', <Fingerprint/>],
   }
 
   const {logout} = useAuth()
+  const location = useLocation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [isChosen, setIsChosen] = useState([true, false, false])
+  const [activeKey, setActiveKey] = useState(Object.keys(managements).find(
+    (key) => location.pathname.includes(managements[key][0].toLowerCase())
+  ) || "User")
 
   const handleNavigate = (path) => {
     navigate(path)
     setMenuOpen(false)
-  }
-
-  const handleChosen = index => {
-    const newIsChosen = Array(isChosen.length).fill(false)
-    newIsChosen[index] = true
-    setIsChosen(newIsChosen)
   }
 
   return (
@@ -78,8 +76,8 @@ function Admin() {
         <div className="relative flex flex-col w-full px-2">
           <p className="font-bold pl-4 pb-4 text-3xl">Admin</p>
 
-          {Object.keys(managements).map((key, i) => (
-            <div key={key} onClick={() => {handleNavigate(managements[key][0]); handleChosen(i)}} className={`${isChosen[i]? 'bg-purple-100 text-purple-600 font-semibold shadow-lg py-4':'py-3'} rounded-lg flex items-center gap-2 px-4 cursor-pointer transition-all text-lg`}>
+          {Object.keys(managements).map((key) => (
+            <div key={key} onClick={() => {handleNavigate(managements[key][0]); setActiveKey(key)}} className={`${activeKey===key? 'bg-purple-100 text-purple-600 font-semibold shadow-lg py-4':'py-3'} rounded-lg flex items-center gap-2 px-4 cursor-pointer transition-all text-lg`}>
               {managements[key][1]}
               {key}
             </div>

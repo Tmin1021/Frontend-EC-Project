@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useAdmin } from '../../context/AdminContext'
-import { isDummy, order_items, orders, users } from '../../data/dummy'
 import { useNavigate, useParams } from 'react-router-dom'
 import Admin_Universal_Item, {Admin_Universal_Page, order_status} from './admin_universal'
-import GlobalApi from '../../../service/GlobalApi'
 import { Text_Item } from './admin_inventory'
 import { toast } from 'sonner'
+import BEApi from '../../../service/BEApi'
+import { getFormatDate } from '../../components/functions/product_functions'
 
 
 export const Admin_Order_Detail = () => {
@@ -13,22 +13,17 @@ export const Admin_Order_Detail = () => {
 
   const {id} = useParams()
   const {handleGetFresh} = useAdmin()
-  const [orderItem, setOrderItem] = useState(null)
   const [orderInfo, setOrderInfo] = useState(null)
   const [userInfo, setUserInfo] = useState(null)
 
   const handleUpdate = (new_status) => {
-    const data = {
-      data:{
-        order_status: new_status
-      }
-    };
+    const data = {status: new_status}
 
-    GlobalApi.OrderApi.update(id, data).then(resp=>{
+    BEApi.OrderApi.update(id, data).then(resp=>{
       toast.success("Updated successfully")
       handleGetFresh()
-    }, ()=>{
-      toast.error('Error. Please try again.')
+    }, (err)=>{
+      toast.error(err.response?.data?.error || "Failed to update status");
     }
     )
   };
@@ -36,80 +31,51 @@ export const Admin_Order_Detail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. Order Item
-        const resItem = await GlobalApi.OrderItemApi.getByOrderId(id);
-        const item = resItem.data.data;
-        console.log(item[0].products)
-
-        if (item) {
-          setOrderItem({
-            order_id: item[0]?.order_id,
-            products: item[0]?.products
-          });
-        }
-
-        // 2. Order Info
-        const resOrder = await GlobalApi.OrderApi.getById(id);
-        const order = resOrder.data.data;
+        // 1. Order Info
+        const resOrder = await BEApi.OrderApi.getById(id)
+        const order = resOrder.data
 
         if (order) {
           const orderData = {
-            order_id: order?.documentId,
-            user_id: order?.user_id,
-            order_date: GlobalApi.formatDate(order?.order_date),
-            total_amount: order?.total_amount,
-            off_price: order?.off_price,
-            shipping_address: order?.shipping_address,
-            status: order?.order_status
-          };
-          setOrderInfo(orderData);
+            ...order,
+            order_id: order?._id}
 
-        // 3. User Info
-        if (order.user_id) {
-          const resUser = await GlobalApi.UserApi.getById(order.user_id);
-          const user = resUser.data.data;
-          if (user) {
-            setUserInfo({
-              user_id: user?.documentId,
-              name: user?.name,
-              mail: user?.mail,
-              phone: user?.phone,
-              address: user?.address,
-              role: user?.role
-            });
+          setOrderInfo(orderData)
+
+          // 2. User Info
+          if (order.user_id) {
+            const resUser = await BEApi.UserApi.getById(order.user_id);
+            const user = resUser.data;
+            if (user) {
+              setUserInfo({
+                ...user,
+                user_id: user._id})
+            }
           }
-        }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+        } 
       }
-    };
+      catch (error) {
+        console.error("Error fetching data", error);
+      }
+    }
+      fetchData()
 
-      if (isDummy) {
-        const new_orderItem = order_items.find(order_item => order_item.order_id.toString() === id)
-        const new_orderInfo = orders.find(order => order.order_id.toString()===id)
-        const new_userInfo = users.find(user=>user.user_id===new_orderInfo?.user_id)
-
-        setOrderItem(new_orderItem)
-        setOrderInfo(new_orderInfo)
-        setUserInfo(new_userInfo)
-      }
-      else {
-        fetchData()
-      }
   }, [id])
 
-  if (!orderItem) return <p>ERROR</p>
+  if (!orderInfo) return <p>ERROR</p>
 
-  const info = {name: ["Name", userInfo?.name], mail: ["Mail", userInfo?.mail], phone: ['Phone', userInfo?.phone], 
-                order_date: ['Order date', orderInfo?.order_date], shipping_address: ['Shipping address', orderInfo?.shipping_address], 
-                order_message: ['Message', orderInfo?.shipping_address]}
+  const info = {name: ["Name", userInfo?.name], mail: ["Mail", userInfo?.email], phone: ['Phone', userInfo?.phone], 
+                order_date: ['Order date', getFormatDate(orderInfo?.createdAt)], shipping_address: ['Shipping address', orderInfo?.shipping_address], 
+                order_message: ['Message', orderInfo?.message ?? ""]}
 
   return (
     <div className='flex flex-col gap-4 py-4 px-2 md:px-8'>    
       <div className='flex justify-between'>
         {/* Title */}
-        <p className='font-semibold text-3xl'>Order #<span className="font-bold text-purple-600">{id}</span></p>
+        <div className='flex flex-col '>
+          <p className='font-semibold text-sm md:text-xl'>Order #<span className="font-bold text-purple-600">{id}</span></p>
+          <p className='font-semibold text-sm md:text-xl'>User #<span className="font-bold text-purple-600">{userInfo?._id}</span></p>
+        </div>
         <div className='lg:hidden flex items-center justify-center p-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.status}</div>
       </div>  
 
@@ -141,7 +107,7 @@ export const Admin_Order_Detail = () => {
       {/* Items */}
       <div className='flex flex-col gap-4 bg-white px-8 py-4 shadow-lg border-1 border-gray-100 rounded-sm min-w-lg overflow-auto'>
         <Admin_Universal_Item key={-1} which={'order_item'} header={1}/>
-        {orderItem.products.map((item) => (
+        {orderInfo?.items.map((item) => (
           <Admin_Universal_Item key={item.product_id} which={'order_item'} info={item}/>
         ))}
         <Admin_Universal_Item key={1} which={'order_item_lastRow'} info={orderInfo} lastRow={true}/>

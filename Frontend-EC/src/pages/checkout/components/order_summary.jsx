@@ -4,6 +4,8 @@ import { Gift } from 'lucide-react'
 import {createPayment} from '../../../../service/Payment'
 import { useCart } from '../../../context/CartContext'
 import { useCheckout } from '../../../context/CheckoutContext'
+import { getRoundPrice } from '../../../components/functions/product_functions'
+import { useNavigate } from 'react-router-dom'
 
 const Order_Summary_Item = ({title, price}) => {
     
@@ -22,6 +24,7 @@ function Order_Summary() {
   const subtotal = getTotal()[1]
   const off_price = getTotalOff()
   const shipping = subtotal > 50 ? 0 : 10
+  const navigate = useNavigate()
 
   return (
     <div className='flex flex-col gap-2 bg-white px-2 md:px-4 py-4 shadow-sm border-1 border-gray-100 rounded-lg'>
@@ -39,8 +42,8 @@ function Order_Summary() {
 
         <Order_Summary_Item title='Total' price={subtotal+shipping-off_price}/>
 
-        <div className='flex justify-center bg-pink-700/70 rounded-lg text-white font-semibold text-sm w-full p-2 hover:shadow-lg hover:shadow-gray-300 hover:bg-pink-700/90 transition-all'
-             onClick={()=>{createOrder(subtotal+shipping-off_price, off_price)}}>
+        <div className='cursor-pointer flex justify-center bg-pink-700/70 rounded-lg text-white font-semibold text-sm w-full p-2 hover:shadow-lg hover:shadow-gray-300 hover:bg-pink-700/90 transition-all'
+             onClick={()=>{createOrder(getRoundPrice(subtotal+shipping-off_price), getRoundPrice(off_price), navigate)}}>
             Order
         </div>
     </div>
