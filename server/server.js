@@ -9,7 +9,7 @@ const orderRoutes = require("./routes/orderRoutes")
 const commentRoutes = require("./routes/commentRoutes")
 
 const app = express()
-const PORT = 5001
+const PORT = process.env.PORT || 5001
 
 // middleware
 app.use(cors())
