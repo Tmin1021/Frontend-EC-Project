@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { assets, products as catalogProducts, demo_1 } from '../../../data/dummy';
+//import { assets, products as catalogProducts, demo_1 } from '../../../data/dummy';
 import { useNavigate } from 'react-router-dom'; // keep if you’ll link to product pages later
 import {useAuth} from '../../../context/AuthContext'
 import { fetchProductsUrgent } from '../../../components/functions/product_functions';
+import { assets } from '../../../data/dummy';
+
 
 function Product_Items({ product, titleOverride }) {
   if (!product) return null;
@@ -57,7 +59,7 @@ const SECTION_SUBTITLES = {
 const extractColor = (obj, product) => {
   let c = (obj?.color || '').trim();
   if (!c && Array.isArray(product?.colors) && product.colors.length) {
-    c = String(product.flower_details.color[0]).trim();
+    c = String(product.colors[0]).trim();
   }
   if (!c) return '';
   // remove trailing "Flower"/"Flowers" (e.g., "White Flowers" -> "White")
@@ -70,29 +72,33 @@ const Dashboard_Recommend = () => {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
   const {user} = useAuth()
-  const [products, setProducts] = useState([])
-  //console.log(user)
+  const [catalogProducts, setCatalogProducts] = useState([])
+  const [productsById, setProductsById] = useState([])
 
-  const productsById = useMemo(() => {
+  const handleProducts = (products = []) => {
     const map = {};
-    (catalogProducts || []).forEach(p => {
+    (products || []).forEach(p => {
       const key = p?.product_id != null ? String(p.product_id) : '';
       if (key) map[key] = p;
     });
-    return map;
-  }, []);
+    setProductsById(map);
+  };
 
   useEffect(() => {
-
-    const fetchRecs = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setErr(null);
+
+        // Fetch urgent catalog first
+        await fetchProductsUrgent({ setter: setCatalogProducts, setter2: handleProducts });
+
+        // Then fetch recommendations
         const res = await fetch(`${API_URL}?user_id=${encodeURIComponent(user?.id ?? user?._id)}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        // Expecting: [historyObj, crossObj, occasionObj, bestObj]
         setItems(Array.isArray(data) ? data : []);
+
       } catch (e) {
         setErr(String(e));
         setItems([]);
@@ -101,9 +107,9 @@ const Dashboard_Recommend = () => {
       }
     };
 
-    fetchProductsUrgent({setter:setProducts}).finally(() => fetchRecs());
+    fetchData();
+  }, [user]);
 
-  }, []);
 
   if (!loading && err) return null;
 
