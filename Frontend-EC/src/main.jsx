@@ -6,6 +6,7 @@ import { CartProvider } from './context/CartContext.jsx'
 import { AdminProvider } from './context/AdminContext.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { DynamicPricingProvider } from './context/DynamicPricingContext.jsx'
+import { CheckoutProvider } from './context/CheckoutContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -13,7 +14,9 @@ createRoot(document.getElementById('root')).render(
       <DynamicPricingProvider>
         <CartProvider>
           <AdminProvider>
-            <App />
+            <CheckoutProvider>
+              <App />
+            </CheckoutProvider>
           </AdminProvider>
         </CartProvider>
       </DynamicPricingProvider>

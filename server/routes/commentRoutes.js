@@ -1,0 +1,48 @@
+const express = require("express")
+const router = express.Router()
+const Comment = require("../models/commentModel")
+
+// GET all comments
+router.get("/", async (req, res) => {
+    try {
+        const comments = await Comment.find()
+        res.json(comments)
+    } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+})
+
+// GET all comments by product_id
+router.get("/product/:productid", async (req, res) => {
+    try {
+        const comments = await Comment.find({product_id: req.params.productid})
+        if (!comments.length) return res.status(404).json({ error: `No comments for product ${req.params.productid}`})
+        res.json(comments)
+    } catch (err) {
+        res.status(500).json({ error: err.message })
+    }
+})
+
+// CREATE comment
+router.post("/", async (req, res) => {
+    try {
+        const newComment = new Comment(req.body)
+        const saved = await newComment.save()
+        res.status(201).json(saved)
+    } catch (err) {
+        res.status(400).json({ error: err.message })
+    }
+})
+
+// DELETE comment
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleted = await Comment.findByIdAndDelete(req.params.id)
+    if (!deleted) return res.status(404).json({ error: "Not found" })
+    res.json({ message: "Deleted successfully" })
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
+module.exports = router

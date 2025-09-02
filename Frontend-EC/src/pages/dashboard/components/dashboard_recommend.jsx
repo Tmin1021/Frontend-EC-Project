@@ -1,19 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { products as catalogProducts } from '../../../data/dummy';
+import { assets, products as catalogProducts, demo_1 } from '../../../data/dummy';
 import { useNavigate } from 'react-router-dom'; // keep if you’ll link to product pages later
+import {useAuth} from '../../../context/AuthContext'
+import { fetchProductsUrgent } from '../../../components/functions/product_functions';
 
 function Product_Items({ product, titleOverride }) {
   if (!product) return null;
 
   const navigate = useNavigate();
-  const findStartingPrice = () => {
-    if (product.type === 'flower' && product?.flower_details?.options?.length) {
-      return Math.min(...product.flower_details.options.map(o => Number(o.price) || 0));
-    }
-    return Number(product.price) || 0;
-  };
 
-  const img = product?.image_url?.[0];
+  const img = assets[product?.image_url?.[0]] ?? demo_1;
   const nameToShow = titleOverride || product.name;
 
   return (
@@ -39,7 +35,7 @@ function Product_Items({ product, titleOverride }) {
       </p>
 
       <p className="font-light text-sm py-1">
-        from <span className="font-bold text-lg">${findStartingPrice()}</span>
+        from <span className="font-bold text-lg">${product.dynamicPrice}</span>
       </p>
     </div>
   );
@@ -47,7 +43,7 @@ function Product_Items({ product, titleOverride }) {
 
 // ---- Config ----
 const API_URL = 'https://rec-server-app.onrender.com/api/v1/recommend';
-const DUMMY_USER_ID = 2; // Replace real user ID when integrate
+//const DUMMY_USER_ID = 2; // Replace real user ID when integrate
 
 const SECTION_LABELS = ['History', 'Cross-sell', 'Occasion', 'Best'];
 
@@ -60,7 +56,7 @@ const SECTION_SUBTITLES = {
 
 const extractColor = (obj, product) => {
   let c = (obj?.color || '').trim();
-  if (!c && Array.isArray(product?.flower_details?.color) && product.flower_details.color.length) {
+  if (!c && Array.isArray(product?.colors) && product.colors.length) {
     c = String(product.flower_details.color[0]).trim();
   }
   if (!c) return '';
@@ -73,7 +69,9 @@ const Dashboard_Recommend = () => {
   const [items, setItems] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
-  // const navigate = useNavigate();
+  const {user} = useAuth()
+  const [products, setProducts] = useState([])
+  //console.log(user)
 
   const productsById = useMemo(() => {
     const map = {};
@@ -85,11 +83,12 @@ const Dashboard_Recommend = () => {
   }, []);
 
   useEffect(() => {
+
     const fetchRecs = async () => {
       try {
         setLoading(true);
         setErr(null);
-        const res = await fetch(`${API_URL}?user_id=${encodeURIComponent(DUMMY_USER_ID)}`);
+        const res = await fetch(`${API_URL}?user_id=${encodeURIComponent(user?.id ?? user?._id)}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         // Expecting: [historyObj, crossObj, occasionObj, bestObj]
@@ -101,14 +100,16 @@ const Dashboard_Recommend = () => {
         setLoading(false);
       }
     };
-    fetchRecs();
+
+    fetchProductsUrgent({setter:setProducts}).finally(() => fetchRecs());
+
   }, []);
 
   if (!loading && err) return null;
 
   return (
-  <div className="bg-gray-100 w-full flex flex-col items-center gap-4 pt-4 px-4 md:px-8 lg:px-16 pb-16">
-    <p className="font-semibold text-2xl mx-auto">Recommendation</p>
+  <div className="bg-gray-100 w-full flex flex-col gap-4 px-4 md:px-8 lg:px-16 md:pt-10 py-8">
+    <p className='font-semibold text-xl md:text-2xl lg:text-4xl text-purple-700'>Recommendation</p>
 
     {loading ? (
       <div className="w-full flex justify-center">
@@ -156,7 +157,7 @@ const Dashboard_Recommend = () => {
             {sectionsWithProducts.map(({ label, product, titleOverride, cardTitle }) => (
               <div key={label} className="bg-white flex-none rounded-xl shadow-lg p-6 w-[250px] md:w-[300px]">
                 <div className="min-h-[64px] flex items-center justify-center text-center">
-                  <h3 className="text-xl font-bold text-green-700 leading-tight">
+                  <h3 className="text-xl font-semibold text-purple-600 leading-tight">
                     {cardTitle}
                   </h3>
                 </div>

@@ -62,7 +62,6 @@ app.post('/create_payment_url', function (req, res, next) {
     var config = require('config');
     var dateFormat = require('dateformat');
 
-    
     var tmnCode = config.get('vnp_TmnCode');
     var secretKey = config.get('vnp_HashSecret');
     var vnpUrl = config.get('vnp_Url');

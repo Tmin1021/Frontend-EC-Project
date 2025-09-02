@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { motion } from "framer-motion";
 
 const contact_form = () => {
   // State variables to store user input
@@ -34,13 +35,27 @@ const contact_form = () => {
   };
 
   return (
-    <>
+    <motion.div
+          className="h-screen w-screen flex items-center justify-center"
+          style={{
+            background: "linear-gradient(270deg, #00C9FF, #92FE9D, #ff6ec4, #7873f5)",
+            backgroundSize: "800% 800%",
+          }}
+          animate={{
+            backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"], 
+          }}
+          transition={{
+            duration: 60,
+            ease: "linear",
+            repeat: Infinity,
+          }}
+        >
       {submitted && (
         <div className="fixed top-10 right-6 z-50 bg-green-500 text-white px-6 py-3 rounded shadow-lg font-semibold animate-bounce">
           Contact submitted
         </div>
       )}
-      <div className="flex flex-col items-center justify-center min-h-[400px] bg-gray-50 bg-opacity-60 backdrop-blur-md rounded-xl shadow-lg p-8">
+      <div className="w-[80%] max-w-[400px] flex flex-col items-center justify-center min-h-[400px] bg-white/20 backdrop-blur-md rounded-xl shadow-lg p-8">
         <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
         <form className="w-full max-w-md" onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -87,7 +102,7 @@ const contact_form = () => {
           </button>
         </form>
       </div>
-    </>
+    </motion.div>
   )
 }
 

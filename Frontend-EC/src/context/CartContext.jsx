@@ -1,145 +1,140 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {bonus_gifts, isDummy, products } from "../data/dummy";
-import GlobalApi from "../../service/GlobalApi";
 import {useAuth} from "../context/AuthContext"
 import { toast } from "sonner";
-import { useDynamicPricing } from "./DynamicPricingContext";
+import BEApi from "../../service/BEApi";
+import { getRoundPrice } from "../components/functions/product_functions";
+import { demo_1 } from "../data/dummy";
 
 const CartContext = createContext()
 
-//children is the component the CartProvider wraps
 export function CartProvider({children}) {
     const [cart, setCart] = useState([])
     const [cartId, setCartId] = useState('')
-    const [isCartOpen, setIsCardOpen] = useState(false)
-    const [selectedItems, setSelectedItems] = useState(Array(cart?.length ?? 0).fill(false))  
+    const [isCartOpen, setIsCartOpen] = useState(false)
     const [selectedAll, setSelectedAll] = useState(false)
-    const [bonus, setBonus] = useState(bonus_gifts)
     const {user, isAuthenticated} = useAuth()
-    const {getDynamicPrice} = useDynamicPricing()
+    const prevIsCartOpen = useRef(isCartOpen)       // useRef avoid reload
+
+    // for flying cart
+    const [flyingImage, setFlyingImage] = useState(demo_1)
+    const [allowFly, setAllowFly] = useState(false)
 
     useEffect(() => {
-        if (!isDummy && isAuthenticated && user?.role==='user') {
-            fetchCart()
-            fetchBonus()
-        }
+        if (isAuthenticated && user?.role==='user') fetchCart()
 
     }, [user, isAuthenticated, isCartOpen]) 
 
-    const prevIsCartOpen = useRef(isCartOpen);
 
     useEffect(() => {
-    // When cart changes from open -> closed
-    if (prevIsCartOpen.current === true && isCartOpen === false) {
-        pushCart();
-    }
+        // When cart changes from open -> closed
+        if (prevIsCartOpen.current === true && isCartOpen === false)  pushCart()
 
-        prevIsCartOpen.current = isCartOpen; // update ref
+        prevIsCartOpen.current = isCartOpen
+
     }, [isCartOpen]);
 
     // a
+    // format: product = (product, quantity)
+    // 3 cases: (1) same product, different option; (2) same product, same option (reupdate that item); (3) new item
     async function addCart(product) {
-        // format: product = (product, option, quantity)
-        // 3 cases: (1) same product, different option; (2) same product, same option (reupdate that item); (3) new item
-        let newCart
-        setCart((prevCart) => {
-            let found = false
+    if (!isAuthenticated) return;
 
-            const updatedCart = prevCart.map(item => {
-                const isSameProduct = item.product_id === product.product.product_id
-                const isSameOption =
-                    (item.option && product.option && item.option.name === product.option.name) ||
-                    (!item.option && !product.option)
+    setCart((prevCart) => {
+        let found = false;
 
-                if (isSameProduct && isSameOption) {
-                    found = true
-                    const newQuantity = Math.min(item.quantity + product.quantity, product.product.stock)
-                    return { ...item, total_price: newQuantity*(item.option?.stems ?? 1)*product.product.dynamic_price, quantity: newQuantity }
-                }
-                return item
-            })
+        const updatedCart = prevCart.map(item => {
+            const isSameProduct = (item.product_id === product.product.product_id);
 
-            if (!found) { 
-                setSelectedItems(prev => [...prev, false])
-                newCart =  [...updatedCart, {product_id: product.product.product_id, option: product?.option, total_price: Math.round(100*(product.quantity*product.product.dynamic_price*(product?.option?.stems ?? 1)),2)/100, quantity: product.quantity, off_price: 0, isSelected: false}]
-                return newCart
-            } 
-
-            newCart = updatedCart
-            return updatedCart
-        })
-
-        // update db
-        if (!isAuthenticated || isDummy) return
-
-        const data = {
-            data: {
-                products: newCart
+            if (isSameProduct) {
+                found = true;
+                const newQuantity = Math.min(
+                    item.quantity + product.quantity,
+                    product.product.stock
+                );
+                return {
+                    ...item,
+                    quantity: newQuantity,
+                    subtotal: newQuantity * product.product.dynamicPrice,
+                };
             }
+            return item;
+        });
+
+        let newCart;
+        if (!found) {
+            newCart = [
+                ...updatedCart,
+                {
+                    product_id: product.product.product_id,
+                    product_name: product.product.name,
+                    quantity: product.quantity,
+                    subtotal: product.quantity * product.product.dynamicPrice,
+                    off_price: 0,
+                    isSelected: false,
+                },];
+        } else {
+            newCart = updatedCart;
         }
 
-        GlobalApi.CartApi.update(cartId, data).then(resp=>{
-            toast.success( `${product.product.name} is added to cart.`)
-            }, ()=>{
-            toast.error('Error. Please try again.')
+        // update DB
+        BEApi.CartApi.update(cartId, { items: newCart })
+        .then(() => {
+            toast.success(`${product.product.name} is added to cart.`);
         })
+        .catch(() => {
+            toast.error("Error. Please try again.");
+        });
+
+        return newCart;
+    });
     }
 
     // c
-    const closeCart = () => setIsCardOpen(false)
+    const closeCart = () => setIsCartOpen(false)
 
     // f
-    async function fetchBonus() {
-        const res = await GlobalApi.BonusApi.getAll()
-
-        if (res) setBonus(res.data.data)
-    }
-
     async function fetchCart() {
-        if (!isAuthenticated) return
         try {
-            const res = await GlobalApi.CartApi.getByUserId(user?.user_id)
-            let data
+            const res = await BEApi.CartApi.getByUserId(user.id);
+            const item = res.data;
 
-            // user has cart already
-            if (res && res.data.data.length>0) {
-                const item = res.data.data
+            if (item) {
+            const data = {
+                user_id: user.user_id,
+                items: item.items ?? []
+            };
 
-                data = {
-                    user_id: user?.user_id,
-                    products: item[0]?.products
-                }
-                
-                const newCart = await preprocessCart(data.products)
-                setCart(data.products ? newCart : [])
-                setCartId(res.data.data[0].documentId)
+            const newCart = await preprocessCart(data.items);
 
-                const newSelectedItems = newCart.map(item => item.isSelected ?? false)
-                setSelectedItems(newSelectedItems)
+            setCart(newCart);
+            setCartId(item._id);
+            setSelectedAll(newCart.length > 0 && newCart.every(item => item.isSelected));
             }
-            // create cart for the first-time user
-            else {
-                data = {
-                    data: {
-                        user_id: user.user_id,
-                    }
-                }
-                await GlobalApi.CartApi.create(data)
-            }
-
         } catch (err) {
-            console.error("Failed to fetch products", err);
+            if (err.response?.status === 404) {
+            // no cart exists → create one
+            try {
+                const data = { user_id: user.id, items: [] };
+                const created = await BEApi.CartApi.create(data);
+                setCart([]); 
+                setCartId(created.data._id);
+            } catch (createErr) {
+                console.error("Failed to create cart", createErr);
+            }
+            } else {
+                console.error("Failed to fetch cart", err);
+            }
         }
     }
 
     // g
-    const getOptimizedPromotions = (cartOverride, selectedItemsOverride) => {
+    const getOptimizedPromotions = (cartOverride) => {
         const flowerCounts = {}
         const accessoryCounts = {}
 
         // 1. Count selected items
-        cartOverride.forEach((item, i) => {
-            if (!selectedItemsOverride[i]) return
+        cartOverride.forEach((item) => {
+            if (!item.isSelected) return
             const id = item.product_id
             const type = item?.option
             if (type) {
@@ -207,30 +202,38 @@ export function CartProvider({children}) {
 
     const getTotal = useCallback(() => {
         // useCallBack to force it to update based on watching change of cart and selectedItems
-        const number_of_selected_items = selectedItems.filter(Boolean).length
-        const total = Math.round(selectedItems.map((isSelected, index) => isSelected? (cart[index]?.total_price) : 0).reduce((acc, cur)=> acc+cur, 0)*100)/100
+        const number_of_selected_items = cart.map(item=> item.isSelected).filter(Boolean).length
+        const total = getRoundPrice(cart.map((item) => item.isSelected? (item.subtotal) : 0).reduce((acc, cur)=> acc+cur, 0))
 
         return [number_of_selected_items, total]
-    }, [cart, selectedItems])
+    }, [cart])
 
     const getTotalOff = () => {
-        return cart.reduce((acc, item) => acc+item.off_price,0)
+        return getRoundPrice(cart.reduce((acc, item) => acc+item.off_price,0))
     }
 
     // h
     const handleSelectedItems = index => {
-        const newSelectedItems = selectedItems.slice()
-        newSelectedItems[index] = !newSelectedItems[index]
-        const number_of_selected_items = newSelectedItems.filter(Boolean).length
-        if (number_of_selected_items === newSelectedItems.length) setSelectedAll(true)
+        const newCart = cart.slice()
+        newCart[index].isSelected = !newCart[index].isSelected
+
+        if (newCart.map(item => item.isSelected).filter(Boolean).length === newCart.length) setSelectedAll(true)
         else setSelectedAll(false)
 
-        setSelectedItems(newSelectedItems)
-        getOptimizedPromotions(cart, newSelectedItems)
+        //getOptimizedPromotions(cart)
+        setCart(newCart)
+    }
+
+    const handleSelectedAll = () => {
+        const newCart = cart.map(item => ({...item, isSelected: !selectedAll}))
+        setSelectedAll(!selectedAll)
+
+        //getOptimizedPromotions(newCart)
+        setCart(newCart)
     }
 
     // o
-    const openCart = () =>  setIsCardOpen(true)
+    const openCart = () =>  setIsCartOpen(true)
 
     // p
     const preprocessCart = async (tmpCart) => {
@@ -238,36 +241,23 @@ export function CartProvider({children}) {
         let updatedCart = []
 
         for (const item of tmpCart) {
-    
             try {
             // fetch product info from API
-            const res = await GlobalApi.ProductApi.getById(item.product_id)
-            const product = res.data.data
+            const res = await BEApi.ProductApi.getById(item.product_id)
+            const product = res.data
 
             // product not found or out of stock or not available => discard
-            if (!product || product.stock===0 || !product.available) {continue}
-
-            // product from db has new change => discard
-            if ((item.option && product.type!='flower') || (!item.option && product.type=='flower')) {continue}
+            if (!product || product.stock===0 || !product.available || item.quantity > product.stock) {continue}
+            const newQuantity = Math.min(product.stock, item.quantity)
             
-            // update to the current availale stock
-            let stock = Math.min(product.stock, item.quantity)
-            if (item.option && product.flower_details?.options) {
-                const matchedOption = product.flower_details.options.find(option => option.name === item.option.name)
-                // no match option anymore (name or stems)
-                if (!matchedOption || matchedOption.stems != item.option.stems) {continue}
-                // out of stock
-                if (item.quantity*item.option.stems > product.stock) {continue}
-                stock = item.quantity
-            }
-
             // update price
             const updatedItem = {
                 ...item,
-                total_price: stock*(item.option?.stems ?? 1) * (product.type==='flower' ? getDynamicPrice(product.price, product.fill_stock_date):product.price),
-                quantity: stock,            
+                product_name: product.name,
+                quantity: newQuantity,  
+                subtotal: newQuantity*product.dynamicPrice,          
                 off_price: 0, 
-            };
+            }
 
             updatedCart.push(updatedItem);
             } catch (err) {
@@ -279,19 +269,16 @@ export function CartProvider({children}) {
     }
 
     const pushCart = async () => {
-        if (isDummy) return
-        const newCart = cart.map((item, i) => ({
+        const newCart = cart.map((item) => ({
             ...item,
-            isSelected: selectedItems[i] || false
+            isSelected: item.isSelected || false
         }))
 
         const data = {
-            data: {
-                products: newCart
-            }
+            items: newCart
         }
 
-        GlobalApi.CartApi.update(cartId, data).then(resp=> {          
+        BEApi.CartApi.update(cartId, data).then(resp=> {          
             }, ()=>{
             toast.error('Error. Please reload page and try again.')
         }) 
@@ -302,22 +289,17 @@ export function CartProvider({children}) {
         // create new cart
         const newCart = []
         for (let i=0; i<cart.length; i++) {
-            if (!selectedItems[i]) newCart.push(cart[i])
+            if (!cart[i].isSelected) newCart.push(cart[i])
         }
-
-        // update current cart and selected items
-        setCart(newCart)
-        setSelectedItems(Array(cart.length).fill(false))
 
         // update to db
-        if (isDummy) return
         const data = {
-            data: {
-                products: newCart
-            }
+            items: newCart
         }
 
-        GlobalApi.CartApi.update(cartId, data).then(resp=> {          
+        BEApi.CartApi.update(cartId, data).then(resp=> {  
+            // update current cart
+            setCart(newCart)        
             }, ()=>{
             toast.error('Error. Please reload page and try again.')
         }) 
@@ -329,21 +311,23 @@ export function CartProvider({children}) {
         // the reason why not update cart directly here is because the promotion use the old data before it get the new one
         // could use other option: useCallBack like the getTotal()
         // create new cart
+        console.log(quantity)
 
         // the caller has managed the quantity compare already
         const updatedCart = cart.map(item =>
-                item === product
-                ? { ...item, total_price: item.total_price*quantity/item.quantity , quantity: quantity }
+                item.product_id === product.product_id
+                ? { ...item, subtotal: getRoundPrice(product.dynamicPrice*quantity), quantity: quantity }
                 : item
         )
 
+        setCart(updatedCart)
         // calculate the bonus
-        getOptimizedPromotions(updatedCart, selectedItems)
-
+        //getOptimizedPromotions(updatedCart)
+        
     }
 
     return (
-        <CartContext.Provider value={{addCart, cart, closeCart, fetchCart, getOptimizedPromotions, getTotal, getTotalOff, handleSelectedItems, isCartOpen, openCart, removeCart, setCart, selectedItems, selectedAll, setSelectedItems, setSelectedAll, updateCart}}>
+        <CartContext.Provider value={{addCart, allowFly, cart, closeCart, fetchCart, flyingImage, getTotal, getTotalOff, handleSelectedAll, handleSelectedItems, isCartOpen, openCart, pushCart, removeCart, setCart, selectedAll, setAllowFly, setFlyingImage, setIsCartOpen, setSelectedAll, updateCart}}>
             {children}
         </CartContext.Provider>
     )

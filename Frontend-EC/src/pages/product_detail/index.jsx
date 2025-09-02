@@ -1,51 +1,41 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Product_Preview from './components/product_preview';
 import Product_Option from './components/product_option';
 import Product_Extra from './components/product_extra';
 import Product_Description from './components/product_description';
-import Product_Delivery_Date from './components/product_delivery_date';
-import { useParams } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import Product_Comment from './components/product_comment';
-//import {ProductCalendarProvider, useProductCalendar} from '../../context/ProductCalendarContext';
 import Product_Quantity from './components/product_quantity';
-import { ProductDetailProvider, useProductDetail } from '../../context/ProductDetailContext';
-import GlobalApi from '../../../service/GlobalApi';
+import { useProductDetail } from '../../context/ProductDetailContext';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDynamicPricing } from '../../context/DynamicPricingContext';
 import Product_Banner from './components/product_banner';
-
-
-const Fly_To_Cart = ({image, isAllowed, setIsAllowed}) => {
-
-    const curWidth = window.innerWidth/2.8
-
-    return (
-        <AnimatePresence>
-        {isAllowed && 
-        <motion.div initial={{ opacity: 0, x: 0, y: 0 }}
-                    animate={{ opacity: 1, x: curWidth, y: -500 }}
-                    exit={{ opacity: 0, y: -500 }}
-                    transition={{ duration: 0.6 }}
-                    onAnimationComplete={() => {
-                        if (isAllowed) setIsAllowed(false);
-                    }}
-                    className='absolute'>
-            <img src={image} className='w-[30px] aspect-square object-fit rounded-sm'/>
-        </motion.div>}
-        </AnimatePresence>
-    )
-}
-
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { SkeletonDetailLoader } from '../../components/custom/skeleton';
 
 function Product_Detail() {
- const {product, quantity, selectedOption, selectedExtra, getOptionStock} = useProductDetail()
+ const {product, quantity, loading} = useProductDetail()
  const {condition_mapping} = useDynamicPricing()
- const {addCart} = useCart()
- const [isAllowed, setIsAllowed] = useState(false)
+ const {addCart, setFlyingImage, setAllowFly} = useCart()
+ const {isAuthenticated} = useAuth()
+ const navigate = useNavigate()
+ const [timeoutReached, setTimeoutReached] = useState(false)
 
- if (!product) return <div>Product not found</div>;
- const stock = product.type === 'flower' ? getOptionStock(selectedOption.stems) : product.stock
+ // Set max wait of 10s
+useEffect(() => {
+    const timer = setTimeout(() => setTimeoutReached(true), 10000)
+    return () => clearTimeout(timer)
+  }, [])
+
+ if (loading && !timeoutReached) return <SkeletonDetailLoader/>
+
+ if ((!product && timeoutReached) || !product) return <div className='w-full h-screen flex justify-center items-center'><p className='text-2xl md:text-3xl font-bold'><span className='line-through'>404</span>, <span className= 'text-pink-500'>product not found</span>.</p></div>
+
+ const handleFlyCart = (image) => {
+    setFlyingImage(image)
+    setAllowFly(true)
+ } 
 
  return (
     <AnimatePresence>
@@ -58,7 +48,7 @@ function Product_Detail() {
             {/* Preview and Description */}
             <p className='font-semibold text-4xl mx-auto md:hidden'>{product.name}</p>
             <div className='flex flex-col gap-4 w-full'>
-                <div className='w-full '><Product_Preview images={product.image_url}/></div>
+                <div className='w-full'><Product_Preview images={product.image_url}/></div>
                 <Product_Description description={product.description}/>
             </div>
 
@@ -66,23 +56,22 @@ function Product_Detail() {
             <div className='w-full flex flex-col gap-4'>
                 <Product_Banner/>
                 <p className='font-semibold text-4xl mx-auto hidden md:flex'>{product.name}</p>
-                {product.type==='flower' && <Product_Option/>}
-                {product.type==='flower' && <Product_Extra/>}
-                {stock!=0 && <Product_Quantity curStock={stock}/>}
-
+                <Product_Option />
+                {product.stock!=0 && <Product_Quantity/>}
 
                 {/* Stock and Condition */}
                 <div className='flex gap-2'>
-                    {stock!=0 && <p className={`${stock<5 ? 'bg-red-600/80':'bg-green-600/80'} font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 hover:bg-red-600-90 transition-all`}>In stock: {stock}</p>}
-                    {stock!=0 && product.type==='flower' && <p className={`${condition_mapping[product.condition]} font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 transition-all`}>{product.condition}</p>}
+                    {product.stock!=0 && <p className={`${product.stock<5 ? 'bg-red-600/80':'bg-green-600/80'} font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 hover:bg-red-600-90 transition-all`}>In stock: {product.stock}</p>}
+                    {product.stock!=0 && <p className={`bg-pink-400/80 font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 hover:bg-red-600-90 transition-all`}>Stems: {product.stems}</p>}
+                    {product.stock!=0 && <p className={`${condition_mapping[product.condition]} font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 transition-all`}>{product.condition}</p>}
+                    <p className='bg-gray-500/80 font-semibold w-fit p-1 text-white rounded-sm cursor-pointer hover:px-2 transition-all'>Sold: {product.sales_count}</p>
                 </div>
 
                 {/* Add to cart */}
-                <div className={`relative ${!stock ? 'bg-gray-500/80 hover:bg-gray-500 pointer-events-none': 'bg-green-800/80 hover:bg-green-800'} min-w-[300px] h-[50px] flex items-center rounded-sm hover:shadow-lg shadow-gray-300 transition-all`} 
-                     onClick={() => {setIsAllowed(true); addCart({ product: product, option: selectedOption, quantity: quantity,});
-                     if (selectedExtra) {addCart({ product: selectedExtra, option: null, quantity: 1});}}}>
-                    <p className='font-semibold text-lg text-white mx-auto cursor-pointer'>{!stock ? 'OUT OF STOCK' : "ADD TO CART"}</p>
-                    <Fly_To_Cart image={product.image_url[0]} isAllowed={isAllowed} setIsAllowed={setIsAllowed}/>
+                <div className={`relative ${!product.stock ? 'bg-gray-500/80 hover:bg-gray-500 pointer-events-none': 'bg-green-800/80 hover:bg-green-800'} min-w-[300px] h-[50px] flex items-center rounded-sm hover:shadow-lg shadow-gray-300 transition-all`} 
+                     onClick={() => {if (!isAuthenticated) {navigate("/login", { state: { from: location.pathname }, replace: true })}
+                                     else {handleFlyCart(product.image_url[0]); addCart({ product: product,  quantity: quantity})}}}>
+                    <p className='font-semibold text-lg text-white mx-auto cursor-pointer'>{!product.stock ? 'OUT OF STOCK' : "ADD TO CART"}</p>
                 </div>
 
             </div>
@@ -101,3 +90,4 @@ function Product_Detail() {
 }
 
 export default Product_Detail
+ 
