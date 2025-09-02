@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { products as catalogProducts } from '../../../data/dummy';
+import { assets, products as catalogProducts, demo_1 } from '../../../data/dummy';
 import { useNavigate } from 'react-router-dom'; // keep if you’ll link to product pages later
 import {useAuth} from '../../../context/AuthContext'
 import { fetchProductsUrgent } from '../../../components/functions/product_functions';
@@ -8,14 +8,8 @@ function Product_Items({ product, titleOverride }) {
   if (!product) return null;
 
   const navigate = useNavigate();
-  const findStartingPrice = () => {
-    if (product.type === 'flower' && product?.flower_details?.options?.length) {
-      return Math.min(...product.flower_details.options.map(o => Number(o.price) || 0));
-    }
-    return Number(product.price) || 0;
-  };
 
-  const img = product?.image_url?.[0];
+  const img = assets[product?.image_url?.[0]] ?? demo_1;
   const nameToShow = titleOverride || product.name;
 
   return (
@@ -41,7 +35,7 @@ function Product_Items({ product, titleOverride }) {
       </p>
 
       <p className="font-light text-sm py-1">
-        from <span className="font-bold text-lg">${findStartingPrice()}</span>
+        from <span className="font-bold text-lg">${product.dynamicPrice}</span>
       </p>
     </div>
   );
@@ -62,7 +56,7 @@ const SECTION_SUBTITLES = {
 
 const extractColor = (obj, product) => {
   let c = (obj?.color || '').trim();
-  if (!c && Array.isArray(product?.flower_details?.color) && product.flower_details.color.length) {
+  if (!c && Array.isArray(product?.colors) && product.colors.length) {
     c = String(product.flower_details.color[0]).trim();
   }
   if (!c) return '';
@@ -106,6 +100,7 @@ const Dashboard_Recommend = () => {
         setLoading(false);
       }
     };
+
     fetchProductsUrgent({setter:setProducts}).finally(() => fetchRecs());
 
   }, []);
