@@ -1,7 +1,7 @@
 import axios from "axios"
 import { createProductParams } from "../src/components/functions/product_functions"
 
-const API_BASE = "https://frontend-ec-project-server.onrender.com"
+const API_BASE = "http://localhost:5001" //"https://frontend-ec-project-server.onrender.com"
 //"http://localhost:5001"
 
 const axiosClient = axios.create({
@@ -37,6 +37,7 @@ const UserApi = {
 }
 
 const ProductApi = {
+  getAllUrgent: () => axiosClient.get("/api/products/all"),
   getAll: (params=createProductParams()) => axiosClient.get(`/api/products?${params.toString()}`),
   getPrediction: (input) => axiosClient.get(`/api/products/predict?search=${input}`),
   getById: (id) => axiosClient.get(`/api/products/${id}`),

@@ -216,7 +216,7 @@ export function Admin_Universal_Page({name}) {
             <Admin_Universal_Item key={-1} which={type} header={1}/>
 
             {/* Rows */}
-            {dataList.map((info, i) => (
+            {dataList?.map((info, i) => (
               <div key={i} onClick={()=>{if(type!=='user') navigate(`/admin/${type}/${info._id}`)}}>
                   <Admin_Universal_Item which={type} info={info} header={0} lastRow={i===dataList.length-1} />
               </div>

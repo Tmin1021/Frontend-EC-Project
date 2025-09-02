@@ -12,13 +12,14 @@ export function ProductDetailProvider({children}) {
     const [comments, setComments] = useState([])
     const [loading, setLoading] = useState(true)
 
+    /*
     useEffect(() => {
         if (product !== undefined) setLoading(false)
-    }, [product])
+    }, [product]) */
     
     useEffect(() => {
         // use 'id' as dependency array to allow it auto update when access by id on url
-        fetchProduct(id, setProduct)
+        fetchProduct(id, setProduct).finally(() => setLoading(false));
         fetchComment(id, setComments)
     }, [id]);
 

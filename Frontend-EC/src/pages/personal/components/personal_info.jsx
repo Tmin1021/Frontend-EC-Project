@@ -23,15 +23,15 @@ export function Change_Password({isOpen, setIsOpen, setter=()=>{}, isCreate=fals
         setIsOpen(false)
         return
       }
+      
       const data = {password: firstPass}
 
-      BEApi.UserApi.update(user?._id, data).then(() => {
+      BEApi.UserApi.update(user?.id ?? user?._id, data).then(() => {
         toast.success('Password is changed successfully')
         setIsOpen(false)
       }, (err) => {
         toast.error(err.response?.data?.error || "Failed to change password. Try again later.")
       })
-      console.log(user)
     }
   };
 

@@ -13,7 +13,7 @@ function createProductParams({search='', flowerTypes=[], occasions=[], colors=[]
             });
 }
 
-async function fetchProducts(setter = () => {}, params) {
+async function fetchProducts({setter = () => {}, setter2 = () => {}, setPagination = () => {}, params}) {
     if (typeof setter != 'function') return
     
     try {
@@ -21,18 +21,24 @@ async function fetchProducts(setter = () => {}, params) {
         const data = res.data.products
 
         if (data && data.length>0) {
-            const newData = res.data.products.map(item => ({
+            const newData = res.data.products.map((item, i) => ({
                 ...item,
+                norm_id: i,
                 product_id: item?._id,
                 image_url: refreshImageURL(item?.image_url),
             })).filter(item => item.available)
 
             setter(newData)
+
+            if (typeof setter2 === 'function') setter2(res.data)
+            if (typeof setPagination === 'function') setPagination(res.data)
         }
 
         else {
             console.warn("No product found")
-            setter([])        
+            setter([])   
+            setter2([])
+            setPagination([])     
         }
     
     } catch (err) {
@@ -61,6 +67,38 @@ async function fetchSearchPreview(params) {
         }
     
 
+    } catch (err) {
+        console.error("Failed to fetch products", err);
+    }
+}
+
+
+async function fetchProductsUrgent({setter = () => {}, setter2 = () => {}}) {
+    if (typeof setter != 'function') return
+    
+    try {
+        const res = await BEApi.ProductApi.getAllUrgent()
+        const data = res.data
+
+        if (data && data.length>0) {
+            const newData = res.data.map((item, i) => ({
+                ...item,
+                norm_id: i,
+                product_id: item?._id,
+                image_url: refreshImageURL(item?.image_url),
+            }))
+
+            setter(newData)
+
+            if (typeof setter2 === 'function') setter2(newData)
+        }
+
+        else {
+            console.warn("No product found")
+            setter([])   
+            setter2([])
+        }
+    
     } catch (err) {
         console.error("Failed to fetch products", err);
     }
@@ -168,4 +206,4 @@ const refreshImageURL = (image_url=[]) => {
     return newImageURL.length > 0 ? newImageURL : [keys[0]]
 }
 
-export {fetchProducts, fetchProduct, fetchSearchPreview, createProductParams, getRoundPrice, getFormatDate, fetchComment, getProduct, refreshImageURL}
+export {fetchProducts, fetchProduct, fetchProductsUrgent, fetchSearchPreview, createProductParams, getRoundPrice, getFormatDate, fetchComment, getProduct, refreshImageURL}

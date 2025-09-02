@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { products as catalogProducts } from '../../../data/dummy';
 import { useNavigate } from 'react-router-dom'; // keep if you’ll link to product pages later
+import {useAuth} from '../../../context/AuthContext'
+import { fetchProductsUrgent } from '../../../components/functions/product_functions';
 
 function Product_Items({ product, titleOverride }) {
   if (!product) return null;
@@ -47,7 +49,7 @@ function Product_Items({ product, titleOverride }) {
 
 // ---- Config ----
 const API_URL = 'https://rec-server-app.onrender.com/api/v1/recommend';
-const DUMMY_USER_ID = 2; // Replace real user ID when integrate
+//const DUMMY_USER_ID = 2; // Replace real user ID when integrate
 
 const SECTION_LABELS = ['History', 'Cross-sell', 'Occasion', 'Best'];
 
@@ -73,7 +75,9 @@ const Dashboard_Recommend = () => {
   const [items, setItems] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
-  // const navigate = useNavigate();
+  const {user} = useAuth()
+  const [products, setProducts] = useState([])
+  //console.log(user)
 
   const productsById = useMemo(() => {
     const map = {};
@@ -85,11 +89,12 @@ const Dashboard_Recommend = () => {
   }, []);
 
   useEffect(() => {
+
     const fetchRecs = async () => {
       try {
         setLoading(true);
         setErr(null);
-        const res = await fetch(`${API_URL}?user_id=${encodeURIComponent(DUMMY_USER_ID)}`);
+        const res = await fetch(`${API_URL}?user_id=${encodeURIComponent(user?.id ?? user?._id)}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         // Expecting: [historyObj, crossObj, occasionObj, bestObj]
@@ -101,7 +106,8 @@ const Dashboard_Recommend = () => {
         setLoading(false);
       }
     };
-    fetchRecs();
+    fetchProductsUrgent({setter:setProducts}).finally(() => fetchRecs());
+
   }, []);
 
   if (!loading && err) return null;

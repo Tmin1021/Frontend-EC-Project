@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import {demo_1, demo_3 } from "../data/dummy";
 import BEApi from "../../service/BEApi";
-import { getFormatDate, refreshImageURL } from "../components/functions/product_functions";
+import { createProductParams, fetchProducts, fetchProductsUrgent, getFormatDate, refreshImageURL } from "../components/functions/product_functions";
 
 const AdminContext = createContext()
 
@@ -13,6 +13,7 @@ export function AdminProvider({children}) {
     const [currentInventory, setCurrentInventory] = useState([])
     const [currentOrder, setCurrentOrder] = useState([])
     const [getFresh, setGetFresh] = useState(false) // flip getFresh to update
+    const [inventoryPagination, setInventoryPagination] = useState([])
 
     const handleGetFresh = () => {
         setGetFresh(!getFresh)
@@ -48,6 +49,7 @@ export function AdminProvider({children}) {
 
                     setInitialInventory(newData)
                     setCurrentInventory(newData)
+                    setInventoryPagination(res.data)
                 }
             
             } catch (err) {
@@ -72,7 +74,7 @@ export function AdminProvider({children}) {
         }
 
         fetchUsers()
-        fetchProducts()
+        fetchProductsUrgent({setter: setInitialInventory, setter2: setCurrentInventory})
         fetchOrders()
     }, [getFresh])
 
@@ -109,6 +111,12 @@ export function AdminProvider({children}) {
     }
 
     // for universal
+    const handlePageChange = async (newPage) => {
+        if (newPage < 1 || newPage > inventoryPagination.totalPages) return
+        //const productParams = createProductParams({page: newPage})
+        fetchProductsUrgent({setter: setInitialInventory, setter2: setCurrentInventory})
+    }
+
     const sortUniversal = (from, by, isAscending) => {
         const mapping = {
             inventory: [currentInventory, setCurrentInventory],
@@ -149,7 +157,7 @@ export function AdminProvider({children}) {
     }
     
     return (
-        <AdminContext.Provider value={{currentInventory, currentUser, currentOrder, updateStatusOrder, filterStatus, handleGetFresh, sortUniversal, updateInventory, removeInventory, searchUniversal}}>
+        <AdminContext.Provider value={{currentInventory, currentUser, currentOrder, inventoryPagination, handlePageChange, updateStatusOrder, filterStatus, handleGetFresh, sortUniversal, updateInventory, removeInventory, searchUniversal}}>
             {children}
         </AdminContext.Provider>
     )

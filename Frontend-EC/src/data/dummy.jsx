@@ -31,15 +31,14 @@ export const assets = {demo_1, demo_2, demo_3, black_magic, butter_cream, cool_b
 const isDummy = 0
 
 const productPlaceHolder =   {
-    product_id: "Create",
     name: "Red Rose Bouquet",
     price: 5,
     stems: 5,
     stock: 10,
     available: true,
     description: "Assorted stems of seasonal roses.",
-    image_url: [demo_1, demo, demo_2, demo_3],
-    occasions: ["Wedding"],
+    image_url: ['demo_1'],
+    occasions: ["Anniversary"],
     colors: ["Pink Flowers"],
     flower_type: "Roses",
   }

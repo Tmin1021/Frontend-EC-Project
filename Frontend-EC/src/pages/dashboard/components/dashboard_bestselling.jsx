@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createProductParams, fetchProducts } from '../../../components/functions/product_functions'
 import Product_Item from '../../../components/custom/product'
+import SkeletonLoader from '../../../components/custom/skeleton'
 
 const Dashboard_Bestselling = () => {
     const navigate = useNavigate()
-    // const {getDynamicPrice, getCondition} = useDynamicPricing()
+    const [loading, setLoading] = useState(true)
     const [bestsellingProducts, setBestsellingProducts] = useState([])
 
     const handleClick = (productID) => {
@@ -13,9 +14,10 @@ const Dashboard_Bestselling = () => {
       }
 
     useEffect(() => {
-        fetchProducts(setBestsellingProducts, createProductParams({sort: 'Best Sellers', limit: 4}))
+        fetchProducts({setter:setBestsellingProducts, params:createProductParams({sort: 'Best Sellers', limit: 4})}).finally(() => setLoading(false));
     }, [])
    
+    if (loading) return (<SkeletonLoader length={4}/>)
   
       return (
           <div className="flex flex-col gap-4 w-full px-4 md:px-8 lg:px-16 py-4 md:pt-10">

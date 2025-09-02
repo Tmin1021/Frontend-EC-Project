@@ -27,6 +27,10 @@ function My_Month({date, setDate}) {
   const today = new Date()
   const [firstPosition, setFirstPosition] = useState(new Date(date.getFullYear(), date.getMonth(), 1))
 
+  const handleDateChange = (i) => {
+    setDate(formatDate(new Date(firstPosition.getFullYear(), firstPosition.getMonth(), i+1-firstPosition.getDay())))
+  }
+
   return (
     <div className='flex flex-col w-full'>
       {/* MONTH YEAR */}
@@ -46,8 +50,8 @@ function My_Month({date, setDate}) {
 
       {/* 1 2 3 ...*/}
       <div className="grid grid-cols-7 gap-2">
-        {Array.from({length: number_of_days[date.getMonth()] + firstPosition.getDay()}).map((_, i) => (
-          <div key={i} onClick={i<firstPosition.getDay()? undefined : () => setDate(formatDate(new Date(date.getFullYear(), date.getMonth(), i+1-firstPosition.getDay())))}>
+        {Array.from({length: number_of_days[firstPosition.getMonth()] + firstPosition.getDay()}).map((_, i) => (
+          <div key={i} onClick={i<firstPosition.getDay()? undefined : () => handleDateChange(i)}>
               <My_Day day={i<firstPosition.getDay()? "" : (i+1-firstPosition.getDay()).toString()} 
                       isActive={i>=firstPosition.getDay() && today >= new Date(firstPosition.getFullYear(), firstPosition.getMonth(), i-firstPosition.getDay())}
                       isChosen={date.getFullYear()===firstPosition.getFullYear() && date.getMonth()===firstPosition.getMonth() && date.getDate()===i+1-firstPosition.getDay()}/>

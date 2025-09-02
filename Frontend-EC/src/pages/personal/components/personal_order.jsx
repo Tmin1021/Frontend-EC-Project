@@ -7,6 +7,7 @@ import { Text_Item } from '../../../admin/components/admin_inventory';
 import { useAuth } from '../../../context/AuthContext'
 import { fetchProduct, getFormatDate, getProduct, getRoundPrice } from '../../../components/functions/product_functions';
 import BEApi from '../../../../service/BEApi';
+import { SkeletonOrderPreview } from '../../../components/custom/skeleton';
 
 export const BASE_URL = 'http://localhost:1337';
 
@@ -16,44 +17,47 @@ export const Order_Product_Preview = () => {
     const [items, setItems] = useState([])
     const [orderInfo, setOrderInfo] = useState()
     const {user} = useAuth()
+    const [loading, setLoading] = useState(true)
 
     const info = {name: ["Name", orderInfo?.user_name], mail: ["Email", user?.email], phone: ['Phone', user?.phone], 
                 order_date: ['Order date', orderInfo?.order_date], shipping_address: ['Shipping address', orderInfo?.shipping_address], 
                 message: ['Message', orderInfo?.message]}
 
     useEffect(() => {
-    const fetchOrderAndItems = async () => {
-        try {
-            // 1. Get order
-            const res = await BEApi.OrderApi.getById(orderID);
-            const item = res.data;
+        const fetchOrderAndItems = async () => {
+            try {
+                // 1. Get order
+                const res = await BEApi.OrderApi.getById(orderID);
+                const item = res.data;
 
-            const orderData = {
-                ...item,
-                order_id: item?._id,
-                order_date: getFormatDate(item.createdAt),
-            };
-            setOrderInfo(orderData);
+                const orderData = {
+                    ...item,
+                    order_id: item?._id,
+                    order_date: getFormatDate(item.createdAt),
+                };
+                setOrderInfo(orderData);
 
-            // 2. Fetch products for each item
-            const itemsWithProduct = await Promise.all(
-                item.items.map(async (it) => {
-                    const productInfo = await getProduct(it.product_id);
-                    return {
-                        ...it,
-                        product_info: productInfo, 
-                    };
-                    })
-            );
+                // 2. Fetch products for each item
+                const itemsWithProduct = await Promise.all(
+                    item.items.map(async (it) => {
+                        const productInfo = await getProduct(it.product_id);
+                        return {
+                            ...it,
+                            product_info: productInfo, 
+                        };
+                        })
+                );
 
-            setItems(itemsWithProduct);
+                setItems(itemsWithProduct);
             } catch (err) {
-            console.error("Failed to fetch order or products", err);
-        }
-    };
+                console.error("Failed to fetch order or products", err);
+            }
+        };
 
-    if (orderID) fetchOrderAndItems();
+        if (orderID) fetchOrderAndItems().finally(() => setLoading(false));
     }, [orderID]);
+
+    if (loading) return <SkeletonOrderPreview/>
 
     return (
         <AnimatePresence>
@@ -122,13 +126,15 @@ export const Order_Product_Preview = () => {
 
 const Order_Preview = ({order}) => {
     const [candidateProduct, setCandidateProduct] = useState(order?.items[0] ?? [])
+    const [loading, setLoading] = useState(true)
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (!order) return 
-        fetchProduct(order?.items[0].product_id, setCandidateProduct)
+        fetchProduct(order?.items[0].product_id, setCandidateProduct).finally(() => setLoading(false));
     }, [])
 
-    const navigate = useNavigate()
+    if (loading) return <SkeletonOrderPreview />
     if (!candidateProduct) return <div></div>
 
     return (

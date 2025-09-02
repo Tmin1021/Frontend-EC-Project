@@ -9,6 +9,7 @@ import { assets, demo_1, productPlaceHolder } from '../../data/dummy'
 import { toast } from 'sonner'
 import Product_Delivery_Date from '../../pages/product_detail/components/product_delivery_date'
 import BEApi from '../../../service/BEApi'
+import Pagination from '../../components/custom/pagination'
 
 export const Text_Item = ({name='', content='', setter={}, placeholder='', isEditable=true, rows=1}) => {
 
@@ -22,7 +23,7 @@ export const Text_Item = ({name='', content='', setter={}, placeholder='', isEdi
             value={content}
             readOnly={!isEditable}
             required
-            onChange={(e)=>{if (typeof setter === "function") {setter(name, e.target.value.trim())}}}
+            onChange={(e)=>{if (typeof setter === "function") {setter(name, e.target.value)}}}
             className={`bg-white text-sm font-light border-1 border-gray-200 rounded-sm pl-4 py-2 resize-none focus:outline-purple-500 transtion-all ${isEditable? '':'border-none'}`}
             rows={rows}
       /> 
@@ -42,7 +43,7 @@ export const Text_Item_2 = ({name='', content='', setter={}, type='text', placeh
             value={content}
             readOnly={!isEditable}
             required
-            onChange={(e)=>{if (typeof setter === "function") {setter(name, e.target.value.trim())}}}
+            onChange={(e)=>{if (typeof setter === "function") {setter(name, e.target.value)}}}
             className={`bg-white text-sm font-light border-1 border-gray-200 rounded-sm pl-4 py-2 resize-none focus:outline-purple-500 transtion-all ${isEditable? '':'border-none'}`}
       /> 
     </div>
@@ -128,7 +129,7 @@ export function Confirm_Box({getSave=true, getDelete=false, saveSetter={}, delet
   )
 }
 
-export function AlbumSelect({selectedImages=[], setSelectedImages=()=>{}, isAlbumClick, setIsAlbumClick}) {
+export function AlbumSelect({selectedImages=[demo_1], setSelectedImages=()=>{}, isAlbumClick, setIsAlbumClick}) {
 
   return (
     <div className={` ${isAlbumClick? 'fixed inset-0 flex justify-center items-center bg-black/20 backdrop-blur-sm':''} transition-all`} onClick={()=>setIsAlbumClick(false)}>
@@ -174,13 +175,12 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
   const [occasions, setOccasions] = useState([])
   const [colors, setColors] = useState([])
   const [selectedImages, setSelectedImages] = useState([])
-
   const [isOpenCalendar, setIsOpenCalendar] = useState(false)
   const today = new Date()
 
   const handleUpdate = () => {
     // Check if any field is blank
-    if (!name || !price || !stock) {
+    if (!name.trim() || !price || !stock) {
       toast.error("All fields are required.");
       return;
     }
@@ -214,8 +214,8 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
       }
 
     BEApi.ProductApi.update(id, data).then(resp=>{
-      toast.success("Updated successfully")
       handleGetFresh()
+      toast.success("Updated successfully")
     }, (err)=>{
       toast.error(err.response?.data?.error || "Failed to update product");
     }
@@ -227,7 +227,7 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
         name,
         price,
         description,
-        //image_url: [demo_1],
+        image_url: selectedImages ?? [demo_1],
         stock,
         stems,
         available,
@@ -238,9 +238,9 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
     }
 
     BEApi.ProductApi.create(data).then(()=>{
-      toast.success("Created successfully")
       handleGetFresh()
       navigate('/admin/inventory', { replace: true })
+      toast.success("Created successfully")
     }, (err)=>{
       toast.error(err.response?.data?.error || "Failed to create product");
     }
@@ -259,6 +259,7 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
   };
 
   useEffect(() => {
+    console.log(product)
     if (product) {
       setName(product.name)
       setPrice(product.price)
@@ -272,7 +273,6 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
       setColors(product.colors || [])
       setSelectedImages(product.image_url || [demo_1])
     }
-    console.log(product)
   }, [product])
 
   if (!product && !isCreate) return <div>ERROR</div>
@@ -366,10 +366,17 @@ export const Admin_Inventory_Detail = ({isCreate=false}) => {
 
 
 function Admin_Inventory() {
+  //const {inventoryPagination, handlePageChange} = useAdmin()
 
   return (
-    <Admin_Universal_Page name={'Inventory'}/>
+    <div>
+        <Admin_Universal_Page name={'Inventory'}/>  
+        
+    </div>
+
   )
 }
 
 export default Admin_Inventory
+
+//<Pagination pagination={inventoryPagination} handlePageChange={handlePageChange}/>
