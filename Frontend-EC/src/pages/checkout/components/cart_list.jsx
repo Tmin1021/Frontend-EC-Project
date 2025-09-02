@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useCart } from '../../../context/CartContext'
-import { carts, products, isDummy , demo_1} from '../../../data/dummy'
+import { assets, demo_1} from '../../../data/dummy'
 import { Minus, Plus, TicketPercent, Trash } from 'lucide-react'
-import GlobalApi from '../../../../service/GlobalApi'
 import { useNavigate } from "react-router-dom";
-import { useDynamicPricing } from '../../../context/DynamicPricingContext'
 import BEApi from '../../../../service/BEApi'
-import { getRoundPrice } from '../../../components/functions/product_functions'
+import { fetchProduct, getRoundPrice, refreshImageURL } from '../../../components/functions/product_functions'
 
 // product: ..., option:,  total_price: , quantity: ,off_price:
 
@@ -14,28 +12,33 @@ const BASE_URL = 'http://localhost:1337';
 
 const Cart_Item = ({product, handleClick}) => {
     const [productInfo, setProductInfo] = useState()
-    const {getDynamicPrice} = useDynamicPricing()
 
     useEffect(() => {
+        /*
         async function fetchProduct(product_id) {
             try {
                 const res = await BEApi.ProductApi.getById(product_id)
                 if (res) {
-                    setProductInfo(res.data)
+                    const data = {
+                        ...res.data,
+                        image_url: refreshImageURL(res.data.image_url)
+                    }
+                    console.log(data)
+                    setProductInfo(data)
                 }
             }
             catch (err) {
                 console.error("Failed to fetch product", err);
             }       
-        }
+        }*/
 
-        fetchProduct(product.product_id)
+        fetchProduct(product.product_id, setProductInfo)
 
-    }, [])
+    }, [product])
 
     return (
         <div className='h-[130px] w-full md:h-[120px] p-1 md:p-4 flex gap-2 md:gap-4 rounded-lg border-1 border-gray-100 hover:shadow-lg hover:shadow-gray-200 transition-all'>
-            <div onClick={handleClick}><img src={productInfo?.image_url?.length > 0 ? productInfo.image_url[0] : demo_1} className='h-full aspect-square object-cover rounded-lg'/></div>
+            <div onClick={handleClick}><img src={productInfo?.image_url?.length > 0 ? assets[productInfo?.image_url?.[0]] : demo_1} className='h-full aspect-square object-cover rounded-lg'/></div>
 
             <div className='flex flex-col justify-between w-full'>
                 <div className='flex justify-between'>

@@ -12,17 +12,25 @@ import { useDynamicPricing } from '../../context/DynamicPricingContext';
 import Product_Banner from './components/product_banner';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { SkeletonDetailLoader } from '../../components/custom/skeleton';
 
 function Product_Detail() {
- const {product, quantity, isLoading} = useProductDetail()
+ const {product, quantity, loading} = useProductDetail()
  const {condition_mapping} = useDynamicPricing()
  const {addCart, setFlyingImage, setAllowFly} = useCart()
  const {isAuthenticated} = useAuth()
  const navigate = useNavigate()
+ const [timeoutReached, setTimeoutReached] = useState(false)
 
- if (isLoading) return <p className="text-lg text-gray-500">Loading product...</p>
+ // Set max wait of 10s
+useEffect(() => {
+    const timer = setTimeout(() => setTimeoutReached(true), 10000)
+    return () => clearTimeout(timer)
+  }, [])
 
- if (!product) return <p className='text-2xl md:text-3xl font-bold'><span className='line-through'>404</span>, <span className= 'text-pink-500'>product not found</span>.</p>
+ if (loading && !timeoutReached) return <SkeletonDetailLoader/>
+
+ if ((!product && timeoutReached) || !product) return <div className='w-full h-screen flex justify-center items-center'><p className='text-2xl md:text-3xl font-bold'><span className='line-through'>404</span>, <span className= 'text-pink-500'>product not found</span>.</p></div>
 
  const handleFlyCart = (image) => {
     setFlyingImage(image)

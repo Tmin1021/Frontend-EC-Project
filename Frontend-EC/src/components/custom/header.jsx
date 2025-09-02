@@ -6,6 +6,7 @@ import { useCart } from "../../context/CartContext";
 import Search_Space from "./search";
 import { useAuth } from '../../context/AuthContext'
 import Chatbot from './chatbot';
+import { assets, demo_1 } from "../../data/dummy";
 
 export const Fly_To_Cart = () => {
     const {flyingImage, allowFly, setAllowFly} = useCart()
@@ -23,7 +24,7 @@ export const Fly_To_Cart = () => {
                         if (allowFly) setAllowFly(false);
                     }}
                     className='absolute'>
-            <img src={flyingImage} className='w-[35px] shadow-lg aspect-square object-fit rounded-sm'/>
+            <img src={assets[flyingImage] ?? demo_1} className='w-[35px] shadow-lg aspect-square object-fit rounded-sm'/>
         </motion.div>}
         </AnimatePresence>
     )

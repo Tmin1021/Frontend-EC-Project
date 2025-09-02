@@ -1,7 +1,7 @@
 import BEApi from "../../../service/BEApi"
-import {demo_1, demo_3} from "../../data/dummy"
+import {assets, demo_1, demo_3} from "../../data/dummy"
 
-function createProductParams({search='', flowerTypes=[], occasions=[], colors=[], sort='Best Seller', page=1, limit=12} = {}) {
+function createProductParams({search='', flowerTypes=[], occasions=[], colors=[], sort='Best Sellers', page=1, limit=12} = {}) {
     return new URLSearchParams({
                 search,
                 flowerTypes: flowerTypes.join(","),
@@ -13,7 +13,7 @@ function createProductParams({search='', flowerTypes=[], occasions=[], colors=[]
             });
 }
 
-async function fetchProducts(setter = () => {}, params) {
+async function fetchProducts({setter = () => {}, setter2 = () => {}, setPagination = () => {}, params}) {
     if (typeof setter != 'function') return
     
     try {
@@ -21,18 +21,24 @@ async function fetchProducts(setter = () => {}, params) {
         const data = res.data.products
 
         if (data && data.length>0) {
-            const newData = res.data.products.map(item => ({
+            const newData = res.data.products.map((item, i) => ({
                 ...item,
+                norm_id: i,
                 product_id: item?._id,
-                image_url: item?.image_url ?? [demo_1],
+                image_url: refreshImageURL(item?.image_url),
             })).filter(item => item.available)
 
             setter(newData)
+
+            if (typeof setter2 === 'function') setter2(res.data)
+            if (typeof setPagination === 'function') setPagination(res.data)
         }
 
         else {
             console.warn("No product found")
-            setter([])        
+            setter([])   
+            setter2([])
+            setPagination([])     
         }
     
     } catch (err) {
@@ -49,7 +55,7 @@ async function fetchSearchPreview(params) {
             const newData = res.data.products.map(item => ({
                 ...item,
                 product_id: item?._id,
-                image_url: item?.image_url ?? [demo_1],
+                image_url: refreshImageURL(item?.image_url),
             })).filter(item => item.available)
 
             return newData
@@ -66,6 +72,38 @@ async function fetchSearchPreview(params) {
     }
 }
 
+
+async function fetchProductsUrgent({setter = () => {}, setter2 = () => {}}) {
+    if (typeof setter != 'function') return
+    
+    try {
+        const res = await BEApi.ProductApi.getAllUrgent()
+        const data = res.data
+
+        if (data && data.length>0) {
+            const newData = res.data.map((item, i) => ({
+                ...item,
+                norm_id: i,
+                product_id: item?._id,
+                image_url: refreshImageURL(item?.image_url),
+            }))
+
+            setter(newData)
+
+            if (typeof setter2 === 'function') setter2(newData)
+        }
+
+        else {
+            console.warn("No product found")
+            setter([])   
+            setter2([])
+        }
+    
+    } catch (err) {
+        console.error("Failed to fetch products", err);
+    }
+}
+
 async function getProduct(product_id) {
     try {
         const res = await BEApi.ProductApi.getById(product_id)
@@ -75,7 +113,7 @@ async function getProduct(product_id) {
             const data = {
                 ...item,
                 product_id: item?._id,
-                image_url: item?.image_url ?? [demo_1],
+                image_url: refreshImageURL(item?.image_url),
             }
 
             return data
@@ -103,7 +141,7 @@ async function fetchProduct(product_id, setter = () => {}) {
             const data = {
                 ...item,
                 product_id: item?._id,
-                image_url: item?.image_url ?? [demo_1],
+                image_url: refreshImageURL(item?.image_url),
             }
 
             setter(data)
@@ -161,4 +199,11 @@ const getFormatDate = (str) => {
   return (date+ ' at ' +cleanTime.slice(0,8))
 }
 
-export {fetchProducts, fetchProduct, fetchSearchPreview, createProductParams, getRoundPrice, getFormatDate, fetchComment, getProduct}
+const refreshImageURL = (image_url=[]) => {
+    if (!image_url) return [demo_1]
+    const keys = Object.keys(assets)
+    const newImageURL = image_url.filter(image => keys.includes(image))
+    return newImageURL.length > 0 ? newImageURL : [keys[0]]
+}
+
+export {fetchProducts, fetchProduct, fetchProductsUrgent, fetchSearchPreview, createProductParams, getRoundPrice, getFormatDate, fetchComment, getProduct, refreshImageURL}

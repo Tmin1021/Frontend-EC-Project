@@ -3,6 +3,21 @@ const router = express.Router()
 const Product = require("../models/productModel")
 const { getDynamicPrice, getCondition } = require("../dynamicPricing")
 
+// GET all prodycts
+router.get('/all', async (req, res) => {
+  try {
+    let products = await Product.find() 
+    products = products.map(p => {
+      const dynamicPrice = getDynamicPrice(p.price, p.fill_stock_date)
+      const condition = getCondition(p.fill_stock_date)
+      return { ...p.toObject(), dynamicPrice, condition }
+    })
+    res.json(products)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 // GET all products combined Search + Filter + Sort + Pagination
 // GET /api/products?search=rose&type=flower&flowerType=Roses,Lilies&occasions=Birthday,Anniversary&colors=Red Flowers,White Flowers&sort=price&page=1&limit=12
 router.get("/", async (req, res) => {

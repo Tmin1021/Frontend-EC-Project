@@ -15,14 +15,14 @@ import glowing from "/src/assets/Glowing.png";
 import honeymoon from  "/src/assets/Honeymoon.png";
 import lemonade from "/src/assets/Lemonade.png";
 import love_you_forever from "/src/assets/Love You Forever.png";
-import picnic from "/src/assets/picnic.png";
+import picnic from "/src/assets/Picnic.png";
 import strawberry_sunset from "/src/assets/Strawberry Sunset.png";
 import sugar_crush from "/src/assets/Sugar Crush.png";
 import waterlemon_candy from "/src/assets/Watermelon Candy.png";
 
-export const assets = [demo_1, demo_2, demo_3, black_magic, butter_cream, cool_breeze, exuberance, flirtatious, french_linen, glowing, honeymoon, lemonade, 
+export const assets = {demo_1, demo_2, demo_3, black_magic, butter_cream, cool_breeze, exuberance, flirtatious, french_linen, glowing, honeymoon, lemonade, 
         love_you_forever, picnic, strawberry_sunset, sugar_crush, waterlemon_candy
-]
+}
 
 // when add item to cart, store as: [product: the product itself, option: if available, quantity]
 // in cart, it will mapped into => [product_id, option, total_price, quantity, off_price]
@@ -31,15 +31,14 @@ export const assets = [demo_1, demo_2, demo_3, black_magic, butter_cream, cool_b
 const isDummy = 0
 
 const productPlaceHolder =   {
-    product_id: "Create",
     name: "Red Rose Bouquet",
     price: 5,
     stems: 5,
     stock: 10,
     available: true,
     description: "Assorted stems of seasonal roses.",
-    image_url: [demo_1, demo, demo_2, demo_3],
-    occasions: ["Wedding"],
+    image_url: ['demo_1'],
+    occasions: ["Anniversary"],
     colors: ["Pink Flowers"],
     flower_type: "Roses",
   }

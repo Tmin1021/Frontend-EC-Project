@@ -8,8 +8,9 @@ const ProductContext = createContext()
 
 export function ProductProvider({children, isSearchPage=false}) {
   const navigate = useNavigate()
-  // const {getDynamicPrice, getCondition, getDiffDays} = useDynamicPricing()
+  const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
+  const [pagination, setPagination] = useState([])
   const [currentValues, setCurrentValues] = useState({
     "Flower Type": new Set(),
     "Occassions": new Set(),
@@ -31,7 +32,7 @@ export function ProductProvider({children, isSearchPage=false}) {
   useEffect(() => {
     // for search
     const productParams = createProductParams({search: search, flowerTypes: flowerTypes, occasions: occasions, colors: colors, sort: sort, page: page})
-    fetchProducts(setProducts, productParams)
+    fetchProducts({setter:setProducts, setter2: setPagination, params:productParams}).finally(() => setLoading(false));
     
     setCurrentValues({
       "Flower Type": new Set(flowerTypes),
@@ -48,6 +49,7 @@ export function ProductProvider({children, isSearchPage=false}) {
   const filterProduct = ({name, value, isChosen}) => { 
     let newValues =    {...currentValues, [name]: new Set(currentValues[name])}
     isChosen ? newValues[name].add(value) : newValues[name].delete(value)
+    setLoading(true)
 
     const productParams = createProductParams({search: newValues.Search, flowerTypes: [...newValues['Flower Type']], occasions: [...newValues.Occassions], colors: [...newValues.Colors], sort: newValues.Sort})
     //fetchProducts(setProducts, productParams)
@@ -64,6 +66,14 @@ export function ProductProvider({children, isSearchPage=false}) {
       return product ? total + product.quantity : total
     }, 0)
   }*/
+
+  // h
+  const handlePageChange = async (newPage) => {
+      if (newPage < 1 || newPage > pagination.totalPages) return
+      const productParams = createProductParams({search: search, flowerTypes: flowerTypes, occasions: occasions, colors: colors, sort: sort, page: newPage})
+      setLoading(true)
+      fetchProducts({setter: setProducts, setPagination:setPagination, params:productParams}).finally(() => setLoading(false))
+  }
 
   // s
   const searchPrediction = async (input) => {
@@ -94,16 +104,17 @@ export function ProductProvider({children, isSearchPage=false}) {
   const sortProduct = value => {
     let newValues = currentValues
     newValues["Sort"] = value
+    setLoading(true)
 
     const productParams = createProductParams({search: newValues.Search, flowerTypes: [...newValues['Flower Type']], occasions: [...newValues.Occassions], colors: [...newValues.Colors], sort: newValues.Sort})
-    fetchProducts(setProducts, productParams)   
+    //fetchProducts(setProducts, productParams).finally(() => setLoading(false));
 
     navigate(`/${isSearchPage ? "search":"flower"}?${productParams.toString()}`, {replace: true})
     setCurrentValues(newValues)
   }
 
   return (
-    <ProductContext.Provider value={{search, products, filterProduct, searchProduct, searchPrediction, sortProduct, isSearchPage}}>
+    <ProductContext.Provider value={{pagination, setPagination, search, products, loading, filterProduct, handlePageChange, searchProduct, searchPrediction, sortProduct, isSearchPage}}>
       {children}
     </ProductContext.Provider>
   )
