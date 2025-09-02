@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "vnpay": "nodemon src/vnpay.js",
-    "start": "nodemon src/payos.js"
+    "start": "nodemon src/vnpay.js"
   },
   "keywords": [],
   "author": "",

@@ -56,7 +56,8 @@ export function Admin_User_Detail({isCreate=false}) {
       email: trimmedEmail,
       phone: trimmedPhone,
       address: trimmedAddress,
-      ...(isCreate && { password })
+      ...(isCreate && { password }),
+      ...(isCreate && { role: 'admin' })
     };
 
     if (isCreate) {
@@ -99,7 +100,7 @@ export function Admin_User_Detail({isCreate=false}) {
           <Text_Item name={'address'} content={address} setter={handleChange} row={2}/>
         </div>
 
-        <Change_Password isOpen={isOpen} setIsOpen={setIsOpen} isCreate={isCreate}/>
+        <Change_Password isOpen={isOpen} setter={setPassword} setIsOpen={setIsOpen} isCreate={isCreate}/>
 
         <Confirm_Box getDelete={false} saveSetter={handleUpdate}/>
       </motion.div>

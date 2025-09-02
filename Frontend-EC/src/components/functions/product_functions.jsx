@@ -89,6 +89,7 @@ async function fetchProductsUrgent({setter = () => {}, setter2 = () => {}}) {
             }))
 
             setter(newData)
+            console.log(1)
 
             if (typeof setter2 === 'function') setter2(newData)
         }
