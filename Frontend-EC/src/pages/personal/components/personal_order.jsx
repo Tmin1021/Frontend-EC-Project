@@ -138,7 +138,7 @@ const Order_Preview = ({order}) => {
     if (!candidateProduct) return <div></div>
 
     return (
-        <div className='flex flex-col gap-2 p-2 md:p-4 bg-white dark:bg-black shadow-sm rounded-sm hover:shadow-lg hover:rounded-lg transition-all'>
+        <div className='flex flex-col gap-2 p-2 md:p-4 bg-white shadow-sm rounded-sm hover:shadow-lg hover:rounded-lg transition-all'>
             {/* Preview Item */}
             <div className='h-[100px] w-full md:h-[120px] flex gap-4'>
                 <img src={candidateProduct?.image_url?.length > 0 ? assets[candidateProduct.image_url[0]] : demo_1} className='h-full aspect-square object-cover rounded-sm'/>

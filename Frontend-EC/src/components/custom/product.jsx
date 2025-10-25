@@ -5,7 +5,7 @@ export default function Product_Item({product}) {
     const {condition_mapping} = useDynamicPricing()
 
     return (
-        <div className="min-w-[170px] bg-white dark:bg-black">
+        <div className="min-w-[170px] bg-white">
             <div className='w-full aspect-square overflow-hidden rounded-sm'>
                 <img src={assets[product?.image_url?.[0]] ?? demo_1} className='w-full h-full object-cover'/>
             </div>

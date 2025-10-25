@@ -25,6 +25,7 @@ import { Toaster } from 'sonner'
 import { CheckoutProvider } from './context/CheckoutContext'
 import Inform from './pages/inform'
 import Accessories from './pages/acessories'
+import { useEffect } from 'react'
 
 const UserLayout = () => {
 

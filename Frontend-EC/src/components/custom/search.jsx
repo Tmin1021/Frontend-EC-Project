@@ -147,9 +147,9 @@ export function Search_Space({isSearch, closeSearch}) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className="absolute left-0 top-0 md:top-14 w-full h-screen bg-white dark:bg-black md:bg-black/10 md:backdrop-blur-sm z-50" onMouseOver={closeSearch}>
+                    className="absolute left-0 top-0 md:top-14 w-full h-screen bg-white md:bg-black/10 md:backdrop-blur-sm z-50" onMouseOver={closeSearch}>
 
-                    <div className='md:flex relative w-full bg-gray-50 dark:bg-black h-0 md:h-[350px] flex-col gap-2 px-4 md:py-2' onMouseOver={(e)=>e.stopPropagation()}>
+                    <div className='md:flex relative w-full bg-gray-50 h-0 md:h-[350px] flex-col gap-2 px-4 md:py-2' onMouseOver={(e)=>e.stopPropagation()}>
                         <div className='md:hidden relative w-full pb-8'>
                             <div className='absolute right-0 top-2' onClick={closeSearch}><X className='w-8 h-8 text-gray-400' /></div>
                         </div>

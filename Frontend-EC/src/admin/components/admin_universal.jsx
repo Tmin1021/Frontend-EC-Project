@@ -5,8 +5,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from "framer-motion";
 import { getRoundPrice } from "../../components/functions/product_functions";
 
+// 1 and 3 for status in order list; 0 and 2 for order status menu
 export const order_status = {
-  "All": ['bg-black dark:bg-white', 'bg-black dark:bg-white', 'text-white dark:text-black', 'text-white dark:text-black', <Package/>],
+  "All": ['bg-gray-700', 'bg-white', 'text-white', 'text-white', <Package/>],
   "Required": ['bg-blue-400', 'bg-blue-100', 'text-white', 'text-blue-500', <ShoppingCart/>],
   "Confirmed": ['bg-green-400', 'bg-green-100', 'text-white', 'text-green-500', <CalendarCheck/>],
   "Canceled": ['bg-red-400', 'bg-red-100', 'text-white', 'text-red-500', <CircleX/>], 

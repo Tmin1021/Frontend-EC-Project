@@ -15,8 +15,9 @@ const {message, shipping_address, setShippingAddress, setMessage} = useCheckout(
             <Text_Item name='Full name' content={user?.name} placeholder='Taylor Swift'/>
             <Text_Item_2 type={'tel'} name='Phone Number' content={user?.phone} setterButton={false} placeholder='0901234567'/>
         </div>
-        <Text_Item name='Delivery Address' content={shipping_address} setter={(name, value) => setShippingAddress(value.trim())} placeholder='227 Nguyen Van Cu, District 5'/>
-        <Text_Item name='Other Message (optional)' content={message} setter={(name, value) => setMessage(value.trim())} placeholder='e.g. Place the package in front of the building ' rows={3}/>
+
+        <Text_Item name='Delivery Address' content={shipping_address} setter={(name, value) => setShippingAddress(value)} placeholder='1 Dinh Tien Hoang, District 1'/>
+        <Text_Item name='Other Message (optional)' content={message} setter={(name, value) => setMessage(value)} placeholder='e.g. Place the package in front of the building ' rows={3}/>
 
     </div>
   )

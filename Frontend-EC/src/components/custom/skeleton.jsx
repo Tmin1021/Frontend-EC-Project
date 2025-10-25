@@ -2,7 +2,7 @@ import React from 'react'
 
 export function SkeletonOrderPreview() {
   return (
-    <div className='flex flex-col gap-2 p-2 md:p-4 bg-white dark:bg-black shadow-sm rounded-sm animate-pulse'>
+    <div className='flex flex-col gap-2 p-2 md:p-4 bg-white shadow-sm rounded-sm animate-pulse'>
       
       {/* Preview Item */}
       <div className='h-[100px] w-full md:h-[120px] flex gap-4'>
@@ -36,7 +36,7 @@ export function SkeletonOrderPreview() {
   )
 }
 
-
+// for flower detail page
 export function SkeletonDetailLoader() {
   return (
     <div className="flex flex-col gap-4 max-w-screen-xl mx-auto px-4 md:px-10 lg:px-32 mt-4 animate-pulse">
@@ -52,6 +52,7 @@ export function SkeletonDetailLoader() {
   )
 }
 
+// for all flower result
 function SkeletonLoader({length=12}) {
 
     return (
@@ -59,7 +60,7 @@ function SkeletonLoader({length=12}) {
         {Array.from({ length: length }).map((_, idx) => (
           <div
             key={idx}
-            className="border rounded-lg p-4 animate-pulse bg-white dark:bg-gray-400/80"
+            className="border rounded-lg p-4 animate-pulse bg-white"
           >
             {/* Image placeholder */}
             <div className="h-40 w-full bg-gray-300 rounded-md mb-4"></div>
