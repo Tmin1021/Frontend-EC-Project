@@ -3,6 +3,7 @@ import signup_wallpaper from '/src/assets/signup-wallpaper.png';
 import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from '../../../context/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { HouseIcon } from 'lucide-react';
 
 const SignUp_Item = ({title="Name", type="text", name="name", content='', placeholder="Enter your name",  handleChange=()=>{}}) => {
   return (
@@ -80,7 +81,11 @@ export const Signup = () => {
             transition={{ duration: 0.6, ease: 'easeInOut' }}
             className="relative z-10 flex flex-col justify-center items-center min-h-screen p-4">
         <div className="w-full max-w-md p-6 sm:p-8 rounded-lg bg-white/40 backdrop-blur-xs border-1 border-white/20 hover:shadow-gray-50 hover:shadow-lg transition-all">
-          <p className="text-3xl font-bold mb-6 text-gray-800">Sign Up</p>
+
+          <div className='flex justify-between items-center mb-6'>
+            <p className="text-3xl font-bold text-gray-700">Sign up</p>
+            <HouseIcon className='text-gray-500 hover:text-gray-700 hover:cursor-pointer' onClick={()=>navigate('/')}/>
+          </div>
           <form className="space-y-4" onSubmit={handleSubmit}>
 
             <SignUp_Item title='Email' type='email' name='email' content={form.email} placeholder='Enter your email' handleChange={handleChange}/>

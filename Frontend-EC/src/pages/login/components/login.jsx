@@ -4,13 +4,17 @@ import { useAuth } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocation } from 'react-router-dom'
+import { toast } from 'sonner';
+import { HouseIcon } from 'lucide-react';
 
-// route: if not authenticated => login => (1): bring to the previous state (2): bring to default personal or admin
+
+// route: if not authenticated => login => (1): bring to the previous state (2): bring to default personal (no previous state available) or admin
 // route: if authenticated => bring to previous state (if available)
 export const Login = () => {
     const {login, user, isAuthenticated} = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
+    const [loading, setLoading] = useState(false)
     const from = location.state?.from?.pathname || "/personal"
 
     // protect login
@@ -28,7 +32,30 @@ export const Login = () => {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault()
-        await login(form.email, form.password, navigate, location)
+        setLoading(true)
+        try {
+          await login(form.email, form.password, navigate, location)
+        } 
+        catch (err) {
+          toast.error("Failed to log in")
+        } 
+        finally {
+          setLoading(false)
+        }
+    }
+
+    const handleDemoAdmin = async (e) => {
+        e.preventDefault()
+        setLoading(true)
+        try {
+          await login('master@example.com', 'bimat', navigate, location)
+        } 
+        catch (err) {
+          toast.error("Failed to log in")
+        } 
+        finally {
+          setLoading(false)
+        }
     }
 
   return (
@@ -48,7 +75,12 @@ export const Login = () => {
                   transition={{ duration: 0.6, ease: 'easeInOut' }}
                   className="relative z-10 flex flex-col justify-center items-center min-h-screen p-4">
         <div className="w-full max-w-md p-6 sm:p-8 rounded-lg bg-white/40 backdrop-blur-xs border-1 border-white/20 hover:shadow-gray-50 hover:shadow-lg transition-all">
-          <p className="text-3xl font-bold mb-6 text-gray-700">Login</p>
+          
+          <div className='flex justify-between items-center mb-6'>
+            <p className="text-3xl font-bold text-gray-700">Login</p>
+            <HouseIcon className='text-gray-500 hover:text-gray-700 hover:cursor-pointer' onClick={()=>navigate('/')}/>
+          </div>
+
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium mb-1 text-gray-700">Email</label>
@@ -83,9 +115,28 @@ export const Login = () => {
           </form>
 
           <p className="mt-4 text-sm text-gray-600">
-            Don't have an account?{' '}
-            <a href="/signup" className="text-blue-600 hover:underline"> Sign up</a>
+            For admin demo{' '}
+            <button type="button" onClick={handleDemoAdmin} className="text-blue-600 hover:underline font-medium">
+              Click here
+            </button>
           </p>
+
+          <p className="mt-4 text-sm text-gray-600">
+            Don't have an account?{' '}
+            <button type="button" onClick={()=>navigate('/signup')} className="text-blue-600 hover:underline font-medium">
+              Sign up
+            </button>
+          </p>
+
+          <div className={`${loading ? 'fixed inset-0 flex justify-center items-center bg-black/20 backdrop-blur-sm' : ''}`}>
+            {loading ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 border-4 border-gray-200 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-gray-500 font-semibold">Logging in...</span>
+                  </div>
+                </div>) : ('')}
+          </div>
 
         </div>
       </motion.div>

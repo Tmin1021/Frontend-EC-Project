@@ -119,7 +119,7 @@ function Search_Inner({closeSearch}) {
                             placeholder="Search Hoa" 
                             value={input}
                             onChange={onHandleInput}
-                            className="absolute inset-0 bg-transparent flex-1 px-3 py-2 text-2xl text-transparent font-medium focus:outline-none"
+                            className="absolute -inset-3 bg-transparent flex-1 px-3 py-2 text-3xl md:text-2xl text-transparent font-medium focus:outline-none"
                             />
                 </div>
             </div>
@@ -149,9 +149,9 @@ export function Search_Space({isSearch, closeSearch}) {
                     transition={{ duration: 0.3 }}
                     className="absolute left-0 top-0 md:top-14 w-full h-screen bg-white dark:bg-black md:bg-black/10 md:backdrop-blur-sm z-50" onMouseOver={closeSearch}>
 
-                    <div className='md:flex relative w-full bg-gray-50 dark:bg-black h-0 md:h-[350px] flex-col gap-2 px-4 py-2' onMouseOver={(e)=>e.stopPropagation()}>
+                    <div className='md:flex relative w-full bg-gray-50 dark:bg-black h-0 md:h-[350px] flex-col gap-2 px-4 md:py-2' onMouseOver={(e)=>e.stopPropagation()}>
                         <div className='md:hidden relative w-full pb-8'>
-                            <div className='absolute right-0' onClick={closeSearch}><X className='w-8 h-8' /></div>
+                            <div className='absolute right-0 top-2' onClick={closeSearch}><X className='w-8 h-8 text-gray-400' /></div>
                         </div>
 
                         <ProductProvider>

@@ -55,7 +55,7 @@ function Cart() {
                     exit={isSmallScreen ? { x: "100%" } : { scale: 0.9, opacity: 0 }}
                     transition={{ duration: 0.4, ease: "easeInOut"}}
                     style={isSmallScreen ? { originX: 0.5, originY: 0.5 } : undefined}
-                    className="relative w-5/6 h-screen md:w-[500px] md:h-[500px] p-1 md:p-2 bg-white/80 backdrop-blur-lg rounded-l-lg md:rounded-lg overflow-y-auto no-scrollbar" onClick={(e) =>e .stopPropagation()}>
+                    className={`relative w-5/6 h-screen md:w-[500px] ${isCartEmpty? 'md:h-fit' : 'md:h-[500px]'} p-1 md:p-2 bg-white/80 backdrop-blur-lg md:rounded-lg overflow-y-auto no-scrollbar`} onClick={(e) =>e .stopPropagation()}>
             {isCartEmpty ? 
             <Cart_Empty/>
             : 
@@ -85,7 +85,7 @@ function Cart() {
             </div>}
 
             {/* Sum */}                            
-            <Cart_Sum/>
+            {!isCartEmpty && <Cart_Sum/>}
         </motion.div>
 
       </motion.div>}

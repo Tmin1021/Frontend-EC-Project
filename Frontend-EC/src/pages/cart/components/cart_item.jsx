@@ -14,9 +14,7 @@ const Cart_Item = ({product}) => {
     const {condition_mapping} = useDynamicPricing()
 
     useEffect(() => {
-
         fetchProduct(product.product_id, setProductInfo)
-
     }, [])
 
     return (

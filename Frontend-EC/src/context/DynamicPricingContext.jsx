@@ -22,7 +22,8 @@ const holidays = [
   ["People’s Army of Vietnam Foundation Day", "2025-12-22"],
   ["Christmas Day", "2025-12-25"],
   ["Mid-Autumn Festival", "2025-09-06"],
-  ["Independence Proclamation Anniversary", "2025-09-02"]
+  ["Independence Proclamation Anniversary", "2025-09-02"],
+  ["Demo day", "2025-11-02"],
 ]
 
 export function DynamicPricingProvider({children}) {
@@ -115,6 +116,7 @@ export function DynamicPricingProvider({children}) {
 
             if (diffDays >= 0 && diffDays <= 10) return name
         }
+        return ''
     }
 
     return(

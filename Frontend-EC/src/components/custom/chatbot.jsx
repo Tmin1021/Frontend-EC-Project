@@ -66,10 +66,10 @@ function Chatbot() {
   return (
     <>
       {/* Floating Chat Button */}
-      <div  onClick={() => setIsOpen(!isOpen)}
+      {!isOpen && <div  onClick={() => setIsOpen(!isOpen)}
             className="fixed bottom-6 right-6 p-4 bg-white/60 backdrop-blur-sm shadow-gray-300 shadow-md rounded-full text-pink-700 hover:text-pink-500 hover:shadow-lg transition-all z-50">
         <BotMessageSquare className='w-8 h-8' />
-      </div>
+      </div>}
 
       {/* Chatbot Panel */}
       <AnimatePresence>
@@ -78,7 +78,7 @@ function Chatbot() {
                     animate={{ opacity: 1,  y: 0 }}
                     exit={{ opacity: 0, y: 80 }}
                     transition={{ duration: 0.4, ease:'easeInOut' }}
-                    className="fixed bottom-20 right-5 z-50 w-[90%] sm:w-[400px] h-[500px] shadow-gray-300 shadow-md border-2 border-gray-100/60 rounded-2xl flex flex-col overflow-hidden">
+                    className="fixed bottom-5 right-5 z-50 w-[90%] sm:w-[400px] h-[500px] shadow-gray-300 shadow-md border-2 border-gray-100/60 rounded-2xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex justify-between items-center p-3 text-gray-700 bg-white/80 backdrop-blur-sm">
             <h2 className="text-xl font-semibold">Chatbot of Hoa</h2>
@@ -90,10 +90,10 @@ function Chatbot() {
             {chatHistory.map((msg, index) => (
               <div
                 key={index}
-                className={`mb-2 p-2 rounded-md text-sm max-w-[75%] ${
+                className={`mb-2 p-2 rounded-md text-sm w-fit max-w-[75%] ${
                   msg.role === 'user'
-                    ? 'bg-blue-300 shadow-gray-100 shadow-sm text-shadow-gray-800 ml-auto text-right'
-                    : 'bg-pink-300 shadow-gray-100 shadow-sm text-gray-800 mr-auto text-left'
+                    ? 'bg-blue-100/60 text-gray-800 ml-auto text-right'
+                    : 'bg-pink-100/60 text-gray-800 mr-auto text-left '
                 }`}
                 dangerouslySetInnerHTML={{
                   __html: msg.content
@@ -126,7 +126,20 @@ function Chatbot() {
                   : 'bg-blue-500/60 hover:bg-blue-700/60 backdrop-blur-lg transition-colors'
               }`}
             >
-              {loading ? 'Sending...' : 'Send'}
+                {loading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    {/* Spinner */}
+                    <div className="w-5 h-5 border-3 border-t-transparent border-white rounded-full animate-spin"></div>
+                    <span className="text-sm">
+                      Sending...{' '}
+                      {chatHistory.length === 1
+                        ? '(waiting approx 1–2 minutes)'
+                        : '(waiting approx 10 seconds)'}
+                    </span>
+                  </div>
+                ) : (
+                  <span className="tracking-wide">Send</span>
+                )}
             </button>
           </form>
         </motion.div>

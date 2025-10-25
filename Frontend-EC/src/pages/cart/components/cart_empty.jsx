@@ -1,5 +1,5 @@
 import React from 'react'
-import { BaggageClaim } from "lucide-react";
+import { BaggageClaim, ShoppingBag } from "lucide-react";
 import { products } from '../../../data/dummy';
 
 const Recommend_Product = () => {
@@ -30,10 +30,10 @@ function Cart_Empty() {
   return (
     <div className='flex flex-col h-full justify-between'>
         <div className='flex items-center gap-10 pl-5'>
-            <BaggageClaim className='w-20 h-20 text-pink-400'/>
+            <ShoppingBag className='w-20 h-20 text-blue-400/80'/>
             <div className='flex flex-col'>
-                <p className='text-2xl font-semibold'>Cart is empty</p>
-                <p>Let's explore other products you might be interested in.</p>
+                <p className='text-xl md:text-2xl font-semibold'>Cart is empty</p>
+                <p className='text-sm'>Let's explore all products you might be interested in.</p>
             </div>
         </div>
     </div>
