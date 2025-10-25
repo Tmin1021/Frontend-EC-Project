@@ -51,7 +51,7 @@ function Admin() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
                     transition={{ duration: 0.2 }} className="md:hidden fixed inset-0 bg-black/30 z-52">
-            <div className="w-1/2 min-w-[300px] flex flex-col bg-white dark:bg-black h-full pr-2">
+            <div className="w-1/2 min-w-[300px] flex flex-col bg-white dark:bg-black h-full px-2">
             
                 <div className='relative min-w-ful pt-6 pb-4'>
                   <div className='absolute right-0' onClick={() => setMenuOpen(!menuOpen)}><PanelRightOpen className='w-7 h-7 hover:text-blue-500'/></div>
@@ -60,11 +60,16 @@ function Admin() {
                 <p className="pl-4 font-bold text-4xl">Admin</p>
 
                 {Object.keys(managements).map((key) => (
-                  <div key={key} onClick={() => handleNavigate(managements[key][0])} className="flex items-center gap-2 pl-4 py-4 bg-white dark:bg-black hover:bg-gray-100 cursor-pointer transition-all text-xl">
+                  <div key={key} onClick={() => {handleNavigate(managements[key][0]); setActiveKey(key)}} className={`${activeKey===key? 'bg-purple-100 text-purple-600 font-semibold shadow-lg py-4':'py-3'} rounded-lg flex items-center gap-2 px-4 cursor-pointer transition-all text-lg`}>
                     {managements[key][1]}
                     {key}
                   </div>
                 ))}
+
+                <div className='absolute bottom-10 w-full flex items-center gap-2 px-4 text-red-500 cursor-pointer hover:text-red-700 transition-all' onClick={()=>logout(navigate)}>
+                  <LogOut/>
+                  <p>Sign Out</p>
+                </div>
             </div>
           </motion.div>
         )}
@@ -83,9 +88,9 @@ function Admin() {
             </div>
           ))}
 
-           <div className='absolute bottom-10 w-full flex items-center gap-2 px-4 text-red-500 cursor-pointer hover:text-red-700  transition-all' onClick={()=>logout(navigate)}>
+           <div className='absolute bottom-10 w-full flex items-center gap-2 px-4 text-red-500 cursor-pointer hover:text-red-700 transition-all' onClick={()=>logout(navigate)}>
             <LogOut/>
-            <p className='hidden md:inline'>Sign Out</p>
+            <p>Sign Out</p>
           </div>
 
         </div>
