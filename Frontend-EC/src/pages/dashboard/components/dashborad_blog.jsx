@@ -1,12 +1,15 @@
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from "framer-motion";
 
 const BLOGS_PER_ROW = 4
 
 const Dashboard_Blog = () => {
     const [blogs, setBlogs] = useState([]);
     const [startIdx, setStartIdx] = useState(0);
+    const listBlogs = ["sunflower-the-flower-of-sun", "gladiolus-the-beauty-of-nature", "rose-queen-of-flower", 
+                      "tulip-flower-of-loyalty", "daffodil-legend-of-narcissus"]
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -45,6 +48,7 @@ const Dashboard_Blog = () => {
     const handlePrev = () => {
     setStartIdx((prev) => (prev - 1 + blogs.length) % blogs.length); // make sure non negative
     };
+
   return (
     <div className="bg-gray-50 w-full flex flex-col gap-4 pt-4 px-4 md:px-8 lg:px-16 md:pt-10 pb-4">
       <p className='font-semibold text-xl md:text-2xl lg:text-4xl text-green-700'>Blogging</p>
@@ -85,3 +89,5 @@ const Dashboard_Blog = () => {
 }
 
 export default Dashboard_Blog
+
+//

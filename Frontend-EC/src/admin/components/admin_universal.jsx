@@ -212,7 +212,7 @@ export function Admin_Universal_Page({name}) {
           {name==='Order' && 
           <Admin_Universal_Order_Status statusChosen={statusChosen} setStatusChosen={setStatusChosen} filterStatus={filterStatus}/>}
 
-          <div className='flex flex-col gap-4 bg-white px-8 py-4 shadow-lg border-1 border-gray-100 rounded-sm min-w-lg overflow-auto' onClick={(e)=>e.stopPropagation()}>
+          <div className='flex flex-col gap-4 bg-white px-8 py-4 mb-4 shadow-lg border-1 border-gray-100 rounded-sm min-w-lg overflow-auto' onClick={(e)=>e.stopPropagation()}>
             {/* Header title */}
             <Admin_Universal_Item key={-1} which={type} header={1}/>
 

@@ -61,7 +61,7 @@ export const Order_Product_Preview = () => {
 
     return (
         <AnimatePresence>
-        <div className='flex flex-col gap-2 p-2 md:p-4 lg:p-8 bg-gray-50 h-screen'>
+        <div className='flex flex-col gap-2 mb-16 p-2 md:p-4 lg:p-8 bg-gray-50 h-screen'>
             <motion.div initial={{ opacity: 0, y: -40 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -40 }}
@@ -76,7 +76,7 @@ export const Order_Product_Preview = () => {
                     </div>
                 </div>
         
-                {/* Status and Payment*/}
+                {/* Status and Payment for lg view*/}
                 <div className='hidden lg:flex w-full lg:w-[25%] h-fit flex-col gap-2 bg-white px-4 py-4 shadow-lg border-1 border-gray-100 rounded-sm'>
                     <p className='text-xs font-semibold text-gray-500'>Status</p>
                     <div className='w-full flex items-center justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.status}</div>
@@ -90,8 +90,8 @@ export const Order_Product_Preview = () => {
                         transition={{ duration: 0.4 }} 
                         className='flex flex-col gap-6 px-3 md:px-6 py-6 bg-white shadow-lg border-1 border-gray-100 rounded-sm'>
                 <div className='flex justify-between lg:hidden'>
-                    <div className='w-[100px] flex items-center justify-center py-2 bg-green-50 text-xs text-green-600 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.payment_method}</div>
-                    <div className='w-[100px] flex justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.status}</div>
+                    <div className='w-[140px] flex items-center justify-center py-2 bg-green-50 text-xs text-green-600 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.payment_method}</div>
+                    <div className='w-[140px] flex justify-center py-2 bg-purple-50 text-xs text-purple-700 font-semibold rounded-sm border-1 border-gray-200 hover:bg-white transition-all'>{orderInfo?.status}</div>
                 </div>
                 
                 {items?.map((item, i) => (
@@ -204,7 +204,7 @@ function Personal_Order() {
   }
   
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-4 mb-6'>
         <p className='text-2xl font-semibold'>Purchased Orders</p>
         <Admin_Universal_Order_Status statusChosen={statusChosen} setStatusChosen={setStatusChosen} filterStatus={filterStatus}/>
 

@@ -140,7 +140,7 @@ function Header() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.3 }}
-                        className="md:hidden absolute left-0 top-0 w-full h-screen bg-white dark:bg-black shadow z-50 px-4 py-2 flex flex-col gap-4">
+                        className="md:hidden absolute left-0 top-0 w-full h-screen bg-white shadow z-50 px-4 py-2 flex flex-col gap-4">
                         <div className='relative w-full pb-8'>
                             <div className='absolute right-0'><X className='w-8 h-8' onClick={()=>setIsDropdownOpen(false)}/></div>
                         </div>

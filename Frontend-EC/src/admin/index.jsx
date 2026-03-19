@@ -50,8 +50,9 @@ function Admin() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -10 }}
-                    transition={{ duration: 0.2 }} className="md:hidden fixed inset-0 bg-black/30 z-52">
-            <div className="w-1/2 min-w-[300px] flex flex-col bg-white dark:bg-black h-full px-2">
+                    transition={{ duration: 0.2 }} 
+                    className="md:hidden fixed inset-0 bg-black/30 z-52">
+            <div className="w-1/2 min-w-[300px] flex flex-col bg-white h-full px-2">
             
                 <div className='relative min-w-ful pt-6 pb-4'>
                   <div className='absolute right-0' onClick={() => setMenuOpen(!menuOpen)}><PanelRightOpen className='w-7 h-7 hover:text-blue-500'/></div>
@@ -75,7 +76,6 @@ function Admin() {
         )}
       </AnimatePresence>
 
-
       {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-1/4 lg:w-1/5 pt-4 h-full">
         <div className="relative flex flex-col w-full px-2">
@@ -97,7 +97,7 @@ function Admin() {
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 p-2 md:p-4 mt-16 md:mt-0 overflow-auto bg-gray-100 ">
+      <div className="flex-1 p-2 md:p-4 mt-14 md:mt-0 overflow-auto bg-gray-100 ">
         <Outlet />
         <Toaster />
       </div>
